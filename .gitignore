@@ -1,5 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# CLIENT DIRECTORY
 # Compiled output
 /client/dist
 /client/tmp
@@ -40,3 +41,7 @@
 # System files
 /client/.DS_Store
 /client/Thumbs.db
+
+
+# SERVER DIRECTORY
+/server/node_modules
