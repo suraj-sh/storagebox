@@ -1,0 +1,17 @@
+2023-10-30	18:38:14	752c0448-4a89-4ae9-ab26-4e03722e9029	Error:Not allowed by CORS
+2023-10-31	02:20:37	d5c57577-e243-4048-831c-48ad16579e0b	Error:ENOENT: no such file or directory, stat 'C:\Users\Lenovo\OneDrive\Desktop\NodeBackend\node 5\views\subdir\test.html'
+2023-10-31	02:20:40	b01f6b25-a936-42ff-b9af-e9681b1f5da1	Error:ENOENT: no such file or directory, stat 'C:\Users\Lenovo\OneDrive\Desktop\NodeBackend\node 5\views\subdir\test.html'
+2023-10-31	02:20:42	e31f390c-3e3f-4d9f-8c70-fd9e98a28e6c	Error:ENOENT: no such file or directory, stat 'C:\Users\Lenovo\OneDrive\Desktop\NodeBackend\node 5\views\subdir\test.html'
+2023-11-01	22:20:33	c4a1d7ff-9331-4486-a63f-6e80bacae572	ReferenceError:resizeBy is not defined
+2023-11-01	22:21:27	218ec6ed-26ea-4fc2-8448-3903af9beaa6	ReferenceError:resizeBy is not defined
+2023-11-07	11:26:02	4346e89d-790b-40c6-abd0-19e8055b4df4	SyntaxError:Unexpected token " in JSON at position 0
+2023-11-08	14:03:22	8e75f14f-17b7-4756-85ad-c48cde5c91c0	SyntaxError:Unexpected end of JSON input
+2023-11-08	14:03:28	5df9027a-c129-48b9-a190-b53c8f7d68a4	SyntaxError:Unexpected end of JSON input
+2023-11-08	14:09:19	54b3b0cf-ecce-4488-8852-e500862eab45	SyntaxError:Unexpected end of JSON input
+2023-11-08	14:09:38	83fe75c2-ce79-4e8e-97aa-d91dc2e581b3	ReferenceError:userDB is not defined
+2023-11-08	14:11:00	04748344-823f-4ecc-b5cc-cdfb2104e952	TypeError:jwt.verify is not a function
+2023-11-16	14:17:12	687c7141-c2a0-460b-801b-7c3aae05a5b6	SyntaxError:Unexpected end of JSON input
+2023-11-17	17:06:27	b8f45a4e-2ad0-483f-97dc-70c5f3761224	TypeError:Cannot read properties of undefined (reading 'map')
+2023-11-25	11:36:24	7ba6f945-d55e-4481-b0d0-912d290fcea9	undefined:undefined
+2023-11-25	11:43:17	5c820c13-0de0-46bf-b09a-980bc7ee902b	undefined:undefined
+2023-11-25	11:45:22	34d50888-bc4f-4aed-96ad-1800ff118f24	undefined:undefined

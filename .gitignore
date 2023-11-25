@@ -45,3 +45,4 @@
 
 # SERVER DIRECTORY
 /server/node_modules
+/server/.env
