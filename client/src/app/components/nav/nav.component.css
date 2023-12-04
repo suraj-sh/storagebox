@@ -49,6 +49,25 @@ header h1 {
     text-decoration: none;
     color: #333;
     font-weight: 600;
+    position: relative;
+}
+
+.nav-part2 li a::after {
+    content: ''; /* Create a pseudo-element for the line */
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: rgb(69, 141, 186); /* Set the line color */
+    bottom: -7px; /* Position the line below the text */
+    left: 0;
+    transform: scaleX(0); /* Initially set line width to zero */
+    transform-origin: bottom right;
+    transition: transform 0.3s ease; /* Add a smooth transition effect */
+}
+
+.nav-part2 li a:hover::after {
+    transform: scaleX(1); /* Expand the line on hover */
+    transform-origin: bottom left;
 }
 
 header i {
@@ -72,6 +91,23 @@ header button {
     cursor: pointer;
 }
 
+footer {
+    background-color: #6F7A96;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+  
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+
 @media (max-width: 600px) {
     header {
         padding: 0 6vw;
@@ -79,17 +115,17 @@ header button {
     }
 
     header h1 {
-        font-size: 5.1vw;
+        font-size: 6vw;
     }
 
     header button {
-        font-size: small;
-        padding: 1.3vw 2vw;
+        font-size: 5vw;
+        padding: 1.5vw 2vw;
     }
 
     header i {
         display: block;
-        font-size: 4.5vw;
+        font-size: 6vw;
         z-index: 100;
         position: absolute;
         padding-top: 8px;
@@ -116,8 +152,9 @@ header button {
         transition: all 0.2s ease-in-out;
     }
 
-    .nav-part2.show-menu li a {
-        font-size: 4vw; /* Adjust the font size as needed */
+    .nav-part2.show-menu li a{
+        font-weight: bolder;
+        font-size: 5vw; /* Adjust the font size as needed */
         margin: 1vw 0; /* Add some margin for better spacing */
         text-align: center; /* Center-align the text */
     }
@@ -155,5 +192,9 @@ header button {
         border-radius: 3px;
         font-weight: 600;
         font-size: 3.5vw;
-    }    
+    } 
+    
+    .footer-content {
+        flex-direction: column;
+      }
 }
