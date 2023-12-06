@@ -22,6 +22,10 @@ const userScehma=new Schema({
         type:String,
         required:true,
     },
+    isSeller:{
+        type:Boolean,
+        default:false
+    },
     refreshToken:String,
     passwordChangedAt:Date,
     passwordResetToken:String,
@@ -33,7 +37,11 @@ userScehma.methods.createResetPassword=function(){
     this.passwordResetTokenExpires=Date.now()+10*60*1000;
     console.log(resetToken,this.passwordResetToken);
     return resetToken;
-
-
 }
+userScehma.virtual('id').get(function(){
+    return this._id.toHexString();
+})
+userScehma.set('toJSON',{
+    virtuals:true,
+})
 module.exports=mongoose.model('User',userScehma);
