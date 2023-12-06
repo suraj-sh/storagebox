@@ -165,7 +165,7 @@ body {
 
 @media (max-width: 600px) {
     .container {
-        margin: 5vw 5vw;
+        margin: 15vw 5vw;
         max-width: 350px;
     }
 }

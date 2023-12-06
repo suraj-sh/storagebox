@@ -144,7 +144,7 @@ body {
     margin-top: 25px; /* Adjusted margin for mobile */
 }
 
-.form .button input {
+.form button {
     border: none;
     color: #fff;
     font-size: 16px; /* Adjusted font size for mobile */
@@ -154,9 +154,10 @@ body {
     background-color: #4070f4;
     cursor: pointer;
     transition: all 0.3s ease;
+    padding: 12px 20px; /* Adjusted padding for better aesthetics */
 }
 
-.button input:hover {
+.form button:hover {
     background-color: #265df2;
 }
 
@@ -165,9 +166,15 @@ body {
     text-align: center;
 }
 
+.required-indicator {
+    color: red; /* Set the color to your preference */
+    margin-left: 5px; /* Adjust the spacing as needed */
+}
+
+
 @media (max-width: 600px) {
     .container {
-        margin: 5vw auto; /* Adjusted margin for mobile */
+        margin: 8vw auto; /* Adjusted margin for mobile */
         max-width: 350px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
         font-size: 16px;
@@ -194,7 +201,7 @@ body {
         font-size: 12px; /* Adjusted font size for mobile */
     }
 
-    .form .button input {
+    .form button {
         font-size: 16px; /* Adjusted font size for mobile */
     }
 }
