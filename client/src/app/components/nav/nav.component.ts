@@ -32,4 +32,10 @@ export class NavComponent {
     this.router.navigate(['/register']);
     this.closeMenu(); // Close the menu after navigation
   }
+
+  currentYear: number;
+
+  ngOnInit() {
+    this.currentYear = new Date().getFullYear();
+  }
 }
