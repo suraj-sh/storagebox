@@ -1,6 +1,4 @@
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
 }
@@ -17,8 +15,8 @@ body {
     max-width: 430px;
     width: 100%;
     border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    margin: 3vw auto; /* Adjusted margin for mobile */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    margin: 2vw auto; /* Adjusted margin for mobile */
 }
 
 .container .forms {
@@ -69,17 +67,40 @@ body {
     margin-top: 20px; /* Adjusted margin for mobile */
 }
 
+.input-field {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-field.error {
+    margin-bottom: 30px; /* Adjust as needed for spacing when error is present */
+}
+
 .input-field input {
-    position: absolute;
+    /* position: absolute; */
     height: 100%;
     width: 100%;
-    padding: 0 25px; /* Adjusted padding for mobile */
+    padding: 0 25px;
     border: none;
     outline: none;
-    font-size: 14px; /* Adjusted font size for mobile */
+    font-size: 16px;
     border-bottom: 2px solid #ccc;
     border-top: 2px solid transparent;
     transition: all 0.2s ease;
+}
+
+.input-field.error input {
+    border-bottom-color: #ff0000; /* Set error border color */
+}
+
+.validation-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    position: absolute;
+    z-index: 1;
+    background-color: #fff; /* Set an appropriate background color */
 }
 
 .input-field input:is(:focus, :valid) {
@@ -89,6 +110,7 @@ body {
 .input-field i {
     position: absolute;
     top: 50%;
+    right: 94%;
     transform: translateY(-50%);
     color: #999;
     font-size: 22px; /* Adjusted font size for mobile */
@@ -107,7 +129,6 @@ body {
     cursor: pointer;
     padding: 8px; /* Adjusted padding for mobile */
 }
-
 
 .form .checkbox-text {
     display: flex;
@@ -128,7 +149,7 @@ body {
 
 .form .text {
     color: #333;
-    font-size: 12px; /* Adjusted font size for mobile */
+    font-size: 16px; /* Adjusted font size for mobile */
 }
 
 .form a.text {
@@ -141,13 +162,14 @@ body {
 }
 
 .form .button {
-    margin-top: 25px; /* Adjusted margin for mobile */
+    margin-top: 35px; /* Adjusted margin for mobile */
 }
 
 .form button {
     border: none;
     color: #fff;
-    font-size: 16px; /* Adjusted font size for mobile */
+    width: 100%;
+    font-size: 18px; /* Adjusted font size for mobile */
     font-weight: 500;
     letter-spacing: 1px;
     border-radius: 6px;
@@ -166,17 +188,11 @@ body {
     text-align: center;
 }
 
-.required-indicator {
-    color: red; /* Set the color to your preference */
-    margin-left: 5px; /* Adjust the spacing as needed */
-}
-
-
 @media (max-width: 600px) {
     .container {
-        margin: 8vw auto; /* Adjusted margin for mobile */
+        margin: 3vw auto; /* Adjusted margin for mobile */
         max-width: 350px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
         font-size: 16px;
     }
 
@@ -185,12 +201,12 @@ body {
     }
 
     .input-field input {
-        font-size: 14px; /* Adjusted font size for mobile */
+        font-size: 16px; /* Adjusted font size for mobile */
         padding: 0 25px; /* Adjusted padding for mobile */
     }
 
     .input-field i {
-        font-size: 18px; /* Adjusted font size for mobile */
+        font-size: 20px; /* Adjusted font size for mobile */
     }
 
     .input-field i.showHidePw {
@@ -198,10 +214,10 @@ body {
     }
 
     .form .text {
-        font-size: 12px; /* Adjusted font size for mobile */
+        font-size: 14px; /* Adjusted font size for mobile */
     }
 
     .form button {
-        font-size: 16px; /* Adjusted font size for mobile */
+        font-size: 18px; /* Adjusted font size for mobile */
     }
 }

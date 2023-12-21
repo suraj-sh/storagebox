@@ -3,30 +3,32 @@
     <div class="form login">
       <span class="title">Login</span>
 
-      <form #loginForm="ngForm">
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
         <div class="input-field">
-          <input type="email" id="email" name="email" autocomplete="email" placeholder="Enter your email" ngModel required>
-          <i class="ri-mail-line"></i>
+          <input id="name" type="text" formControlName="user" autocomplete="name" placeholder="Enter your name" required>
+          <i class="ri-user-3-line"></i>
         </div>
+        
         <div class="input-field">
-          <input type="{{ passwordVisible ? 'text' : 'password' }}" class="password" placeholder="Enter your password" name="password" ngModel required>
+          <input id="password" type="{{ passwordVisible ? 'text' : 'password' }}" formControlName="pwd"
+            placeholder="Enter your password" required>
           <i class="ri-lock-2-line"></i>
           <i *ngIf="passwordVisible" class="ri-eye-line showHidePw" (click)="togglePasswordVisibility()"></i>
           <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
         </div>
 
         <div class="checkbox-text">
-          <a href="#" class="text">Forgot password?</a>
+          <a routerLink="/forgot-password" class="text">Forgot password?</a>
         </div>
 
         <div class="input-field button">
-          <input type="submit" value="Login" [disabled]="!loginForm.valid">
+          <button [disabled]="loginForm.invalid" type="submit">Login</button>
         </div>
       </form>
 
       <div class="login-signup">
         <span class="text">Don't have an account?
-          <a routerLink="/register" class="text signup-link">Signup Now</a>
+          <a routerLink="/register" class="text signup-link">Register Now</a>
         </span>
       </div>
     </div>

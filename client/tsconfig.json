@@ -23,7 +23,9 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "types": ["sweetalert2"]
+  
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

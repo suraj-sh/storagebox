@@ -1,49 +1,73 @@
 <div class="container">
-    <div class="forms">
-        <div class="form signup">
-            <span class="title">Registration</span>
+  <div class="forms">
+    <div class="form signup">
+      <span class="title">Registration</span>
+      <form [formGroup]="registrationForm" novalidate>
 
-            <form (ngsubmit)="register()" [formGroup]="registrationForm">
-                <div class="input-field">
-                    <input type="text" formControlName="name" name="name" autocomplete="name" placeholder="Enter your name" required>
-                    <i class="ri-user-3-line"></i>
-                    <span class="required-indicator" *ngIf="registrationForm.controls['name'].hasError('required') && registrationForm.controls['name'].touched">*</span>
-                </div>
-            
-                <div class="input-field">
-                    <input type="email" formControlName="email" name="email" autocomplete="email" placeholder="Enter your email" required>
-                    <i class="ri-mail-line"></i>
-                    <span class="required-indicator" *ngIf="registrationForm.controls['email'].hasError('required') && registrationForm.controls['email'].touched">*</span>
-                </div>
-            
-                <div class="input-field">
-                    <input type="password" formControlName="password" name="password" autocomplete="new-password" placeholder="Password" required>
-                    <i class="ri-lock-2-line"></i>
-                    <span class="required-indicator" *ngIf="registrationForm.controls['password'].hasError('required') && registrationForm.controls['password'].touched">*</span>
-                </div>
-            
-                <div class="input-field">
-                    <input type="{{ passwordVisible ? 'text' : 'password' }}" formControlName="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
-                    <i class="ri-lock-2-line"></i>
-                    <span class="required-indicator" *ngIf="registrationForm.controls['confirmPassword'].hasError('required') && registrationForm.controls['confirmPassword'].touched">*</span>
-                    <i *ngIf="passwordVisible" class="ri-eye-line showHidePw" (click)="togglePasswordVisibility()"></i>
-                    <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
-                </div>
-            
-                <div class="input-field button">
-                    <button type="submit" (click)="register()">Signup</button>
-                </div>
-
-                <div *ngIf="registrationForm.invalid" class="error-message">
-                    Please fill in all required fields and ensure that passwords match.
-                </div>
-            </form>
-
-            <div class="login-signup">
-                <span class="text">Already have an account?
-                    <a routerLink="/login" class="text login-link">Login Now</a>
-                </span>
+        <!-- Username -->
+        <div class="input-field" [class.error]="user?.invalid && user?.touched">
+          <input id="name" type="text" formControlName="user" placeholder="Enter your username" autocomplete="name"
+            required>
+          <i class="ri-user-3-line"></i>
+          <div *ngIf="user?.touched">
+            <div *ngIf="user?.hasError('required')" class="validation-message">**Username is required**
             </div>
+            <div *ngIf="user?.hasError('minlength')" class="validation-message">**Name must be at least 6
+              characters**</div>
+          </div>
         </div>
+
+        <!-- Email -->
+        <div class="input-field" [class.error]="email?.invalid && email?.touched">
+          <input id="email" type="email" formControlName="email" placeholder="Enter your email" autocomplete="email"
+            required>
+          <i class="ri-mail-line"></i>
+          <div *ngIf="email?.hasError('required') && email?.touched" class="validation-message">**Email is required**
+          </div>
+          <div *ngIf="email?.hasError('email') && email?.touched" class="validation-message">**Invalid email format**
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="input-field" [class.error]="pwd?.invalid && pwd?.touched">
+          <input id="password" [type]="passwordVisible ? 'text' : 'password'" formControlName="pwd"
+            placeholder="Password" autocomplete="new-password" required>
+          <i class="ri-lock-2-line"></i>
+          <div *ngIf="pwd?.touched">
+            <div *ngIf="pwd?.hasError('required')" class="validation-message">**Password is required**
+            </div>
+            <div *ngIf="pwd?.hasError('minlength')" class="validation-message">**Password must be at least 12
+              characters**</div>
+            <div *ngIf="pwd?.hasError('pattern')" class="validation-message">**Password must contain at least one number
+              and one special character**</div>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="input-field" [class.error]="confirmPassword?.invalid && confirmPassword?.touched">
+          <input id="confirmPassword" [type]="passwordVisible ? 'text' : 'password'" formControlName="confirmPassword"
+            placeholder="Confirm Password" autocomplete="current-password" required>
+          <i class="ri-lock-2-line"></i>
+          <i *ngIf="passwordVisible" class="ri-eye-line showHidePw" (click)="togglePasswordVisibility()"></i>
+          <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
+          <div *ngIf="confirmPassword?.hasError('required') && confirmPassword?.touched" class="validation-message">
+            **Password is required**</div>
+          <div *ngIf="confirmPassword?.value !== pwd?.value && confirmPassword?.touched" class="validation-message">
+            **Passwords do not match**</div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="input-field button">
+          <button [disabled]="registrationForm.invalid" (click)="register()" type="button">Register</button>
+        </div>
+      </form>
+
+      <!-- Login Link -->
+      <div class="login-signup">
+        <span class="text">Already have an account?
+          <a routerLink="/login" class="text login-link">Login Now</a>
+        </span>
+      </div>
     </div>
+  </div>
 </div>
