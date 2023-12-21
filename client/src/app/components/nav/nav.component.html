@@ -1,11 +1,15 @@
 <header>
-    <h1>StorageBox</h1>
+    <div class="logo">
+        <img src="../../../assets/icons/logo.png" alt="company logo">
+        <span>StorageBox</span>
+    </div>
+    <!-- <h1>StorageBox</h1> -->
     <ul class="nav-part2" [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
         <li><a routerLink="/home" (click)="closeMenu()">Home</a></li>
-        <li><a routerLink="/about-us" (click)="closeMenu()">About Us</a></li>
         <li><a routerLink="/settings" (click)="closeMenu()">Settings</a></li>
-        <button (click)="redirectToLogin()">Login</button>
-        <button (click)="redirectToRegister()">Register</button>
+        <button *ngIf="!authService.loggedIn()" (click)="redirectToLogin()">Login</button>
+        <button *ngIf="!authService.loggedIn()" (click)="redirectToRegister()">Register</button>
+        <button *ngIf="authService.loggedIn()" (click)="authService.logout()">Logout</button>
     </ul>
     <i class="ri-menu-3-fill" (click)="toggleMenu()"></i>
 </header>

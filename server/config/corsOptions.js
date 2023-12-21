@@ -1,7 +1,8 @@
 //cors origin resource sharing
 const whitelist=['https://www.mysite.com',
-'https://localhost:3000',
-'https://localhost:3500'];
+'http://localhost:3000',
+'http://localhost:3500',
+'http://localhost:4200'];
 const corsOptions={
     origin:(origin,callback)=>{
         if(whitelist.indexOf(origin)!==-1||!origin){
