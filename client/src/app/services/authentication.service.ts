@@ -23,6 +23,10 @@ export class AuthenticationService {
     return this.http.post<any>(`${this.apiUrl}/auth/forgotpassword`, user);
   }
 
+  resetPassword(data: any) {
+    return this.http.post<any>(`${this.apiUrl}/auth/resetpassword`, data);
+  }
+
   loggedIn(){
     return !!localStorage.getItem('token')
   }
