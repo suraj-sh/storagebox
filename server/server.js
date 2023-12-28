@@ -35,6 +35,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 connectDB();
 
 // Routes
+app.use('/public/upload',express.static(__dirname + '/public/upload'));
 app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));

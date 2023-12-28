@@ -16,3 +16,7 @@
 2023-11-25	11:43:17	5c820c13-0de0-46bf-b09a-980bc7ee902b	undefined:undefined
 2023-11-25	11:45:22	34d50888-bc4f-4aed-96ad-1800ff118f24	undefined:undefined
 2023-11-27	17:28:19	9d1e5811-7dbd-4858-9a7c-5ee6d013fcf5	undefined:undefined
+2023-12-09	14:17:09	bd3b7ffe-11c8-419c-8ff4-f0876a38817c	Error:Not allowed by CORS
+2023-12-09	14:17:09	8d49abac-be69-45f4-8eb9-cb0ba1ac7347	Error:Not allowed by CORS
+2023-12-15	17:29:55	38ca96f6-01cb-4a4d-8e38-83fe8dc05839	Error:invalid image type
+2023-12-26	15:35:55	8eef62df-514b-4c32-9bd9-07cbf827c7a2	SyntaxError:Unexpected token ' in JSON at position 24

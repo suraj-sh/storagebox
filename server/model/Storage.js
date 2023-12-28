@@ -1,6 +1,10 @@
 var mongoose=require('mongoose');
 const Schema=mongoose.Schema;
 const storageSchema=new Schema({
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
     name:{
         type:String,
         required:true,
@@ -9,8 +13,12 @@ const storageSchema=new Schema({
         type:String,
         required:true,
     },
-    address:{
+    city:{
         type:String,
+        required:true,
+    },
+    mobileNo:{
+        type:Number,
         required:true,
     },
     image:{
@@ -24,6 +32,10 @@ const storageSchema=new Schema({
         type:Number,
         default:0,
     },
+    isRented:{
+        type:Boolean,
+        default:false,
+    },
     category:{
         type:String,
         required:true,
@@ -36,8 +48,6 @@ const storageSchema=new Schema({
 storageSchema.virtual('id').get(function(){
     return this._id.toHexString();
 })
-storageSchema.set('toJSON',{
-    virtuals:true,
-})
+storageSchema.set('toJSON', { virtuals: true });
 
 module.exports=mongoose.model('Storage',storageSchema);
