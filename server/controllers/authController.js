@@ -1,49 +1,50 @@
-const User=require('../model/User');
-const bcrypt=require('bcrypt');
-const crypto=require('crypto');
-const jwt=require('jsonwebtoken');
+const User = require('../model/User');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const { sendEmail } = require('../middlewere/email');
 const { user } = require('../config/roles_list');
 const errorhandler = require('../middlewere/errorHandler');
 
-const handleLogin=async(req,res)=>{
-
-    const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required' });
-    const foundUser=await User.findOne({username:user}).exec();
-    if(!foundUser)return res.sendStatus(401);
-
-    const match=await bcrypt.compare(pwd, foundUser.password);
-    if(match){
-        const roles=Object.values(foundUser.roles);
-        const acessToken=jwt.sign(
-            {"UserInfo":{
-                "userId":foundUser._id,
-                "username":foundUser.username,
-                "roles":roles,
-            }
+const handleLogin = async (req, res) => {
+    const { user, email, pwd } = req.body;
+    if (!(user || email) || !pwd) {
+        return res.status(400).json({ 'message': 'Username or email and password are required' });
+    }
+    const foundUser = await User.findOne({ $or: [{ username: user }, { email: email }], }).exec();
+    if (!foundUser) return res.sendStatus(401);
+    const match = await bcrypt.compare(pwd, foundUser.password);
+    if (match) {
+        const roles = Object.values(foundUser.roles);
+        const acessToken = jwt.sign(
+            {
+                "UserInfo": {
+                    "userId": foundUser._id,
+                    "username": foundUser.username,
+                    "roles": roles,
+                }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn:'60s'}
+            { expiresIn: '5m' }
         );
-        const refreshToken=jwt.sign(
-            {"username":foundUser.username},
+        const refreshToken = jwt.sign(
+            { "username": foundUser.username },
             process.env.REFRESH_TOKEN_SECRET,
-            {expiresIn:'1d'}
+            { expiresIn: '1d' }
         );
         //Saving refresh Token with current user
-        foundUser.refreshToken=refreshToken;
-        const result=await foundUser.save();
-        console.log(result);                                                                             
-        res.cookie('jwt',refreshToken,{ httpOnly:true,maxAge:24*60*60*1000});
-        res.json({acessToken});
-    }else{
+        foundUser.refreshToken = refreshToken;
+        const result = await foundUser.save();
+        console.log(result);
+        res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        res.json({ acessToken });
+    } else {
         res.sendStatus(401);
     }
 }
 
 const forgotpassword = async (req, res, next) => {
-    let userData; 
+    let userData;
 
     try {
         userData = await User.findOne({ email: req.body.email });
@@ -55,7 +56,17 @@ const forgotpassword = async (req, res, next) => {
         await userData.save({ validateBeforeSave: false });
 
         const resetUrl = `${req.protocol}://${req.get('host')}/auth/resetpassword/${resetToken}`;
-        const message = `Hii ${userData.username} we have received a password reset request. Please use the below link to reset your password:\n\n${resetUrl}\n\nThis reset link is valid for 10 minutes.`;
+        const message = `Dear ${userData.username},
+We received a request to reset the password associated with your StorageBox account. For your security, please follow the instructions below to complete the process:
+
+1. Click on the following link to reset your password:
+${resetUrl}\n\n
+2. This link is valid for the next 10 minutes.
+
+If you did not initiate this password reset, please contact our support team immediately at support@storagebox.com.
+
+Thank you,
+The StorageBox Team`
 
         await sendEmail({
             email: userData.email,

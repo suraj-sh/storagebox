@@ -20,6 +20,15 @@ const userScehma=new Schema({
     },
     password:{
         type:String,
+        validate(value){
+            if(!value.match(/\d/)||!value.match(
+                /[a-zA-Z]/)){
+                    throw new Error("password must contian atleast one letter and one number");
+                }
+                else if(value.length<6){
+                    throw new Error("Minimum length is 6 charecter");
+                }
+        },
         required:true,
     },
     isSeller:{
@@ -38,10 +47,8 @@ userScehma.methods.createResetPassword=function(){
     console.log(resetToken,this.passwordResetToken);
     return resetToken;
 }
-userScehma.virtual('id').get(function(){
-    return this._id.toHexString();
-})
-userScehma.set('toJSON',{
-    virtuals:true,
-})
+// userScehma.virtual('id').get(function(){
+//     return this._id.toHexString();
+// })
+userScehma.set('toJSON',{virtuals:true})
 module.exports=mongoose.model('User',userScehma);
