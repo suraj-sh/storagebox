@@ -25,12 +25,12 @@ export class NavComponent {
 
   redirectToLogin(): void {
     this.router.navigate(['/login']);
-    this.closeMenu(); // Close the menu after navigation
+    this.closeMenu();
   }
 
   redirectToRegister(): void {
     this.router.navigate(['/register']);
-    this.closeMenu(); // Close the menu after navigation
+    this.closeMenu(); 
   }
 
   currentYear: number;
@@ -38,4 +38,5 @@ export class NavComponent {
   ngOnInit() {
     this.currentYear = new Date().getFullYear();
   }
+
 }
