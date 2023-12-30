@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
         });
         localStorage.setItem('token', res.acessToken);
         this.router.navigate(['/home']);
+        this.loginForm.reset();
       },
       (err) => {
         let errorMessage = 'Invalid username or password. Please try again.';

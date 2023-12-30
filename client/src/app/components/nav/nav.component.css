@@ -1,19 +1,6 @@
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
     font-family: 'Gilroy', sans-serif;
-}
-
-html, body {
-    height: 100%;
-    width: 100%;
-}
-
-main {
-    height: 100%;
-    width: 100%;
-    position: relative;
 }
 
 header {
@@ -27,10 +14,10 @@ header {
     position: relative;
 }
 
-.nav-part2 {
+.nav {
     display: flex;
     align-items: center;
-    gap: 4vw;
+    gap: 3vw;
 }
 
 .logo {
@@ -40,7 +27,7 @@ header {
 
 .logo img {
     max-height: 60px;
-    margin-right: 5px; 
+    margin-right: 5px;
 }
 
 .logo span {
@@ -48,36 +35,24 @@ header {
     font-weight: 700;
 }
 
-.nav-part2 li {
+.nav li {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.nav-part2 li a {
+.nav li a {
+    cursor: pointer;
     font-size: 1.4vw;
     text-decoration: none;
     color: #333;
     font-weight: 600;
     position: relative;
+    transition: color 0.3s ease;
 }
 
-.nav-part2 li a::after {
-    content: ''; 
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background-color: rgb(69, 141, 186); 
-    bottom: -7px;
-    left: 0;
-    transform: scaleX(0); 
-    transform-origin: bottom right;
-    transition: transform 0.3s ease;
-}
-
-.nav-part2 li a:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
+.nav li a:hover {
+    color: rgb(69, 141, 186);
 }
 
 header i {
@@ -99,6 +74,13 @@ header button {
     border-radius: 5px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header button:hover,
+header button:focus {
+    background-color: #326b95; 
+    outline: none;
 }
 
 footer {
@@ -110,13 +92,12 @@ footer {
     bottom: 0;
     width: 100%;
 }
-  
+
 .footer-content {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-  
 
 @media (max-width: 600px) {
     header {
@@ -128,14 +109,14 @@ footer {
         display: flex;
         align-items: center;
     }
-    
+
     .logo img {
         max-height: 45px;
-        margin-right: 5px; 
+        margin-right: 5px;
     }
-    
+
     .logo span {
-        font-size: 5vw; 
+        font-size: 5vw;
         font-weight: 700;
     }
 
@@ -146,24 +127,24 @@ footer {
 
     header i {
         display: block;
-        font-size: 6vw;
+        font-size: 9vw;
         z-index: 100;
         position: absolute;
-        padding-top: 8px;
         top: 10px;
         right: 10px;
+        cursor: pointer;
     }
 
-    .nav-part2 {
-        display: none; 
+    .nav {
+        display: none;
     }
 
-    .nav-part2.show-menu {
+    .nav.show-menu {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 80%;
+        width: 100%;
         height: 100vh;
         position: fixed;
         top: 0;
@@ -173,13 +154,16 @@ footer {
         transition: all 0.2s ease-in-out;
     }
 
-    .nav-part2.show-menu li a{
+    .nav.show-menu li a {
         font-weight: bolder;
-        font-size: 5vw; 
-        margin: 0; 
-        text-align: center; 
+        font-size: 5vw;
+        margin: 0;
+        text-align: center;
+        padding: 1vw; /* Add padding for better touch interaction */
+        color: #333; /* Set color for the links */
+        transition: color 0.3s ease;
     }
-
+    
     .content {
         height: calc(100% - 60px);
         flex-direction: column;
@@ -213,9 +197,9 @@ footer {
         border-radius: 3px;
         font-weight: 600;
         font-size: 3.5vw;
-    } 
-    
+    }
+
     .footer-content {
         flex-direction: column;
-      }
+    }
 }

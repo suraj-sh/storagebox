@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthenticationService {
   private apiUrl = 'http://localhost:3500';
 
@@ -13,6 +14,10 @@ export class AuthenticationService {
 
   registerUser(user: any){
    return this.http.post<any>(`${this.apiUrl}/register`, user); 
+  }
+
+  sendVerificationEmail(user: any){
+    return this.http.post<any>(`${this.apiUrl}/register/verify`, user); 
   }
 
   loginUser(user: any){
@@ -35,6 +40,5 @@ export class AuthenticationService {
     localStorage.removeItem('token')
     this.router.navigate(['/home'])
   }
-
   
- }
+}
