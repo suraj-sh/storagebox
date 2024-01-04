@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -26,11 +26,14 @@ export class ResetPasswordComponent implements OnInit {
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit() {
-    this.token = this.route.snapshot.params['token'];
+    this.activatedRoute.params.subscribe(val => {
+      this.token = val['token'];
+      console.log(this.token)
+    });
 
     this.resetPasswordForm = this.formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
@@ -38,14 +41,15 @@ export class ResetPasswordComponent implements OnInit {
     });
   }
 
+  // Example Angular component method
   resetPassword() {
-    if (this.resetPasswordForm.invalid) {
-      return;
+
+    let resetObj = {
+      token: this.token,
+      password: this.resetPasswordForm.value.password
     }
 
-    const newPassword = this.resetPasswordForm.value.password;
-
-    this.authService.resetPassword({ token: this.token, password: newPassword }).subscribe(
+    this.authService.resetPassword(resetObj).subscribe(
       (res: any) => {
         Swal.fire({
           title: 'Password Reset Successful',
@@ -53,8 +57,6 @@ export class ResetPasswordComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Login',
         });
-
-        // Redirect to login page after successful password reset
         this.router.navigate(['/login']);
       },
       (err: any) => {
@@ -66,7 +68,7 @@ export class ResetPasswordComponent implements OnInit {
         });
         console.log(err);
       }
-    );
+    )
   }
 
   togglePasswordVisibility() {
@@ -77,7 +79,7 @@ export class ResetPasswordComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const password = control.get('password');
       const confirmPassword = control.get('confirmPassword');
-  
+
       return password && confirmPassword && password.value !== confirmPassword.value
         ? { passwordMismatch: true }
         : null;

@@ -15,7 +15,7 @@ export class NavComponent {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    this.isCloseIconVisible = true;
+    this.isCloseIconVisible = this.isMenuOpen;
   }
 
   closeMenu() {
@@ -38,5 +38,4 @@ export class NavComponent {
   ngOnInit() {
     this.currentYear = new Date().getFullYear();
   }
-
 }

@@ -33,6 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'OK',
         });
+        this.forgotPasswordForm.reset();
       },
       (err) => {
         Swal.fire({
