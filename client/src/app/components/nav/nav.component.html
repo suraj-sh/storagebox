@@ -8,11 +8,14 @@
         <li><a routerLink="/home" (click)="closeMenu()">Home</a></li>
         <li><a routerLink="/home" (click)="closeMenu()">Chats</a></li>
         <li><a routerLink="/home" (click)="closeMenu()">Settings</a></li>
-        <button *ngIf="!authService.loggedIn()" (click)="redirectToLogin()">Login</button>
-        <button *ngIf="!authService.loggedIn()" (click)="redirectToRegister()">Register</button>
+        <ng-container *ngIf="!authService.loggedIn()">
+            <button (click)="redirectToLogin()">Login</button>
+            <button (click)="redirectToRegister()">Register</button>
+        </ng-container>
         <button *ngIf="authService.loggedIn()" (click)="authService.logout()">Logout</button>
     </ul>
-    <i class="ri-menu-3-fill" (click)="toggleMenu()"></i>
+    <i class="ri-menu-3-fill" *ngIf="!isMenuOpen" (click)="toggleMenu()"></i>
+    <i class="ri-close-fill" *ngIf="isCloseIconVisible" (click)="closeMenu()"></i>
 </header>
 
 <footer>

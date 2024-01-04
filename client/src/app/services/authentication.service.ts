@@ -1,44 +1,65 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthenticationService {
   private apiUrl = 'http://localhost:3500';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
-  registerUser(user: any){
-   return this.http.post<any>(`${this.apiUrl}/register`, user); 
+  registerUser(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  sendVerificationEmail(user: any){
-    return this.http.post<any>(`${this.apiUrl}/register/verify`, user); 
+  sendVerificationEmail(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register/verify`, user).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  loginUser(user: any){
-   return this.http.post<any>(`${this.apiUrl}/auth`, user); 
+  loginUser(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth`, user).pipe(
+      catchError(this.handleError));
   }
 
-  forgotpass(user: any){
-    return this.http.post<any>(`${this.apiUrl}/auth/forgotpassword`, user);
+  forgotpass(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/forgotpassword`, user).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  resetPassword(data: any) {
-    return this.http.post<any>(`${this.apiUrl}/auth/resetpassword`, data);
+  resetPassword(resetObj: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/resetpassword/`, resetObj).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  loggedIn(){
-    return !!localStorage.getItem('token')
+  loggedIn(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token;
   }
 
-  logout(){
-    localStorage.removeItem('token')
-    this.router.navigate(['/home'])
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/home']);
   }
-  
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An error occurred';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(errorMessage);
+  }
 }
