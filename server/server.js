@@ -4,6 +4,7 @@ const app = express();
 const path = require('path');
 const { logger } = require('./middlewere/logEvents');
 const cors = require('cors');
+const io =require('socket.io');
 const corsOptions = require('./config/corsOptions');
 const errorhandler = require('./middlewere/errorHandler');
 const verifyToken = require('./middlewere/verifyJWT');
@@ -35,6 +36,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 connectDB();
 
 // Routes
+app.use('/public/document',express.static(__dirname+'/public/document'))
 app.use('/public/upload',express.static(__dirname + '/public/upload'));
 app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
@@ -59,6 +61,8 @@ app.all('*', (req, res) => {
 
 // Overall error handling
 app.use(errorhandler);
+
+
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');

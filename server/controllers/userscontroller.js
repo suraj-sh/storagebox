@@ -117,6 +117,9 @@ const getSellerUsers = async (req, res) => {
     }
 };
 
+const UpdateDocument=async(req,res)=>{
+    
+}
 module.exports={
     getAllUser,
     getUser,

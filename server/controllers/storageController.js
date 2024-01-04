@@ -193,15 +193,17 @@ const deleteStorage= async (req,res)=>{
     res.json(result);
 }
 const storageCount=async(req,res)=>{
-    const storageCount=await Storage.countDocuments((count)=>count);
-
-    if(!storageCount){
-        res.status(500).json({'message':'Server error'});
-    }
+    try {
+    const storageCount=await Storage.countDocuments();
     res.send({
-        count:storageCount
-    })
+        count: storageCount
+    });
+} catch (error) {
+    console.error('Error counting users:', error);
+    res.status(500).json({ 'message': 'Internal Server Error' });
 }
+}
+
 module.exports = {
     getAllStorage,
     createNewStorage,

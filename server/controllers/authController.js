@@ -7,6 +7,7 @@ const { user } = require('../config/roles_list');
 const errorhandler = require('../middlewere/errorHandler');
 
 const handleLogin = async (req, res) => {
+    const cookies =req.cookies;
     const { user, email, pwd } = req.body;
     if (!(user || email) || !pwd) {
         return res.status(400).json({ 'message': 'Username or email and password are required' });
@@ -27,16 +28,32 @@ const handleLogin = async (req, res) => {
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '5m' }
         );
-        const refreshToken = jwt.sign(
+        const newRefreshToken = jwt.sign(
             { "username": foundUser.username },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
+        let newRefreshTokenArray=
+        !cookies?.jwt
+        ?foundUser.refreshToken
+        :foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
+
+        if(cookies?.jwt)
+        {
+            const refreshToken= cookies.jwt;
+            const foundToken=await User.findOne({refreshToken}).exec();
+            
+            if(!foundToken){
+                console.log('attempted refresh token reasue at login');
+                newRefreshTokenArray=[];
+            }
+            res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http
+    }
         //Saving refresh Token with current user
-        foundUser.refreshToken = refreshToken;
+        foundUser.refreshToken = [...newRefreshTokenArray,newRefreshToken];
         const result = await foundUser.save();
         console.log(result);
-        res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({ acessToken });
     } else {
         res.sendStatus(401);
@@ -110,8 +127,8 @@ const resetpassword = async (req, res, next) => {
 
         // Update user data
         userData.password = hashedPassword;
-        userData.passwordResetToken = '';
-        userData.passwordResetTokenExpires = '';
+        userData.passwordResetToken = undefined;
+        userData.passwordResetTokenExpires = undefined;
         userData.passwordChangedAt = Date.now();
 
         await userData.save();

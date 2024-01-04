@@ -35,7 +35,15 @@ const userScehma=new Schema({
         type:Boolean,
         default:false
     },
-    refreshToken:String,
+    idProof:{
+        type:String,
+        default:'',
+    },
+    DoucemntProof:{
+        type:String,
+        default:'',
+    },
+    refreshToken:[String],
     passwordChangedAt:Date,
     passwordResetToken:String,
     passwordResetTokenExpires:Date,
