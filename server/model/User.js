@@ -37,11 +37,11 @@ const userScehma=new Schema({
     },
     idProof:{
         type:String,
-        default:'',
+        default:undefined,
     },
-    DoucemntProof:{
+    documentProof:{
         type:String,
-        default:'',
+        default:undefined,
     },
     refreshToken:[String],
     passwordChangedAt:Date,

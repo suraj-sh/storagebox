@@ -8,6 +8,7 @@ const errorhandler = require('../middlewere/errorHandler');
 
 const handleLogin = async (req, res) => {
     const cookies =req.cookies;
+    console.log(cookies)
     const { user, email, pwd } = req.body;
     if (!(user || email) || !pwd) {
         return res.status(400).json({ 'message': 'Username or email and password are required' });
