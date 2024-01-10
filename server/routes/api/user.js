@@ -4,6 +4,7 @@ const path=require('path');
 const userController=require('../../controllers/userscontroller');
 const verifyRoles = require('../../middlewere/verifyRoles');
 const ROLES_LIST = require('../../config/roles_list');
+const uploadDocument = require('../../middlewere/uploadDocs');
 
 router.route('/')
 .get(verifyRoles(ROLES_LIST.Admin),userController.getAllUser)
@@ -22,11 +23,15 @@ router.route('/change-role-user/:id')
 
 router.route('/:id')
 .get(userController.getUser)
-.put(userController.updateUser)
+.put(uploadDocument.fields([
+    { name: 'idProof', maxCount: 1 },
+    { name: 'documentProof', maxCount: 1 },
+  ]), userController.updateUser)
 .delete(verifyRoles(ROLES_LIST.Admin),userController.deleteUser);
 
-
-
-
+router.route('/idProof/:id')
+.delete(userController.deleteIdProof);
+router.route('/docProof/:id')
+.delete(userController.deleteDocumentProof);
 
 module.exports=router;

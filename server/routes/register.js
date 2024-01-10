@@ -5,8 +5,8 @@ const uploadDocument = require('../middlewere/uploadDocs');
 
 router.route('/')
 .post(uploadDocument.fields([
-    { name: 'documentPath', maxCount: 1 },
-    { name: 'documentFile', maxCount: 1 },
+    { name: 'idProof', maxCount: 1 },
+    { name: 'documentProof', maxCount: 1 },
   ]), registerController.handleNewUser);
 ;
 
