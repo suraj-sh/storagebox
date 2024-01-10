@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FormBuilder, FormGroup, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-register',
@@ -13,6 +14,9 @@ export class RegisterComponent {
   passwordVisible = false;
   showOwnerDocumentsSection = false;
   currentStep = 1;
+  showSpinner = false;
+  filesIdProof: File | null = null;
+  filesStorageProof: File | null = null;
 
   get user() {
     return this.registrationForm.get('user');
@@ -34,23 +38,45 @@ export class RegisterComponent {
     return this.registrationForm.get('confirmPassword');
   }
 
-  get role() {
-    return this.registrationForm.get('role');
+  get isSeller() {
+    return this.registrationForm.get('isSeller');
+  }
+
+  get idProof() {
+    return this.registrationForm.get('idProof');
+  }
+
+  get DoucemntProof() {
+    return this.registrationForm.get('DoucemntProof');
   }
 
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
-              private router: Router) { }
+    private router: Router, private spinner: NgxSpinnerService) { }
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
     verificationCode: ['', Validators.required],
-    pwd: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
-    confirmPassword: ['', [Validators.required, this.passwordMatchValidator()]],
-    role: ['', Validators.required],
-    idProof: ['', []],
-    storageProof: ['', []]
+    pwd: ['', [Validators.required, Validators.minLength(12),
+    Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+    confirmPassword: ['', [Validators.required]],
+    isSeller: [false, Validators.required],
+    idProof: [''],
+    DoucemntProof: ['']
   });
+
+  selectFile(event: any, formControlName: string) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      // Handle each file input separately based on formControlName
+      if (formControlName === 'idProof') {
+        this.filesIdProof = file;
+      } else if (formControlName === 'DoucemntProof') {
+        this.filesStorageProof = file;
+      }
+    }
+  }
 
   nextStep() {
     this.currentStep++;
@@ -60,79 +86,75 @@ export class RegisterComponent {
     this.currentStep--;
   }
 
-  verifyEmail() {
-    // Implement email verification logic
-    const verificationCode = this.registrationForm.get('verificationCode')?.value;
-    // Call your backend API to verify the code
-    this.nextStep();
-  }
-
   sendVerificationCode() {
-    const email = this.email?.value; // Assuming you have an email form control
-    if (email) {
-      this.authService.sendVerificationEmail(email).subscribe(
-        (response) => {
-          // Handle success, e.g., show a message to the user
-          console.log('Verification email sent successfully');
-        },
-        (error) => {
-          // Handle error, e.g., show an error message
-          console.error('Error sending verification email', error);
-        }
-      );
+    // Get the values from the form controls
+    const isSeller = this.isSeller?.value;
+    const user = this.user?.value;
+    const email = this.email?.value;
+    const idProof = this.idProof?.value;
+    const DoucemntProof = this.DoucemntProof?.value;
+
+    // Check if the user is a seller and if the required files are uploaded
+    if (isSeller) {
+      if (!idProof || !DoucemntProof) {
+        // If any of the required files are missing, show an alert and return
+        Swal.fire('Error', 'Please provide both ID proof and proof of the storage unit', 'error');
+        return;
+      }
     }
+
+    // Prepare the form data
+    const formData = {
+      isSeller, user, email, idProof, DoucemntProof
+    };
+
+    // Show spinner
+    this.showSpinner = true;
+
+    // Send verification email
+    this.authService.sendVerificationEmail(formData).subscribe(
+      (response) => {
+        console.log('Verification email sent successfully');
+        Swal.fire({
+          title: 'Success',
+          text: 'Verification Code sent to email',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        });
+        this.showSpinner = false;
+        this.nextStep(); // Move to the next step (verification code entry)
+      }
+    );
   }
 
   register() {
-    if (this.currentStep === 1) {
-      const formData = this.registrationForm.value;
+    console.log(this.registrationForm.value);
+    const formData = this.registrationForm.value;
+    this.showSpinner = true;
 
-      if (formData.role === 'owner') {
-        if (!formData.idProof || !formData.storageProof) {
-          Swal.fire('Error', 'Please provide both ID proof and proof of storage unit', 'error');
-          return;
-        }
+    this.authService.registerUser(formData).subscribe(
+      (response) => {
+        console.log('User registered successfully', response);
+        Swal.fire({
+          title: 'Success',
+          text: response.success || 'Registration successful',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        });
+        // Redirect to login or perform any other post-registration actions
+        this.showSpinner = false;
+        this.router.navigate(['/login']);
       }
-
-      this.authService.registerUser(formData).subscribe(
-        (res) => {
-          Swal.fire({
-            title: 'Success',
-            text: res.success || 'Registration successful',
-            icon: 'success',
-            iconColor: '#00ff00',
-            confirmButtonText: 'OK'
-          });
-          this.router.navigate(['/login']);
-          this.registrationForm.reset();
-          this.currentStep = 1;
-        },
-        (err) => {
-          const errorMessage = err?.error?.message || 'An error occurred during registration';
-          Swal.fire('Error', errorMessage, 'error');
-        }
-      );
-    } else if (this.currentStep === 2) {
-      this.verifyEmail();
-    }
+    );
   }
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  private passwordMatchValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const password = control.get('pwd');
-      const confirmPassword = control.get('confirmPassword');
-
-      return password && confirmPassword && password.value !== confirmPassword.value
-        ? { passwordMismatch: true }
-        : null;
-    };
-  }
-
   updateOwnerDocumentsSection() {
-    this.showOwnerDocumentsSection = this.role?.value === 'owner';
+    this.showOwnerDocumentsSection = this.isSeller?.value === true;
   }
 }

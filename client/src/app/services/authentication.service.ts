@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -11,17 +11,17 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  registerUser(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
-      catchError(this.handleError)
-    );
-  }
-
   sendVerificationEmail(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register/verify`, user).pipe(
-      catchError(this.handleError)
+    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
+       catchError(this.handleError)
     );
-  }
+  } 
+
+  registerUser(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register/verify`, user).pipe(
+       catchError(this.handleError)
+    );
+ }
 
   loginUser(user: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth`, user).pipe(
@@ -35,7 +35,7 @@ export class AuthenticationService {
   }
 
   resetPassword(resetObj: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/resetpassword/`, resetObj).pipe(
+    return this.http.post<any>(`${this.apiUrl}/auth/resetpassword/${resetObj.token}`, resetObj).pipe(
       catchError(this.handleError)
     );
   }
@@ -55,7 +55,8 @@ export class AuthenticationService {
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
-    } else {
+    } 
+    else {
       // Server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }

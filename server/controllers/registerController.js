@@ -40,7 +40,7 @@ const handleNewUser = [
         subject: 'Email Verification Code',
         message: `Hello ${user},\n\nThank you for registering with StorageBox! Your verification code is: ${verificationCodeData.code}\n\nPlease use this code to complete your registration within the next 5 minutes.\n\nIf you didn't request this code, please ignore this email.\n\nThank you,\nThe StorageBox Team`
       });
-
+      
       const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
       const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
       const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
