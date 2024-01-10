@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -27,49 +27,40 @@ export class ResetPasswordComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(val => {
+    this.activatedRoute.params.subscribe((val) => {
       this.token = val['token'];
-      console.log(this.token)
+      console.log(this.token);
     });
 
     this.resetPasswordForm = this.formBuilder.group({
-      password: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+      password: ['', [Validators.required, Validators.minLength(12), 
+                  Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
       confirmPassword: ['', [Validators.required, this.passwordMatchValidator()]],
     });
   }
 
-  // Example Angular component method
   resetPassword() {
+      let resetObj = {
+        token: this.token,
+        password: this.resetPasswordForm.value.password,
+      };
 
-    let resetObj = {
-      token: this.token,
-      password: this.resetPasswordForm.value.password
-    }
-
-    this.authService.resetPassword(resetObj).subscribe(
-      (res: any) => {
-        Swal.fire({
-          title: 'Password Reset Successful',
-          text: 'Your password has been reset successfully.',
-          icon: 'success',
-          confirmButtonText: 'Login',
-        });
-        this.router.navigate(['/login']);
-      },
-      (err: any) => {
-        Swal.fire({
-          title: 'Password Reset Failed',
-          text: 'There was an error resetting your password. Please try again.',
-          icon: 'error',
-          confirmButtonText: 'Retry',
-        });
-        console.log(err);
-      }
-    )
+      this.authService.resetPassword(resetObj).subscribe(
+        (res: any) => {
+          Swal.fire({
+            title: 'Password Reset Successful',
+            text: 'Your password has been reset successfully.',
+            icon: 'success',
+            confirmButtonText: 'Login',
+          });
+          this.router.navigate(['/login']);
+        }
+      ); 
   }
+  
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;

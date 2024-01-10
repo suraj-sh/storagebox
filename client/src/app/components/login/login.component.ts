@@ -27,8 +27,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-
-    this.authService.loginUser(this.loginForm.value).subscribe(
+    const formData = {
+      user: this.loginForm.value.user,
+      email: this.loginForm.value.user,
+      pwd: this.loginForm.value.pwd,
+    };
+    console.log(formData);
+    this.authService.loginUser(formData).subscribe(
       (res) => {
         Swal.fire({
           title: 'Login Successful',
@@ -41,21 +46,6 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home']);
         this.loginForm.reset();
       },
-      (err) => {
-        let errorMessage = 'Invalid username or password. Please try again.';
-
-        if (err.status === 401) {
-          errorMessage = 'Incorrect username or password. Please try again.';
-        }
-
-        Swal.fire({
-          title: 'Login Failed',
-          text: errorMessage,
-          icon: 'error',
-          confirmButtonText: 'Retry',
-        });
-        console.log(err);
-      }
     );
   }
 

@@ -42,8 +42,8 @@ The StorageBox Team`
       });
 
       const  basePath=`${req.protocol}://${req.get('host')}/public/document/`;
-      const documentPath = req.files['documentPath'] ? `${basePath}${req.files['documentPath'][0].filename}` : null;
-      const documentFile = req.files['documentFile'] ? `${basePath}${req.files['documentFile'][0].filename}` : null;
+      const documentPath = req.files && req.files['documentPath'] ? `${basePath}${req.files['documentPath'][0].filename}` : null;
+      const documentFile = req.files && req.files['documentFile'] ? `${basePath}${req.files['documentFile'][0].filename}` : null;
 
       temporaryStorage[verificationCodeData.code] = {
         user,
