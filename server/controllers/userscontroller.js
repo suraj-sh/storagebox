@@ -19,24 +19,33 @@ const getUser=async (req,res)=>{
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
             return res.status(400).json({ 'message': 'Correct ID parameter is required' });
         }
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
         // Check if the new username is already taken
         const existingUser = await User.findOne({ username: req.body.user });
         if (existingUser && existingUser._id.toString() !== req.params.id) {
             return res.status(400).json({ 'message': 'Username is already taken' });
         }
-        const user = await User.findByIdAndUpdate({ _id: req.params.id }, {
-            username: req.body.user,
-            isSeller: req.body.isSeller,
-        }, { new: true });
-        if (!user) {
-            return res.status(500).json({ 'message': 'User cannot be updated' });
+        user.username = req.body.user;
+
+        // Update idProof and documentProof only if isSeller is true
+        if (user.isSeller) {
+            const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
+            const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
+            const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
+            user.idProof = idProof;
+            user.documentProof = documentProof;
+        }else{
+            res.status(403).json({'message':"Only Authorized owners can access this"})
         }
-        res.json(user);
+        const updatedUser = await user.save();
+        res.json(updatedUser);
     } catch (error) {
         res.status(500).json({ 'message': error.message });
     }
 };
-
 const usersCount = async (req, res) => {
     try {
         const count = await User.countDocuments();
@@ -116,10 +125,37 @@ const getSellerUsers = async (req, res) => {
         res.status(500).json({ 'message': 'Internal Server Error' });
     }
 };
-
-const UpdateDocument=async(req,res)=>{
-    
-}
+const deleteIdProof = async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ 'message': 'User not found' });
+      }
+      user.idProof = undefined;
+      await user.save();
+      res.json({ 'message': 'IdProof deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ 'message': error.message });
+    }
+  };
+  const deleteDocumentProof = async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ 'message': 'User not found' });
+      }
+      user.documentProof = undefined;
+      await user.save();
+      res.json({ 'message': 'documentProof deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ 'message': error.message });
+    }
+  };
+  
 module.exports={
     getAllUser,
     getUser,
@@ -129,4 +165,6 @@ module.exports={
     getSellerUsers,
     changeUserRole,
     changeEditorRole,
+    deleteIdProof,
+    deleteDocumentProof
 }

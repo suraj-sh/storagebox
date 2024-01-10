@@ -21,10 +21,10 @@ const handleRefreshToken =async (req, res) => {
         )
         return res.sendStatus(401);
     }
-    const newRefreshToken=foundUser.refreshToken.filter(rt=>rt!==refreshToken);
+    const newRefreshTokenArray=foundUser.refreshToken.filter(rt=>rt!==refreshToken);
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET,async (err, decoded) => {
         if(err){
-            foundUser.refreshToken=[...newRefreshToken];
+            foundUser.refreshToken=[...newRefreshTokenArray];
             const result=await foundUser.save();
             console.log(result);
         }
@@ -48,9 +48,9 @@ const handleRefreshToken =async (req, res) => {
             { expiresIn: '1d' }
         );
         //Saving refresh Token with current user
-        foundUser.refreshToken = [...newRefreshToken,NewRefreshToken];
+        foundUser.refreshToken = [...newRefreshTokenArray,NewRefreshToken];
         const result=await foundUser.save();
-        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie('jwt', NewRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({ accessToken });
     });
 };
