@@ -66,7 +66,6 @@ const handleNewUser = [
   }
 ];
 
-
 const verifyCodeAndSetPassword = [ 
   body('pwd', 'Enter at least one alphabet and one number').isLength({ min: 6 }),
   async (req, res) => {
@@ -80,16 +79,18 @@ const verifyCodeAndSetPassword = [
       // Fetch email from temporary storage
       const storedData = Object.values(temporaryStorage)[0];
 
-      if (!storedData || !storedData.verificationCode) {
+      if (!storedData || !storedData.verificationCode || storedData.codeUsed) {
         return res.status(400).json({ 'message': 'Invalid verification code' });
       }
 
       const currentTimestamp = Date.now();
       const codeTimestamp = storedData.timestamp;
       const codeExpiration = 5 * 60 * 1000; 
+      
       if (currentTimestamp - codeTimestamp > codeExpiration) {
         return res.status(400).json({ 'message': 'Verification code has expired' });
       }
+
       if (storedData.verificationCode.toString() !== verificationCode) {
         return res.status(400).json({ 'message': 'Invalid verification code' });
       }
@@ -97,8 +98,10 @@ const verifyCodeAndSetPassword = [
       if (storedData.pwd) {
         return res.status(400).json({ 'message': 'Password has already been set' });
       }
-      // Update stored data with the user-provided password
+
+      // Update stored data with the user-provided password and mark code as used
       storedData.pwd = await bcrypt.hash(pwd, 10);
+      storedData.codeUsed = true;
 
       // Create the user account
       const result = await User.create({
@@ -127,3 +130,4 @@ module.exports = {
   handleNewUser,
   verifyCodeAndSetPassword
 };
+

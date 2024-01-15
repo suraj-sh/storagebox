@@ -41,6 +41,7 @@ app.use('/public/upload',express.static(__dirname + '/public/upload'));
 app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
+app.use('/logout',require('./routes/logout'));
 app.use('/refresh', require('./routes/refreshToken'));
 app.use('/storage', require('./routes/api/storage'));
 app.use(verifyToken);
