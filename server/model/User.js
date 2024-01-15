@@ -48,13 +48,13 @@ const userScehma=new Schema({
     passwordResetToken:String,
     passwordResetTokenExpires:Date,
 })
-userScehma.methods.createResetPassword=function(){
-    const resetToken=crypto.randomBytes(32).toString('hex');
-    this.passwordResetToken=crypto.createHash('sha256').update(resetToken).digest('hex');
-    this.passwordResetTokenExpires=Date.now()+10*60*1000;
-    console.log(resetToken,this.passwordResetToken);
-    return resetToken;
-}
+// userScehma.methods.createResetPassword=function(){
+//     const resetToken=crypto.randomBytes(32).toString('hex');
+//     this.passwordResetToken=crypto.createHash('sha256').update(resetToken).digest('hex');
+//     this.passwordResetTokenExpires=Date.now()+10*60*1000;
+//     console.log(resetToken,this.passwordResetToken);
+//     return resetToken;
+// }
 // userScehma.virtual('id').get(function(){
 //     return this._id.toHexString();
 // })
