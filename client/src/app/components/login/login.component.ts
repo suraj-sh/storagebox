@@ -41,10 +41,10 @@ export class LoginComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Continue',
           iconColor: '#00ff00',
+        }).then(() => {
+          this.router.navigate(['']);
+          this.loginForm.reset();
         });
-        localStorage.setItem('token', res.acessToken);
-        this.router.navigate(['/home']);
-        this.loginForm.reset();
       },
     );
   }

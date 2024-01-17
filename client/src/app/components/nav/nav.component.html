@@ -5,14 +5,14 @@
     </div>
 
     <ul class="nav" [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
-        <li><a routerLink="/home" (click)="closeMenu()">Home</a></li>
+        <li><a routerLink="" (click)="closeMenu()">Home</a></li>
         <li><a routerLink="/login" (click)="closeMenu()">Chats</a></li>
         <li><a routerLink="/login" (click)="closeMenu()">Settings</a></li>
-        <ng-container *ngIf="!authService.loggedIn()">
+        <ng-container *ngIf="!(isLoggedIn$ | async)">
             <button (click)="redirectToLogin()">Login</button>
             <button (click)="redirectToRegister()">Register</button>
         </ng-container>
-        <button *ngIf="authService.loggedIn()" (click)="authService.logout()">Logout</button>
+        <button *ngIf="isLoggedIn$ | async" (click)="authService.logout()">Logout</button>
     </ul>
     <i class="ri-menu-3-fill" *ngIf="!isMenuOpen" (click)="toggleMenu()"></i>
     <i class="ri-close-fill" *ngIf="isCloseIconVisible" (click)="closeMenu()"></i>

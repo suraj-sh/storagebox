@@ -1,7 +1,7 @@
 <div class="container">
   <div class="form signup">
     <span class="title">Registration</span>
-    <form [formGroup]="registrationForm">
+    <form [formGroup]="registrationForm" enctype="multipart/form-data">
 
       <div *ngIf="currentStep === 1">
         <!-- Step 1: Role Selection, Username and Email -->
@@ -18,7 +18,6 @@
           </div>
         </div>
 
-       
         <!-- ID Proof -->
         <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
           <label for="idProof">ID Proof:</label>
@@ -34,12 +33,12 @@
 
         <!-- Storage Documents Proof -->
         <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
-          <label for="DoucemntProof">Proof of Storage Unit:</label>
+          <label for="documentProof">Proof of Storage Unit:</label>
           <div class="custom-file-upload">
-            <input type="file" id="DoucemntProof" formControlName="DoucemntProof" (change)="selectFile($event, 'DoucemntProof')" required>
+            <input type="file" id="documentProof" formControlName="documentProof" (change)="selectFile($event, 'documentProof')" required>
             <span>{{ filesStorageProof?.name || 'Choose File' }}</span>
             <div
-              *ngIf="isSeller?.value && registrationForm.get('DoucemntProof')?.hasError('required') && registrationForm.get('DoucemntProof')?.touched"
+              *ngIf="isSeller?.value && registrationForm.get('documentProof')?.hasError('required') && registrationForm.get('documentProof')?.touched"
               class="validation-message">
               Proof of Storage Unit is required
             </div>
@@ -85,9 +84,9 @@
         </div>
 
         <!-- Next Button for Step 2 -->
-        <!-- <div class="input-field button">
+        <div class="input-field button">
           <button (click)="nextStep()" type="button">Next</button>
-        </div> -->
+        </div>
       </div>
 
       <div *ngIf="currentStep === 2">
@@ -135,9 +134,9 @@
         </div>
 
         <!-- Previous Button for Step 1 -->
-        <!-- <div class="input-field button">
+        <div class="input-field button">
           <button type="button" (click)="prevStep()">Previous</button>
-        </div> -->
+        </div>
       </div>
 
     </form>

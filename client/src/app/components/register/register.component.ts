@@ -3,7 +3,6 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-register',
@@ -46,33 +45,33 @@ export class RegisterComponent {
     return this.registrationForm.get('idProof');
   }
 
-  get DoucemntProof() {
-    return this.registrationForm.get('DoucemntProof');
+  get documentProof() {
+    return this.registrationForm.get('documentProof');
   }
 
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
-    private router: Router, private spinner: NgxSpinnerService) { }
+    private router: Router) { }
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
-    email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+    email: ['', [Validators.required, 
+                  Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
     verificationCode: ['', Validators.required],
     pwd: ['', [Validators.required, Validators.minLength(12),
-    Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+                Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
     confirmPassword: ['', [Validators.required]],
     isSeller: [false, Validators.required],
     idProof: [''],
-    DoucemntProof: ['']
+    documentProof: ['']
   });
 
   selectFile(event: any, formControlName: string) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
 
-      // Handle each file input separately based on formControlName
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      } else if (formControlName === 'DoucemntProof') {
+      } else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
     }
@@ -92,11 +91,11 @@ export class RegisterComponent {
     const user = this.user?.value;
     const email = this.email?.value;
     const idProof = this.idProof?.value;
-    const DoucemntProof = this.DoucemntProof?.value;
+    const documentProof = this.documentProof?.value;
 
     // Check if the user is a seller and if the required files are uploaded
     if (isSeller) {
-      if (!idProof || !DoucemntProof) {
+      if (!idProof || !documentProof) {
         // If any of the required files are missing, show an alert and return
         Swal.fire('Error', 'Please provide both ID proof and proof of the storage unit', 'error');
         return;
@@ -105,7 +104,7 @@ export class RegisterComponent {
 
     // Prepare the form data
     const formData = {
-      isSeller, user, email, idProof, DoucemntProof
+      isSeller, user, email, idProof, documentProof
     };
 
     // Show spinner
