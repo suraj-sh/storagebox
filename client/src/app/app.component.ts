@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthenticationService } from './services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +9,9 @@ import { AuthenticationService } from './services/authentication.service';
 export class AppComponent {
   title = 'client';
 
-  constructor(private authService: AuthenticationService){}
+  constructor(private router: Router){}
+
+  isAdminRoute(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
 }
