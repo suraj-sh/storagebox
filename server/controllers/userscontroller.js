@@ -23,29 +23,85 @@ const getUser=async (req,res)=>{
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
+        console.log('Incoming request:', req);
         // Check if the new username is already taken
-        const existingUser = await User.findOne({ username: req.body.user });
-        if (existingUser && existingUser._id.toString() !== req.params.id) {
-            return res.status(400).json({ 'message': 'Username is already taken' });
+        if (req.body.user) {
+            // Check if the new username is already taken
+            const existingUser = await User.findOne({ username: req.body.user });
+            if (existingUser && existingUser._id.toString() !== req.params.id) {
+                return res.status(400).json({ 'message': 'Username is already taken' });
+            }
+            user.username = req.body.user;
         }
-        user.username = req.body.user;
 
         // Update idProof and documentProof only if isSeller is true
         if (user.isSeller) {
             const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
-            const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
-            const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
-            user.idProof = idProof;
-            user.documentProof = documentProof;
-        }else{
-            res.status(403).json({'message':"Only Authorized owners can access this"})
+            // Update idProof
+            if (req.files && req.files['idProof']) {
+                const idProof = `${basePath}${req.files['idProof'][0].filename}`;
+                user.idProof = idProof;
+            }
+            // Update documentProof
+            if (req.files && req.files['documentProof']) {
+                const documentProof = `${basePath}${req.files['documentProof'][0].filename}`;
+                user.documentProof = documentProof;
+            }
+        } else {
+            res.status(403).json({ 'message': "Only Authorized owners can access this" });
         }
-        const updatedUser = await user.save();
-        res.json(updatedUser);
+        await user.save();
+        res.status(200).json({message:"User updated"});
     } catch (error) {
-        res.status(500).json({ 'message': error.message });
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: error.message });
     }
 };
+
+const updateUserPic = async (req, res) => {
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
+        }
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
+        if (req.file) {
+            const fileName = req.file.filename;
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`;
+            user.image = `${basePath}${fileName}`;
+        }
+        await user.save();
+        return res.status(200).json({ message: 'User profile picture updated' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+const deleteUserPic=async (req,res)=>{
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
+        }
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
+        if (user.image) {
+            // Delete the existing profile picture (optional, depending on your use case)
+            user.image =undefined; 
+            await user.save();
+            return res.status(200).json({ message: 'Profile picture deleted successfully' });
+        } else {
+            return res.status(404).json({ message: 'User does not have a profile picture' });
+        }
+    }catch(error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+
+}
 const usersCount = async (req, res) => {
     try {
         const count = await User.countDocuments();
@@ -66,6 +122,7 @@ const changeUserRole = async (req, res) => {
         }
         if (user.isSeller) {
             user.roles = { Editor: 1320 };
+            user.isActiveSeller=true;
             await user.save();
             res.status(200).json({ message: 'User roles updated successfully to Editor' });
         } else {
@@ -85,6 +142,7 @@ const changeEditorRole = async (req, res) => {
         }
         if(user.isSeller && user.roles.Editor){
             user.roles={User:2002};
+            user.isActiveSeller=false;
             await user.save();
             res.status(200).json({ message: 'User roles updated successfully to User' });
         }else{
@@ -164,7 +222,9 @@ module.exports={
     deleteUser,
     getSellerUsers,
     changeUserRole,
+    updateUserPic,
     changeEditorRole,
     deleteIdProof,
+    deleteUserPic,
     deleteDocumentProof
 }

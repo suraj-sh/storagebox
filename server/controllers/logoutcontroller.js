@@ -1,4 +1,5 @@
 const User=require('../model/User');
+const UserToken = require('../model/UserToken');
 
 const handleLogout = async (req, res) => {
     //on client,also delete the acess token
@@ -13,8 +14,7 @@ const handleLogout = async (req, res) => {
         return res.sendStatus(403);
     }
     foundUser.refreshToken=foundUser.refreshToken.filter(rt=>rt!==refreshToken);
-    foundUser.passwordResetToken='';
-    foundUser.passwordResetTokenExpires='';
+    await UserToken.findOneAndDelete({ userId: foundUser._id });
     const result=await foundUser.save();
 
     res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http

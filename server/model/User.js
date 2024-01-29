@@ -6,6 +6,10 @@ const userScehma=new Schema({
         type:String,
         required:true,
     },
+    image:{
+        type:String,
+        default:undefined,
+    },
     email:{
         type:String,
         required:true
@@ -43,10 +47,14 @@ const userScehma=new Schema({
         type:String,
         default:undefined,
     },
+    isActiveSeller:{
+        type:Boolean,
+        default:false
+    },
     refreshToken:[String],
-    passwordChangedAt:Date,
-    passwordResetToken:String,
-    passwordResetTokenExpires:Date,
+    // passwordChangedAt:Date,
+    // passwordResetToken:String,
+    // passwordResetTokenExpires:Date,
 })
 // userScehma.methods.createResetPassword=function(){
 //     const resetToken=crypto.randomBytes(32).toString('hex');
