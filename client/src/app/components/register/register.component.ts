@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
@@ -17,36 +17,9 @@ export class RegisterComponent {
   filesIdProof: File | null = null;
   filesStorageProof: File | null = null;
 
-  get user() {
-    return this.registrationForm.get('user');
-  }
-
-  get email() {
-    return this.registrationForm.get('email');
-  }
-
-  get verificationCode() {
-    return this.registrationForm.get('verificationCode');
-  }
-
-  get pwd() {
-    return this.registrationForm.get('pwd');
-  }
-
-  get confirmPassword() {
-    return this.registrationForm.get('confirmPassword');
-  }
-
-  get isSeller() {
-    return this.registrationForm.get('isSeller');
-  }
-
-  get idProof() {
-    return this.registrationForm.get('idProof');
-  }
-
-  get documentProof() {
-    return this.registrationForm.get('documentProof');
+  // Common getter function for the form inputs 
+  get form() {
+    return this.registrationForm.controls;
   }
 
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
@@ -54,11 +27,11 @@ export class RegisterComponent {
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
-    email: ['', [Validators.required, 
-                  Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+    email: ['', [Validators.required,
+    Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
     verificationCode: ['', Validators.required],
     pwd: ['', [Validators.required, Validators.minLength(12),
-                Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+    Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
     confirmPassword: ['', [Validators.required]],
     isSeller: [false, Validators.required],
     idProof: [''],
@@ -71,7 +44,8 @@ export class RegisterComponent {
 
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      } else if (formControlName === 'documentProof') {
+      }
+      else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
     }
@@ -86,26 +60,35 @@ export class RegisterComponent {
   }
 
   sendVerificationCode() {
-    // Get the values from the form controls
-    const isSeller = this.isSeller?.value;
-    const user = this.user?.value;
-    const email = this.email?.value;
-    const idProof = this.idProof?.value;
-    const documentProof = this.documentProof?.value;
+
+    const formData = new FormData();
+
+    // Append all form controls to FormData
+    Object.entries(this.form).forEach(([controlName, control]) => {
+      if (control instanceof FormControl) {
+        formData.append(controlName, String(control.value));
+      }
+    });
+
+    // Append files separately, only if they are not null
+    if (this.filesIdProof !== null) {
+      formData.append('idProof', this.filesIdProof);
+    }
+
+    if (this.filesStorageProof !== null) {
+      formData.append('documentProof', this.filesStorageProof);
+    }
+
 
     // Check if the user is a seller and if the required files are uploaded
-    if (isSeller) {
-      if (!idProof || !documentProof) {
+    if (this.form.isSeller?.value) {
+      if (!this.filesIdProof || !this.filesStorageProof) {
         // If any of the required files are missing, show an alert and return
         Swal.fire('Error', 'Please provide both ID proof and proof of the storage unit', 'error');
         return;
       }
     }
 
-    // Prepare the form data
-    const formData = {
-      isSeller, user, email, idProof, documentProof
-    };
 
     // Show spinner
     this.showSpinner = true;
@@ -122,31 +105,45 @@ export class RegisterComponent {
           confirmButtonText: 'OK'
         });
         this.showSpinner = false;
-        this.nextStep(); // Move to the next step (verification code entry)
+        this.nextStep();
       }
     );
   }
 
   register() {
-    console.log(this.registrationForm.value);
-    const formData = this.registrationForm.value;
-    this.showSpinner = true;
+    if (!this.registrationForm.invalid) {
+      console.log(this.registrationForm.value);
+      const formData = new FormData();
 
-    this.authService.registerUser(formData).subscribe(
-      (response) => {
-        console.log('User registered successfully', response);
-        Swal.fire({
-          title: 'Success',
-          text: response.success || 'Registration successful',
-          icon: 'success',
-          iconColor: '#00ff00',
-          confirmButtonText: 'OK'
-        });
-        // Redirect to login or perform any other post-registration actions
-        this.showSpinner = false;
-        this.router.navigate(['/login']);
-      }
-    );
+      // Append all form controls to FormData
+      Object.entries(this.form).forEach(([controlName, control]) => {
+        if (control instanceof FormControl) {
+          formData.append(controlName, String(control.value));
+        }
+      });
+
+      this.showSpinner = true;
+
+      this.authService.registerUser(formData).subscribe(
+        (response) => {
+          console.log('User registered successfully', response);
+          Swal.fire({
+            title: 'Success',
+            text: response.success || 'Registration successful',
+            icon: 'success',
+            iconColor: '#00ff00',
+            confirmButtonText: 'OK'
+          });
+          // Redirect to login or perform any other post-registration actions
+          this.showSpinner = false;
+          this.router.navigate(['/login']);
+        }
+      );
+    }
+  }
+
+  isButtonDisabled(): boolean {
+    return this.registrationForm.invalid || this.registrationForm.get('pwd')?.value !== this.registrationForm.get('confirmPassword')?.value;
   }
 
   togglePasswordVisibility() {
@@ -154,6 +151,6 @@ export class RegisterComponent {
   }
 
   updateOwnerDocumentsSection() {
-    this.showOwnerDocumentsSection = this.isSeller?.value === true;
+    this.showOwnerDocumentsSection = this.form.isSeller?.value === true;
   }
 }

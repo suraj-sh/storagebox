@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthInterceptor } from 'src/app/interceptors/auth.interceptor';
 
 @Component({
   selector: 'app-login',

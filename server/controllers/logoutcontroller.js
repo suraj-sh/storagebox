@@ -17,7 +17,7 @@ const handleLogout = async (req, res) => {
     foundUser.passwordResetTokenExpires='';
     const result=await foundUser.save();
 
-    res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http
+    res.clearCookie('jwt',{ httpOnly:true,maxAge:0});//secure:true -only serves on http
     res.sendStatus(204);
 };
 

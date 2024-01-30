@@ -30,35 +30,7 @@
     border-radius: 25px;
 }
 
-.form .input-field {
-    position: relative;
-    height: 50px;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.input-field {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.input-field.error {
-    margin-bottom: 30px;
-}
-
-input {
-    height: 100%;
-    width: 100%;
-    padding: 0 35px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    border-bottom: 2px solid #ccc;
-    border-top: 2px solid transparent;
-    transition: all 0.2s ease;
-}
-
-.input-field .label {
+.label {
     font-weight: bold;
     margin-bottom: 10px;
     display: block;
@@ -66,7 +38,7 @@ input {
 
 .radio-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 }
 
 input[type="radio"] {
@@ -125,6 +97,7 @@ input[type="radio"]:checked+label:before {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-top: 3px;
 }
 
 .custom-file-upload:hover span {
@@ -152,13 +125,31 @@ div[style=''] {
 }
 
 .input-field {
+    position: relative;
+    height: 50px;
+    width: 100%;
+    margin: 20px 0;
     margin-bottom: 20px;
 }
 
-.label {
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: block;
+.input-field.error {
+    margin-bottom: 30px;
+}
+
+input {
+    height: 100%;
+    width: 100%;
+    padding: 0 35px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    border-bottom: 2px solid #ccc;
+    border-top: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.input-field {
+    margin-bottom: 20px;
 }
 
 .input-field.error input {
@@ -168,7 +159,7 @@ div[style=''] {
 .validation-message {
     color: #ff0000;
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     margin-top: 5px;
     position: absolute;
     z-index: 1;
