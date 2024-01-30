@@ -4,7 +4,7 @@
     width: 100%;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-    margin: 2vw auto;
+    margin: 1.5vw auto;
 }
 
 .form {
@@ -49,7 +49,7 @@
 input {
     height: 100%;
     width: 100%;
-    padding: 0 25px;
+    padding: 0 35px;
     border: none;
     outline: none;
     font-size: 16px;
@@ -99,15 +99,12 @@ input[type="radio"]:checked+label:before {
     border-color: #fff;
 }
 
-
-/* Add this to your stylesheet or style section */
-
 .custom-file-upload {
     display: flex;
     align-items: center;
-  }
-  
-  .custom-file-upload input[type="file"] {
+}
+
+.custom-file-upload input[type="file"] {
     opacity: 0;
     position: absolute;
     top: 0;
@@ -116,9 +113,9 @@ input[type="radio"]:checked+label:before {
     left: 0;
     width: 100%;
     cursor: pointer;
-  }
-  
-  .custom-file-upload span {
+}
+
+.custom-file-upload span {
     border: 2px solid #ccc;
     display: inline-block;
     padding: 8px 12px;
@@ -128,16 +125,16 @@ input[type="radio"]:checked+label:before {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
-  .custom-file-upload:hover span {
+}
+
+.custom-file-upload:hover span {
     border-color: #4070f4;
-  }
-  
-  .custom-file-upload input:active+span {
+}
+
+.custom-file-upload input:active+span {
     border-color: #265df2;
-  }
-  
+}
+
 
 div[style] {
     display: none;
@@ -164,7 +161,7 @@ div[style=''] {
     display: block;
 }
 
-.error input {
+.input-field.error input {
     border-bottom-color: #ff0000;
 }
 
@@ -182,7 +179,7 @@ input:is(:focus, :valid) {
     border-bottom-color: #4070f4;
 }
 
-.input-field i {
+i {
     position: absolute;
     top: 50%;
     right: 94%;
@@ -196,7 +193,7 @@ input:is(:focus, :valid)~i {
     color: #4070f4;
 }
 
-.input-field i.showHidePw {
+i.showHidePw {
     position: absolute;
     top: 50%;
     right: 0;
@@ -241,6 +238,11 @@ button:hover {
     background-color: #265df2;
 }
 
+button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
 .login-signup {
     margin-top: 20px;
     text-align: center;
@@ -248,7 +250,7 @@ button:hover {
 
 @media (max-width: 600px) {
     .container {
-        margin: 3vw auto;
+        margin: 5vw auto;
         max-width: 350px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
         font-size: 16px;
