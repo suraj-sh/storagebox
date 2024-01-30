@@ -24,7 +24,10 @@ const storageMiddleware = multer.diskStorage({
 });
 
 // Create Multer middleware using the storage configuration
-const uploadDocument = multer({ storage: storageMiddleware });
+const uploadDocument = multer({ 
+  storage: storageMiddleware,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 // Export the middleware for use in routes
 module.exports = uploadDocument;
