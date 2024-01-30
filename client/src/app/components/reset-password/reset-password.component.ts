@@ -22,12 +22,8 @@ export class ResetPasswordComponent implements OnInit {
     return this.resetPasswordForm.get('confirmPassword');
   }
 
-  constructor(
-    private authService: AuthenticationService,
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
+    private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((val) => {
@@ -36,44 +32,37 @@ export class ResetPasswordComponent implements OnInit {
     });
 
     this.resetPasswordForm = this.formBuilder.group({
-      password: ['', [Validators.required, Validators.minLength(12), 
-                  Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
-      confirmPassword: ['', [Validators.required, this.passwordMatchValidator()]],
+      password: ['', [Validators.required, Validators.minLength(12),
+      Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+      confirmPassword: ['', [Validators.required]],
     });
   }
 
-  resetPassword() {
-      let resetObj = {
-        token: this.token,
-        password: this.resetPasswordForm.value.password,
-      };
-
-      this.authService.resetPassword(resetObj).subscribe(
-        (res: any) => {
-          Swal.fire({
-            title: 'Password Reset Successful',
-            text: 'Your password has been reset successfully.',
-            icon: 'success',
-            confirmButtonText: 'Login',
-          });
-          this.router.navigate(['/login']);
-        }
-      ); 
+  isButtonDisabled(): boolean {
+    return this.resetPasswordForm.invalid || this.resetPasswordForm.get('password')?.value !== this.resetPasswordForm.get('confirmPassword')?.value;
   }
-  
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  private passwordMatchValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const password = control.get('password');
-      const confirmPassword = control.get('confirmPassword');
-
-      return password && confirmPassword && password.value !== confirmPassword.value
-        ? { passwordMismatch: true }
-        : null;
+  resetPassword() {
+    let resetObj = {
+      token: this.token,
+      password: this.resetPasswordForm.value.password,
     };
+
+    this.authService.resetPassword(resetObj).subscribe(
+      (res: any) => {
+        Swal.fire({
+          title: 'Password Reset Successful',
+          text: 'Your password has been reset successfully.',
+          icon: 'success',
+          confirmButtonText: 'Login',
+        });
+        this.router.navigate(['/login']);
+      }
+    );
   }
+
 }

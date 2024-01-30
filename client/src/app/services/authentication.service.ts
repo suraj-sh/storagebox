@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -11,59 +12,66 @@ import { Router } from '@angular/router';
 export class AuthenticationService {
   private apiUrl = 'http://localhost:3500';
 
-  // Declare isLoggedInSubject as a BehaviorSubject
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-
+  // Initialize isLoggedInSubject with the value from local storage, defaulting to false if not found
+  isLoggedInSubject = new BehaviorSubject<boolean>(false);
   // Expose isLoggedIn$ as an Observable for components to subscribe to
-  isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  constructor(private http: HttpClient, private cookieService: CookieService, private router: Router) { }
+  constructor(private http: HttpClient, private cookieService: CookieService,
+    private router: Router) { }
 
   loginUser(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth`, user, { withCredentials: true })
+    return this.http.post(`${this.apiUrl}/auth`, user)
       .pipe(
         catchError(this.handleError),
-        tap(() => this.isLoggedInSubject.next(true))
+        tap((response) => {
+          this.updateLoggedInState(true);
+        })
       );
   }
 
-  loggedIn(): boolean {
-    const token = this.cookieService.get('jwt');
-    return !!token;
+  logout(): void {
+    this.updateLoggedInState(false);
+
+    this.http.get(`${this.apiUrl}/logout`).subscribe(
+      (res) => {
+        Swal.fire({
+          title: 'Successfully Logged Out',
+          icon: 'success',
+          confirmButtonText: 'Continue',
+          iconColor: '#00ff00',
+        });
+        // Remove token from local 
+        localStorage.removeItem('isLoggedIn');
+        this.router.navigate(['/login']);
+      }
+    );
   }
 
-  logout(): void {
-    console.log('Logout method called');
-    this.isLoggedInSubject.next(false);
-  
-    const token = this.cookieService.get('jwt');
-  
-    // Check if the token exists before making the request
-    if (token) {
-      const headers = {
-        Authorization: `Bearer ${token}`
-      };
-  
-      // Include the headers in the request
-      this.http.post(`${this.apiUrl}/logout`, {}, { headers })
-        .pipe(
-          catchError((error) => {
-            console.error('Error during logout:', error);
-            return throwError(error);
-          })
-        )
-        .subscribe(() => {
-          this.cookieService.delete('jwt');
-          this.router.navigate(['/login']);
-        });
+  // Helper function to update the login state
+  private updateLoggedInState(isLoggedIn: boolean): void {
+    this.isLoggedInSubject.next(isLoggedIn);
+     // Store the login state in local storage
+     if (isLoggedIn) {
+      localStorage.setItem('isLoggedIn', 'true');
     } else {
-      // If token is not present, just clear the cookie and navigate
-      this.cookieService.delete('jwt');
-      this.router.navigate(['/login']);
+      localStorage.removeItem('isLoggedIn');
     }
   }
-  
 
+  refreshToken(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/refresh`).pipe(
+      catchError(this.handleError),
+      switchMap((response: any) => {
+        if (response && response.accessToken) {
+          this.cookieService.set('jwt', response.accessToken);
+          return new Observable((observer) => observer.next(response.accessToken));
+        } else {
+          return throwError('Refresh token response is missing or invalid.');
+        }
+      })
+    );
+  }
 
   sendVerificationEmail(user: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
@@ -77,7 +85,6 @@ export class AuthenticationService {
     );
   }
 
-
   forgotpass(user: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/forgotpassword`, user).pipe(
       catchError(this.handleError)
@@ -89,7 +96,6 @@ export class AuthenticationService {
       catchError(this.handleError)
     );
   }
-
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
