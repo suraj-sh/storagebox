@@ -636,3 +636,9 @@
 2024-01-29	12:14:01	2e2487f2-0748-418f-abe9-6616cf3c2f4a	POST	undefined	/auth
 2024-01-29	12:14:21	f5f2fadf-7a26-4a82-8913-6f056abaac7b	PUT	undefined	/user/659e991f0fa82f8c56cdea15
 2024-01-29	12:14:59	f07ac19e-6bed-4864-b3a0-0b0f8a7d99db	PUT	undefined	/user/659e991f0fa82f8c56cdea15
+2024-01-30	15:16:42	357a075d-1331-40e7-8533-01a2c8d69063	OPTIONS	http://localhost:4200	/auth
+2024-01-30	15:16:42	3c59bf07-967b-4725-8240-e397dd8b4ab3	POST	http://localhost:4200	/auth
+2024-01-30	15:16:47	07e7772b-6fba-4a96-a3c0-afb6382c1e9e	POST	http://localhost:4200	/auth
+2024-01-30	15:18:54	835b9144-c742-4111-ba3f-d05b4de007fc	GET	http://localhost:4200	/logout
+2024-01-30	15:19:08	d827d5a7-71fa-4bbe-ba86-bb421643ee5e	OPTIONS	http://localhost:4200	/auth
+2024-01-30	15:19:08	d6f0007c-cf64-49e6-96f2-4da1f2a322e2	POST	http://localhost:4200	/auth
