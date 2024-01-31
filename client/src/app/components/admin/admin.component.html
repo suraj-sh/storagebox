@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="board">
+        <!-- <div class="board">
             <table width="100%">
                 <thead>
                     <tr>
@@ -211,75 +211,36 @@
                         <td class="verify">
                             <a href="#">Verify</a>
                         </td>
-                    </tr>
+                    </tr>                 
+                </tbody>
+            </table>
+        </div> -->
+        <!-- admin.component.html -->
+
+        <div class="board">
+            <table width="100%">
+                <thead>
                     <tr>
-                        <td class="people">
-                            <img src="../../../assets/images/blank.png" alt="">
-                            <div class="people-de">
-                                <h5>John Doe</h5>
-                                <p>john.com</p>
-                            </div>
-                        </td>
-                        <td class="people-des">
-                            <h5>Software Engineer</h5>
-                            <p>Web dev</p>
-                        </td>
-                        <td class="active">
-                            <p>Active</p>
-                        </td>
-                        <td class="role">
-                            <p>Owner</p>
-                        </td>
-                        <td class="verify">
-                            <a href="#">Verify</a>
-                        </td>
+                        <td class="people-de">User ID</td>
+                        <td class="people-de">Username</td>
+                        <td class="people-des">ID Proof</td>
+                        <td class="people-des">Document Proof</td>
+                        <td class="active">Active Status</td>
+                        <td class="verify">Verify</td>
                     </tr>
-                    <tr>
-                        <td class="people">
-                            <img src="../../../assets/images/blank.png" alt="">
-                            <div class="people-de">
-                                <h5>John Doe</h5>
-                                <p>john.com</p>
-                            </div>
-                        </td>
-                        <td class="people-des">
-                            <h5>Software Engineer</h5>
-                            <p>Web dev</p>
-                        </td>
-                        <td class="active">
-                            <p>Active</p>
-                        </td>
-                        <td class="role">
-                            <p>Owner</p>
-                        </td>
-                        <td class="verify">
-                            <a href="#">Verify</a>
-                        </td>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let seller of sellers">
+                        <td>{{ seller._id }}</td>
+                        <td>{{ seller.username }}</td>
+                        <td><a [href]="seller.idProof" target="_blank">View</a></td>
+                        <td><a [href]="seller.documentProof" target="_blank">View</a></td>
+                        <td>{{ seller.isActive ? 'Active' : 'Inactive' }}</td>
+                        <td><button (click)="verifySeller(seller._id)">Verify</button></td>
                     </tr>
-                    <tr>
-                        <td class="people">
-                            <img src="../../../assets/images/blank.png" alt="">
-                            <div class="people-de">
-                                <h5>John Doe</h5>
-                                <p>john.com</p>
-                            </div>
-                        </td>
-                        <td class="people-des">
-                            <h5>Software Engineer</h5>
-                            <p>Web dev</p>
-                        </td>
-                        <td class="active">
-                            <p>Active</p>
-                        </td>
-                        <td class="role">
-                            <p>Owner</p>
-                        </td>
-                        <td class="verify">
-                            <a href="#">Verify</a>
-                        </td>
-                    </tr>                    
                 </tbody>
             </table>
         </div>
+
     </section>
 </body>

@@ -97,6 +97,10 @@ export class AuthenticationService {
     );
   }
 
+  getSellers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/user/seller`);
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
     if (error.error instanceof ErrorEvent) {
