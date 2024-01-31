@@ -35,10 +35,10 @@ const handleLogin = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
-        let newRefreshTokenArray=
-        !cookies?.jwt
-        ?foundUser.refreshToken
-        :foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
+        let newRefreshTokenArray =
+            !cookies?.jwt
+                ? foundUser.refreshToken
+                : foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
 
         if(cookies?.jwt)
         {
@@ -49,7 +49,7 @@ const handleLogin = async (req, res) => {
                 console.log('attempted refresh token reasue at login');
                 newRefreshTokenArray=[];
             }
-            res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http
+            res.clearCookie('jwt',{ httpOnly:true} );//secure:true -only serves on http
     }
         //Saving refresh Token with current user
         foundUser.refreshToken = [...newRefreshTokenArray,newRefreshToken];

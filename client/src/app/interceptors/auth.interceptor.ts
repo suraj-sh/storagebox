@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpClientModule} from '@angular/common/http';
-import { Observable, catchError, switchMap, throwError } from 'rxjs';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
@@ -13,22 +14,23 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.cookieService.get('jwt');
-  
+
+    // Clone the request and add withCredentials option
+    let clonedRequest = request.clone({
+      withCredentials: true,
+    });
+
+    // If token is present, add Authorization header
     if (token) {
-      request = request.clone({
+      clonedRequest = clonedRequest.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
     }
-  
-    // Add withCredentials option
-    request = request.clone({
-      withCredentials: true,
-    });
-  
-    // Check if the request failed due to an unauthorized (401) response
-    return next.handle(request).pipe(
+
+    // Intercept and handle errors
+    return next.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && token) {
           // Attempt to refresh the token
