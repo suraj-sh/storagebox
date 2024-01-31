@@ -3,20 +3,29 @@
         <img src="../../../assets/icons/logo.png" alt="company logo">
         <span>StorageBox</span>
     </div>
-    <!-- <h1>StorageBox</h1> -->
-    <ul class="nav-part2" [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
-        <li><a routerLink="/home" (click)="closeMenu()">Home</a></li>
+
+    <ul class="nav" [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
+        <li><a routerLink="" (click)="closeMenu()">Home</a></li>
+        <li><a routerLink="/chats" (click)="closeMenu()">Chats</a></li>
         <li><a routerLink="/settings" (click)="closeMenu()">Settings</a></li>
-        <button *ngIf="!authService.loggedIn()" (click)="redirectToLogin()">Login</button>
-        <button *ngIf="!authService.loggedIn()" (click)="redirectToRegister()">Register</button>
-        <button *ngIf="authService.loggedIn()" (click)="authService.logout()">Logout</button>
+
+        <!-- Display these buttons if the user is not logged in -->
+        <ng-container *ngIf="!(isLoggedIn$ | async)">
+            <li><button (click)="redirectToLogin()">Login</button></li>
+            <li><button (click)="redirectToRegister()">Register</button></li>
+        </ng-container>
+
+        <!-- Display this button if the user is logged in -->
+        <ng-container *ngIf="isLoggedIn$ | async">
+            <li><button (click)="logout()">Logout</button></li>
+        </ng-container>
     </ul>
-    <i class="ri-menu-3-fill" (click)="toggleMenu()"></i>
+    <i class="ri-menu-3-fill" *ngIf="!isMenuOpen" (click)="toggleMenu()"></i>
+    <i class="ri-close-fill" *ngIf="isCloseIconVisible" (click)="closeMenu()"></i>
 </header>
 
 <footer>
     <div class="footer-content">
-      <p>&copy; {{ currentYear }} StorageBox. All rights reserved.</p>
+        <p>&copy; {{ currentYear }} StorageBox. All rights reserved.</p>
     </div>
 </footer>
-  

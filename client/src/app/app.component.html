@@ -1,6 +1,5 @@
-<app-nav> </app-nav>
-
+<ng-container *ngIf="!isAdminRoute()">
+  <app-nav></app-nav>
+</ng-container>
+  
 <router-outlet></router-outlet>
-    
-  
-  

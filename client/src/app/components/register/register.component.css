@@ -1,55 +1,25 @@
-* {
-    box-sizing: border-box;
-    font-family: sans-serif;
-}
-
-body {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .container {
     position: relative;
     max-width: 430px;
     width: 100%;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-    margin: 2vw auto; /* Adjusted margin for mobile */
+    margin: 1.5vw auto;
 }
 
-.container .forms {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    height: auto;
-    width: 100%;
-    transition: height 0.2s ease;
-}
-
-.container .form {
+.form {
     width: 100%;
     padding: 30px;
     background-color: #fff;
 }
 
-.container.active .signup {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-
-.container.active .forms {
-    height: auto;
-}
-
-.container .form .title {
+.title {
     position: relative;
     font-size: 27px;
     font-weight: 600;
 }
 
-.form .title::before {
+.title::before {
     content: '';
     position: absolute;
     left: 0;
@@ -60,27 +30,116 @@ body {
     border-radius: 25px;
 }
 
-.form .input-field {
+.label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.radio-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]+label {
     position: relative;
-    height: 50px;
+    padding-left: 30px;
+    cursor: pointer;
+    line-height: 2;
+    font-size: 16px;
+}
+
+input[type="radio"]+label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4070f4;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+input[type="radio"]:checked+label:before {
+    background-color: #4070f4;
+    border-color: #fff;
+}
+
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+}
+
+.custom-file-upload input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    margin-top: 20px; /* Adjusted margin for mobile */
+    cursor: pointer;
+}
+
+.custom-file-upload span {
+    border: 2px solid #ccc;
+    display: inline-block;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 3px;
+}
+
+.custom-file-upload:hover span {
+    border-color: #4070f4;
+}
+
+.custom-file-upload input:active+span {
+    border-color: #265df2;
+}
+
+
+div[style] {
+    display: none;
+}
+
+div[style=''] {
+    display: block;
+}
+
+.pagination-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .input-field {
     position: relative;
+    height: 50px;
+    width: 100%;
+    margin: 20px 0;
     margin-bottom: 20px;
 }
 
 .input-field.error {
-    margin-bottom: 30px; /* Adjust as needed for spacing when error is present */
+    margin-bottom: 30px;
 }
 
-.input-field input {
-    /* position: absolute; */
+input {
     height: 100%;
     width: 100%;
-    padding: 0 25px;
+    padding: 0 35px;
     border: none;
     outline: none;
     font-size: 16px;
@@ -89,67 +148,54 @@ body {
     transition: all 0.2s ease;
 }
 
+.input-field {
+    margin-bottom: 20px;
+}
+
 .input-field.error input {
-    border-bottom-color: #ff0000; /* Set error border color */
+    border-bottom-color: #ff0000;
 }
 
 .validation-message {
     color: #ff0000;
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     margin-top: 5px;
     position: absolute;
     z-index: 1;
-    background-color: #fff; /* Set an appropriate background color */
+    background-color: #fff;
 }
 
-.input-field input:is(:focus, :valid) {
+input:is(:focus, :valid) {
     border-bottom-color: #4070f4;
 }
 
-.input-field i {
+i {
     position: absolute;
     top: 50%;
     right: 94%;
     transform: translateY(-50%);
     color: #999;
-    font-size: 22px; /* Adjusted font size for mobile */
+    font-size: 22px;
     transition: all 0.2s ease;
 }
 
-.input-field input:is(:focus, :valid) ~ i {
+input:is(:focus, :valid)~i {
     color: #4070f4;
 }
 
-.input-field i.showHidePw {
+i.showHidePw {
     position: absolute;
     top: 50%;
     right: 0;
     transform: translateY(-50%);
     cursor: pointer;
-    padding: 8px; /* Adjusted padding for mobile */
-}
-
-.form .checkbox-text {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 15px; /* Adjusted margin for mobile */
-}
-
-.checkbox-text .checkbox-content {
-    display: flex;
-    align-items: center;
-}
-
-.checkbox-content input {
-    margin-right: 8px; /* Adjusted margin for mobile */
-    accent-color: #4070f4;
+    padding: 8px;
 }
 
 .form .text {
     color: #333;
-    font-size: 16px; /* Adjusted font size for mobile */
+    font-size: 16px;
 }
 
 .form a.text {
@@ -161,63 +207,68 @@ body {
     text-decoration: underline;
 }
 
-.form .button {
-    margin-top: 35px; /* Adjusted margin for mobile */
+.button {
+    margin-top: 35px;
 }
 
-.form button {
+button {
     border: none;
     color: #fff;
     width: 100%;
-    font-size: 18px; /* Adjusted font size for mobile */
+    font-size: 18px;
     font-weight: 500;
     letter-spacing: 1px;
     border-radius: 6px;
     background-color: #4070f4;
     cursor: pointer;
     transition: all 0.3s ease;
-    padding: 12px 20px; /* Adjusted padding for better aesthetics */
+    padding: 12px 20px;
 }
 
-.form button:hover {
+button:hover {
     background-color: #265df2;
 }
 
-.form .login-signup {
-    margin-top: 20px; /* Adjusted margin for mobile */
+button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.login-signup {
+    margin-top: 20px;
     text-align: center;
 }
 
 @media (max-width: 600px) {
     .container {
-        margin: 3vw auto; /* Adjusted margin for mobile */
+        margin: 5vw auto;
         max-width: 350px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
         font-size: 16px;
     }
 
-    .form .title {
-        font-size: 24px; /* Adjusted font size for mobile */
+    .title {
+        font-size: 24px;
     }
 
-    .input-field input {
-        font-size: 16px; /* Adjusted font size for mobile */
-        padding: 0 25px; /* Adjusted padding for mobile */
+    input {
+        font-size: 16px;
+        padding: 0 25px;
     }
 
     .input-field i {
-        font-size: 20px; /* Adjusted font size for mobile */
+        font-size: 20px;
     }
 
     .input-field i.showHidePw {
-        padding: 8px; /* Adjusted padding for mobile */
+        padding: 8px;
     }
 
     .form .text {
-        font-size: 14px; /* Adjusted font size for mobile */
+        font-size: 14px;
     }
 
-    .form button {
-        font-size: 18px; /* Adjusted font size for mobile */
+    button {
+        font-size: 18px;
     }
 }

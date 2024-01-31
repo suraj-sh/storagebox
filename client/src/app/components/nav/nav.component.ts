@@ -1,21 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
-export class NavComponent {
+export class NavComponent implements OnInit {
 
   isMenuOpen = false;
   isCloseIconVisible = false;
 
-  constructor(private router: Router, public authService: AuthenticationService) { }
+  currentYear: number;
+  isLoggedIn$: Observable<boolean>;
+
+  constructor(private router: Router, public authService: AuthenticationService,
+    private cookieService: CookieService, private http: HttpClient) {
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    this.authService.isLoggedInSubject.next(isLoggedIn);
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    this.isCloseIconVisible = true;
+    this.isCloseIconVisible = this.isMenuOpen;
   }
 
   closeMenu() {
@@ -25,17 +37,22 @@ export class NavComponent {
 
   redirectToLogin(): void {
     this.router.navigate(['/login']);
-    this.closeMenu(); // Close the menu after navigation
+    this.closeMenu();
   }
 
   redirectToRegister(): void {
     this.router.navigate(['/register']);
-    this.closeMenu(); // Close the menu after navigation
+    this.closeMenu();
   }
 
-  currentYear: number;
+  logout(): void {
+    this.authService.logout();
+    this.closeMenu();
+  }
 
   ngOnInit() {
     this.currentYear = new Date().getFullYear();
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
+  
 }

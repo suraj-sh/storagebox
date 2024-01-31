@@ -46,4 +46,5 @@
 # SERVER DIRECTORY
 /server/node_modules
 /server/.env
-/server/logs
+/server/logs/
+/server/public/

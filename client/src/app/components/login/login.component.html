@@ -3,9 +3,9 @@
     <div class="form login">
       <span class="title">Login</span>
 
-      <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <form [formGroup]="loginForm">
         <div class="input-field">
-          <input id="name" type="text" formControlName="user" autocomplete="name" placeholder="Enter your name" required>
+          <input id="name" type="text" formControlName="user" autocomplete="name" placeholder="Enter your username or email" required>
           <i class="ri-user-3-line"></i>
         </div>
         
@@ -22,7 +22,7 @@
         </div>
 
         <div class="input-field button">
-          <button [disabled]="loginForm.invalid" type="submit">Login</button>
+          <button [disabled]="loginForm.invalid" type="button" (click)="login()">Login</button>
         </div>
       </form>
 

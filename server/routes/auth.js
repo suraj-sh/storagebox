@@ -6,8 +6,8 @@ router.route('/')
 .post(authController.handleLogin);
 
 router.route('/forgotpassword')
-.post(authController.forgotpassword);
+.post(authController.forgotPassword);
 
 router.route('/resetpassword/:token')
-.patch(authController.resetpassword);
+.post(authController.resetPassword);
 module.exports=router;

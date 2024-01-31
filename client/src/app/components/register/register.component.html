@@ -1,73 +1,142 @@
 <div class="container">
-  <div class="forms">
-    <div class="form signup">
-      <span class="title">Registration</span>
-      <form [formGroup]="registrationForm" novalidate>
+  <div class="form signup">
+    <span class="title">Registration</span>
+    <form [formGroup]="registrationForm" enctype="multipart/form-data">
+
+      <div *ngIf="currentStep === 1">
+        <!-- Step 1: Role Selection, Username and Email -->
+        <div class="input-field">
+          <span class="label">Select your role:</span>
+          <div class="radio-buttons">
+            <input type="radio" id="owner" formControlName="isSeller" [value]="true"
+              (change)="updateOwnerDocumentsSection()" required>
+            <label for="owner">Owner</label>
+
+            <input type="radio" id="renter" formControlName="isSeller" [value]="false"
+              (change)="updateOwnerDocumentsSection()" required>
+            <label for="renter">Renter</label>
+          </div>
+        </div>
+
+        <!-- ID Proof -->
+        <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
+          <label for="idProof">Govt. ID Proof: ( Aadhar / Pancard / DL )</label>
+          <div class="custom-file-upload">
+            <input type="file" id="idProof" formControlName="idProof" (change)="selectFile($event, 'idProof')" required>
+            <span>{{ filesIdProof?.name || 'Choose File' }}</span>
+          </div>
+        </div>
+
+        <!-- Storage Documents Proof -->
+        <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
+          <label for="documentProof">Storage Unit Proof: ( Lease Agreement )</label>
+          <div class="custom-file-upload">
+            <input type="file" id="documentProof" formControlName="documentProof" (change)="selectFile($event, 'documentProof')" required>
+            <span>{{ filesStorageProof?.name || 'Choose File' }}</span>
+          </div>
+        </div>
 
         <!-- Username -->
-        <div class="input-field" [class.error]="user?.invalid && user?.touched">
+        <div class="input-field" [class.error]="form.user.invalid && form.user.touched">
           <input id="name" type="text" formControlName="user" placeholder="Enter your username" autocomplete="name"
             required>
           <i class="ri-user-3-line"></i>
-          <div *ngIf="user?.touched">
-            <div *ngIf="user?.hasError('required')" class="validation-message">**Username is required**
+          <div *ngIf="form.user?.touched">
+            <div *ngIf="form.user?.hasError('required')" class="validation-message">**Username is required**</div>
+            <div *ngIf="form.user?.hasError('minlength')" class="validation-message">**Name must be at least 6 characters**
             </div>
-            <div *ngIf="user?.hasError('minlength')" class="validation-message">**Name must be at least 6
-              characters**</div>
           </div>
         </div>
 
         <!-- Email -->
-        <div class="input-field" [class.error]="email?.invalid && email?.touched">
+        <div class="input-field" [class.error]="form.email.invalid && form.email.touched">
           <input id="email" type="email" formControlName="email" placeholder="Enter your email" autocomplete="email"
             required>
           <i class="ri-mail-line"></i>
-          <div *ngIf="email?.hasError('required') && email?.touched" class="validation-message">**Email is required**
+          <div *ngIf="form.email?.touched">
+            <div *ngIf="form.email?.hasError('required')" class="validation-message">**Email is required**</div>
+            <div *ngIf="form.email?.hasError('pattern')" class="validation-message">**Please enter a valid email address**
+            </div>
           </div>
-          <div *ngIf="email?.hasError('email') && email?.touched" class="validation-message">**Invalid email format**
+        </div>
+
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+          <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+            [fullScreen]="true">
+            <p style="color: white"> Sending... </p>
+          </ngx-spinner>
+        </div>
+
+        <!-- Send Verification Code Button -->
+        <div class="input-field button">
+          <button [disabled]="!form.email.valid" (click)="sendVerificationCode()" type="button">Send Verification
+            Code</button>
+        </div>
+
+        <!-- Next Button for Step 2 -->
+        <!-- <div class="input-field button">
+          <button (click)="nextStep()" type="button">Next</button>
+        </div> -->
+      </div>
+
+      <div *ngIf="currentStep === 2">
+        <!-- Verfication code for Email (OTP), Password and Confirm Password -->
+        <div class="input-field" [class.error]="form.verificationCode.invalid && form.verificationCode.touched">
+          <input id="verificationCode" type="text" inputmode="numeric" formControlName="verificationCode"
+            placeholder="Enter verification code" autocomplete="off" required>
+          <i class="ri-key-line"></i>
+          <div *ngIf="form.verificationCode?.hasError('required') && form.verificationCode?.touched" class="validation-message">
+            **Verification code is required**
           </div>
         </div>
 
         <!-- Password -->
-        <div class="input-field" [class.error]="pwd?.invalid && pwd?.touched">
+        <div class="input-field" [class.error]="form.pwd.invalid && form.pwd.touched">
           <input id="password" [type]="passwordVisible ? 'text' : 'password'" formControlName="pwd"
             placeholder="Password" autocomplete="new-password" required>
           <i class="ri-lock-2-line"></i>
-          <div *ngIf="pwd?.touched">
-            <div *ngIf="pwd?.hasError('required')" class="validation-message">**Password is required**
-            </div>
-            <div *ngIf="pwd?.hasError('minlength')" class="validation-message">**Password must be at least 12
+          <div *ngIf="form.pwd?.touched">
+            <div *ngIf="form.pwd?.hasError('required')" class="validation-message">**Password is required**</div>
+            <div *ngIf="form.pwd?.hasError('minlength')" class="validation-message">**Password must be at least 12
               characters**</div>
-            <div *ngIf="pwd?.hasError('pattern')" class="validation-message">**Password must contain at least one number
+            <div *ngIf="form.pwd?.hasError('pattern')" class="validation-message">**Password must contain at least one number
               and one special character**</div>
           </div>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="input-field" [class.error]="confirmPassword?.invalid && confirmPassword?.touched">
+        <div class="input-field" [class.error]="form.confirmPassword.invalid && form.confirmPassword.touched">
           <input id="confirmPassword" [type]="passwordVisible ? 'text' : 'password'" formControlName="confirmPassword"
             placeholder="Confirm Password" autocomplete="current-password" required>
           <i class="ri-lock-2-line"></i>
           <i *ngIf="passwordVisible" class="ri-eye-line showHidePw" (click)="togglePasswordVisibility()"></i>
           <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
-          <div *ngIf="confirmPassword?.hasError('required') && confirmPassword?.touched" class="validation-message">
-            **Password is required**</div>
-          <div *ngIf="confirmPassword?.value !== pwd?.value && confirmPassword?.touched" class="validation-message">
-            **Passwords do not match**</div>
+          <div *ngIf="form.confirmPassword?.touched">
+            <div *ngIf="form.confirmPassword?.hasError('required')" class="validation-message">
+              **Password is required**</div>
+            <div *ngIf="form.confirmPassword?.value !== form.pwd?.value" class="validation-message">
+              **Passwords do not match**</div>
+          </div>
         </div>
 
-        <!-- Submit Button -->
+        <!-- Register Button for Step 2 -->
         <div class="input-field button">
-          <button [disabled]="registrationForm.invalid" (click)="register()" type="button">Register</button>
+          <button [disabled]="isButtonDisabled()" (click)="register()" type="button">Register</button>
         </div>
-      </form>
 
-      <!-- Login Link -->
-      <div class="login-signup">
-        <span class="text">Already have an account?
-          <a routerLink="/login" class="text login-link">Login Now</a>
-        </span>
+        <!-- Previous Button for Step 1 -->
+        <!-- <div class="input-field button">
+          <button type="button" (click)="prevStep()">Previous</button>
+        </div> -->
       </div>
+
+    </form>
+
+    <!-- Login Link -->
+    <div class="login-signup">
+      <span class="text">Already have an account?
+        <a routerLink="/login" class="text login-link">Login Now</a>
+      </span>
     </div>
   </div>
 </div>
