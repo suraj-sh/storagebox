@@ -1,0 +1,35 @@
+
+<div class="container">
+    
+    <div class="left">
+        <div class="profile-picture-container">
+            <img *ngIf="!hasProfilePicture()" class="profile-picture" src="../../../assets/images/Profile_image.jpg"
+                alt="Profile Picture">
+            <img *ngIf="hasProfilePicture()" class="profile-picture" [src]="profileData.profilePicture"
+                alt="Profile Picture">
+        </div>
+        <div class="btn-container">
+            <label for="profilePicture" class="upload-button">Upload
+                <input type="file" id="profilePicture" (change)="loadProfilePicture($event)">
+            </label>
+            <button class="remove-button" (click)="removeProfilePicture()">Remove</button>
+        </div>
+    </div>
+
+    <div class="right">
+        <h4>User Profile</h4>
+        <div class="form">
+            <label for="name">User Name</label>
+            <input id="name" type="text" placeholder="User Name" autocomplete="name">
+            <label for="email">Email ID</label>
+            <input id="email" type="text" placeholder="Enter Email ID" autocomplete="email">
+            <label for="country">Country</label>
+            <input id="country" type="text" placeholder="Country" autocomplete="country">
+       
+        </div>
+        <div class="buttons">
+            <button class="profile-button" type="button" (click)="saveProfile()">Save Changes</button>
+            <button class="profile-button" type="button" (click)="updateProfile()">Edit Profile</button>
+        </div>
+    </div>
+</div>

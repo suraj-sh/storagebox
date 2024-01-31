@@ -11,8 +11,11 @@ import { HttpClientModule} from '@angular/common/http';
 import { AuthenticationService } from './services/authentication.service';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileService } from './services/profileservice.service';
 
 @NgModule({
+  
   declarations: [
     AppComponent,
     HomeComponent,
@@ -21,6 +24,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     RegisterComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +33,10 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [AuthenticationService],
+  providers: [AuthenticationService,  ProfileService],
+  
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
+
+
