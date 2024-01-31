@@ -7,6 +7,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminComponent } from './components/admin/admin.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -14,9 +15,9 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent},
   { path: 'forgot-password', component: ForgotPasswordComponent},
   { path: 'reset-password/:token', component: ResetPasswordComponent},
+  { path: 'profile', component: ProfileComponent},
   { path: 'admin', component: AdminComponent},
   { path: '', redirectTo: '', pathMatch: 'full' }
-
 ];
 
 @NgModule({

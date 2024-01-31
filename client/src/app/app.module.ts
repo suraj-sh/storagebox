@@ -19,8 +19,11 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileService } from './services/profileservice.service';
 
 @NgModule({
+  
   declarations: [
     AppComponent,
     HomeComponent,
@@ -29,7 +32,8 @@ import { AdminComponent } from './components/admin/admin.component';
     RegisterComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    AdminComponent
+     ProfileComponent,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,6 +47,7 @@ import { AdminComponent } from './components/admin/admin.component';
   providers: [
     AuthenticationService,
     CookieService,
+    ProfileService,
     AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,
@@ -57,4 +62,4 @@ import { AdminComponent } from './components/admin/admin.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule{} 
+export class AppModule {}
