@@ -19,8 +19,11 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileService } from './services/profileservice.service';
 
 @NgModule({
+  
   declarations: [
     AppComponent,
     HomeComponent,
@@ -29,6 +32,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     RegisterComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +58,9 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
       useClass: ErrorInterceptor,
       multi: true,
     },
-  ],
+    
+  providers: [AuthenticationService,  ProfileService],
+  
   bootstrap: [AppComponent]
 })
-export class AppModule{} 
+export class AppModule {}
