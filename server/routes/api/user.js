@@ -16,6 +16,12 @@ router.route('/seller')
 router.route('/get/count')
 .get(verifyRoles(ROLES_LIST.Admin),userController.usersCount);
 
+router.route('/seller-count')
+.get(verifyRoles(ROLES_LIST.Admin),userController.sellerCount);
+
+router.route('/verifiedSeller-count')
+.get(verifyRoles(ROLES_LIST.Admin),userController.verifiedSellerCount);
+
 router.route('/change-role/:id')
 .put(verifyRoles(ROLES_LIST.Admin),userController.changeUserRole);
 

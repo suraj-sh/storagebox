@@ -23,7 +23,6 @@ const getUser=async (req,res)=>{
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
-        console.log('Incoming request:', req);
         // Check if the new username is already taken
         if (req.body.user) {
             // Check if the new username is already taken
@@ -111,6 +110,25 @@ const usersCount = async (req, res) => {
     } catch (error) {
         console.error('Error counting users:', error);
         res.status(500).json({ 'message': 'Internal Server Error' });
+    }
+};
+
+const sellerCount = async (req, res) => {
+    try {
+        const sellerCount = await User.countDocuments({ isSeller: true });
+        res.send({ count: sellerCount });
+    } catch (error) {
+        console.error('Error counting sellers:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+const verifiedSellerCount=async (req, res) => {
+    try {
+        const verifiedSellerCount = await User.countDocuments({ isActiveSeller: true });
+        res.send({ count: verifiedSellerCount });
+    } catch (error) {
+        console.error('Error counting sellers:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 const changeUserRole = async (req, res) => {
@@ -220,6 +238,8 @@ module.exports={
     updateUser,
     usersCount,
     deleteUser,
+    sellerCount,
+    verifiedSellerCount,
     getSellerUsers,
     changeUserRole,
     updateUserPic,
