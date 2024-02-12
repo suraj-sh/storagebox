@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthInterceptor } from 'src/app/interceptors/auth.interceptor';
 
 @Component({
   selector: 'app-login',
@@ -27,8 +28,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-
-    this.authService.loginUser(this.loginForm.value).subscribe(
+    const formData = {
+      user: this.loginForm.value.user,
+      email: this.loginForm.value.user,
+      pwd: this.loginForm.value.pwd,
+    };
+    console.log(formData);
+    this.authService.loginUser(formData).subscribe(
       (res) => {
         Swal.fire({
           title: 'Login Successful',
@@ -36,26 +42,11 @@ export class LoginComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Continue',
           iconColor: '#00ff00',
+        }).then(() => {
+          this.router.navigate(['']);
+          this.loginForm.reset();
         });
-        localStorage.setItem('token', res.acessToken);
-        this.router.navigate(['/home']);
-        this.loginForm.reset();
       },
-      (err) => {
-        let errorMessage = 'Invalid username or password. Please try again.';
-
-        if (err.status === 401) {
-          errorMessage = 'Incorrect username or password. Please try again.';
-        }
-
-        Swal.fire({
-          title: 'Login Failed',
-          text: errorMessage,
-          icon: 'error',
-          confirmButtonText: 'Retry',
-        });
-        console.log(err);
-      }
     );
   }
 

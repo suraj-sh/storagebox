@@ -19,7 +19,7 @@ const handleLogin = async (req, res) => {
     const match = await bcrypt.compare(pwd, foundUser.password);
     if (match) {
         const roles = Object.values(foundUser.roles);
-        const acessToken = jwt.sign(
+        const accessToken = jwt.sign(
             {
                 "UserInfo": {
                     "userId": foundUser._id,
@@ -35,10 +35,10 @@ const handleLogin = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
-        let newRefreshTokenArray=
-        !cookies?.jwt
-        ?foundUser.refreshToken
-        :foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
+        let newRefreshTokenArray =
+            !cookies?.jwt
+                ? foundUser.refreshToken
+                : foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
 
         if(cookies?.jwt)
         {
@@ -49,14 +49,14 @@ const handleLogin = async (req, res) => {
                 console.log('attempted refresh token reasue at login');
                 newRefreshTokenArray=[];
             }
-            res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http
+            res.clearCookie('jwt',{ httpOnly:true} );//secure:true -only serves on http
     }
         //Saving refresh Token with current user
         foundUser.refreshToken = [...newRefreshTokenArray,newRefreshToken];
         const result = await foundUser.save();
         console.log(result);
-        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.json({ acessToken });
+        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24*60*60*1000});
+        res.json({ accessToken});
     } else {
         res.sendStatus(401);
     }

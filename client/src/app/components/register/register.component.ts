@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FormBuilder, FormGroup, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -13,44 +13,43 @@ export class RegisterComponent {
   passwordVisible = false;
   showOwnerDocumentsSection = false;
   currentStep = 1;
+  showSpinner = false;
+  filesIdProof: File | null = null;
+  filesStorageProof: File | null = null;
 
-  get user() {
-    return this.registrationForm.get('user');
-  }
-
-  get email() {
-    return this.registrationForm.get('email');
-  }
-
-  get verificationCode() {
-    return this.registrationForm.get('verificationCode');
-  }
-
-  get pwd() {
-    return this.registrationForm.get('pwd');
-  }
-
-  get confirmPassword() {
-    return this.registrationForm.get('confirmPassword');
-  }
-
-  get role() {
-    return this.registrationForm.get('role');
+  // Common getter function for the form inputs 
+  get form() {
+    return this.registrationForm.controls;
   }
 
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
-              private router: Router) { }
+    private router: Router) { }
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required,
+    Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
     verificationCode: ['', Validators.required],
-    pwd: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
-    confirmPassword: ['', [Validators.required, this.passwordMatchValidator()]],
-    role: ['', Validators.required],
-    idProof: ['', []],
-    storageProof: ['', []]
+    pwd: ['', [Validators.required, Validators.minLength(12),
+    Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+    confirmPassword: ['', [Validators.required]],
+    isSeller: [false, Validators.required],
+    idProof: [''],
+    documentProof: ['']
   });
+
+  selectFile(event: any, formControlName: string) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      if (formControlName === 'idProof') {
+        this.filesIdProof = file;
+      }
+      else if (formControlName === 'documentProof') {
+        this.filesStorageProof = file;
+      }
+    }
+  }
 
   nextStep() {
     this.currentStep++;
@@ -60,79 +59,98 @@ export class RegisterComponent {
     this.currentStep--;
   }
 
-  verifyEmail() {
-    // Implement email verification logic
-    const verificationCode = this.registrationForm.get('verificationCode')?.value;
-    // Call your backend API to verify the code
-    this.nextStep();
-  }
-
   sendVerificationCode() {
-    const email = this.email?.value; // Assuming you have an email form control
-    if (email) {
-      this.authService.sendVerificationEmail(email).subscribe(
-        (response) => {
-          // Handle success, e.g., show a message to the user
-          console.log('Verification email sent successfully');
-        },
-        (error) => {
-          // Handle error, e.g., show an error message
-          console.error('Error sending verification email', error);
-        }
-      );
+
+    const formData = new FormData();
+
+    // Append all form controls to FormData
+    Object.entries(this.form).forEach(([controlName, control]) => {
+      if (control instanceof FormControl) {
+        formData.append(controlName, String(control.value));
+      }
+    });
+
+    // Append files separately, only if they are not null
+    if (this.filesIdProof !== null) {
+      formData.append('idProof', this.filesIdProof);
     }
+
+    if (this.filesStorageProof !== null) {
+      formData.append('documentProof', this.filesStorageProof);
+    }
+
+
+    // Check if the user is a seller and if the required files are uploaded
+    if (this.form.isSeller?.value) {
+      if (!this.filesIdProof || !this.filesStorageProof) {
+        // If any of the required files are missing, show an alert and return
+        Swal.fire('Error', 'Please provide both ID proof and proof of the storage unit', 'error');
+        return;
+      }
+    }
+
+
+    // Show spinner
+    this.showSpinner = true;
+
+    // Send verification email
+    this.authService.sendVerificationEmail(formData).subscribe(
+      (response) => {
+        console.log('Verification email sent successfully');
+        Swal.fire({
+          title: 'Success',
+          text: 'Verification Code sent to email',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        });
+        this.showSpinner = false;
+        this.nextStep();
+      }
+    );
   }
 
   register() {
-    if (this.currentStep === 1) {
-      const formData = this.registrationForm.value;
+    if (!this.registrationForm.invalid) {
+      console.log(this.registrationForm.value);
+      const formData = new FormData();
 
-      if (formData.role === 'owner') {
-        if (!formData.idProof || !formData.storageProof) {
-          Swal.fire('Error', 'Please provide both ID proof and proof of storage unit', 'error');
-          return;
+      // Append all form controls to FormData
+      Object.entries(this.form).forEach(([controlName, control]) => {
+        if (control instanceof FormControl) {
+          formData.append(controlName, String(control.value));
         }
-      }
+      });
+
+      this.showSpinner = true;
 
       this.authService.registerUser(formData).subscribe(
-        (res) => {
+        (response) => {
+          console.log('User registered successfully', response);
           Swal.fire({
             title: 'Success',
-            text: res.success || 'Registration successful',
+            text: response.success || 'Registration successful',
             icon: 'success',
             iconColor: '#00ff00',
             confirmButtonText: 'OK'
           });
+          // Redirect to login or perform any other post-registration actions
+          this.showSpinner = false;
           this.router.navigate(['/login']);
-          this.registrationForm.reset();
-          this.currentStep = 1;
-        },
-        (err) => {
-          const errorMessage = err?.error?.message || 'An error occurred during registration';
-          Swal.fire('Error', errorMessage, 'error');
         }
       );
-    } else if (this.currentStep === 2) {
-      this.verifyEmail();
     }
+  }
+
+  isButtonDisabled(): boolean {
+    return this.registrationForm.invalid || this.registrationForm.get('pwd')?.value !== this.registrationForm.get('confirmPassword')?.value;
   }
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  private passwordMatchValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const password = control.get('pwd');
-      const confirmPassword = control.get('confirmPassword');
-
-      return password && confirmPassword && password.value !== confirmPassword.value
-        ? { passwordMismatch: true }
-        : null;
-    };
-  }
-
   updateOwnerDocumentsSection() {
-    this.showOwnerDocumentsSection = this.role?.value === 'owner';
+    this.showOwnerDocumentsSection = this.form.isSeller?.value === true;
   }
 }

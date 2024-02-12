@@ -10,14 +10,14 @@ const handleLogout = async (req, res) => {
     }
     const foundUser = await User.findOne({refreshToken}).exec();
     if (!foundUser) {
-        res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});
+        res.clearCookie('jwt',{ httpOnly:true});
         return res.sendStatus(403);
     }
     foundUser.refreshToken=foundUser.refreshToken.filter(rt=>rt!==refreshToken);
     await UserToken.findOneAndDelete({ userId: foundUser._id });
     const result=await foundUser.save();
 
-    res.clearCookie('jwt',{ httpOnly:true,maxAge:24*60*60*1000});//secure:true -only serves on http
+    res.clearCookie('jwt',{ httpOnly:true});//secure:true -only serves on http
     res.sendStatus(204);
 };
 
