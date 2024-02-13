@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { AuthInterceptor } from 'src/app/interceptors/auth.interceptor';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +32,9 @@ export class LoginComponent implements OnInit {
       email: this.loginForm.value.user,
       pwd: this.loginForm.value.pwd,
     };
+    
     console.log(formData);
+
     this.authService.loginUser(formData).subscribe(
       (res) => {
         Swal.fire({

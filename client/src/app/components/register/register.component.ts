@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -27,11 +27,9 @@ export class RegisterComponent {
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
-    email: ['', [Validators.required,
-    Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+    email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
     verificationCode: ['', Validators.required],
-    pwd: ['', [Validators.required, Validators.minLength(12),
-    Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
+    pwd: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
     confirmPassword: ['', [Validators.required]],
     isSeller: [false, Validators.required],
     idProof: [''],
@@ -42,13 +40,29 @@ export class RegisterComponent {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
 
+      // Check if the file is a PDF
+      if (formControlName === 'idProof' && !this.isPdfFile(file)) {
+        Swal.fire('Error', 'Please upload a PDF file for ID proof', 'error');
+        return;
+      }
+
+      if (formControlName === 'documentProof' && !this.isPdfFile(file)) {
+        Swal.fire('Error', 'Please upload a PDF file for storage unit proof', 'error');
+        return;
+      }
+
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      }
+      } 
       else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
     }
+  }
+
+  isPdfFile(file: File): boolean {
+    // Check if the file type is PDF
+    return file.type === 'application/pdf';
   }
 
   nextStep() {

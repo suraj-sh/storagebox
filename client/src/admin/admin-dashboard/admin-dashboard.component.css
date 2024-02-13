@@ -41,7 +41,7 @@ body{
     cursor: pointer;
 }
 
-#menu .items li:nth-child(1){
+#menu .items li.selected {
     border-left: 4px solid #fff;
 }
 
@@ -51,7 +51,7 @@ body{
     height: 30px;
     line-height: 30px;
     text-align: center;
-    font-size: 14px;
+    font-size: 30px;
     margin: 0 10px 0 25px;
 }
 
@@ -135,7 +135,7 @@ body{
 #menu-btn{
     display: none;
     color: #2b2b2b;
-    font-size: 20px;
+    font-size: 30px;
     cursor: pointer;
     margin-right: 20px;
 }
@@ -144,7 +144,7 @@ body{
 
 /* Header - 2 */
 
-.i-name{
+.header{
     color: #444a53;
     padding: 10px 30px 0 30px;
     font-size: 24px;
@@ -208,24 +208,16 @@ body{
     color: #828997
 }
 
-/* ********************************************** */
+/* ****************************************************************************** */
 
 /* Main Board */
 
 .board{
-    width: 94%;
+    width: 95%;
     margin: 30px 0 30px 30px;
     overflow: auto;
     background: #fff;
     border-radius: 8px;
-}
-
-.board img{
-    width: 45px;
-    height: 45px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 15px;
 }
 
 .board h5{
@@ -247,6 +239,7 @@ body{
 }
 
 table{
+    width: 100%;
     border-collapse: collapse;
 }
 
@@ -267,7 +260,8 @@ tbody tr td{
     padding: 10px 15px;
 }
 
-.active p{
+.active{
+    margin: 5px;
     background: #d7feda;
     padding: 2px 10px;
     display: inline-block;
@@ -275,83 +269,88 @@ tbody tr td{
     color: #2b2b2b;
 }
 
-.verify a {
-    text-decoration: none;
-    font-size: 14px;
-    color: #554cd1;
+.view-link {
+    color: #007bff;
     font-weight: 600;
+    text-decoration: none;
 }
+
+.view-link:hover {
+    text-decoration: underline;
+}
+
+.verify-button {
+    padding: 8px 16px;
+    background-color: #594EF7;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.verify-button:hover {
+    background-color: #1006a2;
+}
+
 
 /* ************************************************************* */
 
 /* Media Queries */
 
-@media (max-width: 769px) {
-    #menu{
-        width: 270px;
-        position: fixed;
-        left: -270px;
+@media (max-width: 600px) {
+
+    #menu {
+        width: 240px;
+        left: -240px;
+        transition: 0.3s ease;
     }
 
-    #menu-btn{
+    #menu.open {
+        left: 0px;
+    }
+
+    #menu-btn {
         display: initial;
     }
 
-    #interface{
+    #interface {
         width: 100%;
         margin-left: 0;
         display: inline-block;
+        transition: 0.3s ease;
     }
 
-    #interface .navigation{
+    #menu.open~ #interface{
+        width: calc(100% - 240px);
+        margin-left: 240px;
+        transition: 0.3s ease;
+    }
+
+    #interface .navigation {
         width: 100%;
     }
 
-    .values{
+    #interface .navigation .search input{
+        width: 100px;
+    }
+
+    .values {
         padding: 30px 30px 0 30px;
-        justify-content: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap; /* Allow flex items to wrap to the next line */
+        margin-top: -20px;
+    }
+    
+    .values .val-box {
+        width: calc(50% - 10px);
+        margin: 10px 0; /* Add margin between boxes */
     }
 
-    .values .val-box{
-        padding: 16px 20px;
-        margin: 10px 20px 10px 0;
-    }
-
-    .board{
-        width: 92%;
+    .board {
+        width: calc(100% - 60px);
         padding: 0;
         overflow-x: auto;
     }
 
-    table{
-        width: 100%;
-        border-collapse: collapse;
-    }
-}
-
-@media (max-width: 600px){
-    #interface .navigation{
-        padding: 15px;
-    }
-
-    #interface .navigation .search input{
-        width: 150px;
-    }
-
-    .i-name{
-        padding: 30px 15px 0 15px;
-    }
-
-    .values{
-        padding: 15px 15px 0 15px;
-    }
-
-    .values .val-box{
-        width: 100%;
-        margin: 8px 0;
-    }
-
-    .board{
-        margin: 30px 15px 30px 15px;
-    }
 }

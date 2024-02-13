@@ -18,9 +18,9 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { AdminComponent } from './components/admin/admin.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileService } from './services/profileservice.service';
+import { AdminModule } from 'src/admin/admin.module';
 
 @NgModule({
   
@@ -32,8 +32,8 @@ import { ProfileService } from './services/profileservice.service';
     RegisterComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-     ProfileComponent,
-    AdminComponent,
+    ProfileComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -42,7 +42,8 @@ import { ProfileService } from './services/profileservice.service';
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    AdminModule,
   ],
   providers: [
     AuthenticationService,
