@@ -113,9 +113,16 @@ const verifyCodeAndSetPassword = [
         documentProof: storedData.documentProof
       });
 
+      if (storedData.isSeller) {   
+        await sendEmail({
+            email: storedData.email,
+            subject: `Seller's Account Verification`,
+            message: `\n\nThank you for registering with StorageBox!\n\nYour account is now under verification. Our team will review your account details and notify you once the verification process is complete.\n\nIf you have any questions or concerns, feel free to reach out to us.\n\nThank you,\nThe StorageBox Team`
+        });
+    }
       // Remove stored data from temporary storage
       delete temporaryStorage[storedData.email];
-
+     
       res.status(200).json({
         'message': 'User registered successfully',
         'user': result,
