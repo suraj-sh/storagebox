@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import Swal from 'sweetalert2';
-import { NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-forgot-password',
@@ -17,8 +16,7 @@ export class ForgotPasswordComponent implements OnInit {
     return this.forgotPasswordForm.get('email');
   }
 
-  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder, 
-              private spinner: NgxSpinnerService) {}
+  constructor( private authService: AuthenticationService, private formBuilder: FormBuilder ) {}
 
   ngOnInit() {
     this.forgotPasswordForm = this.formBuilder.group({
@@ -38,19 +36,9 @@ export class ForgotPasswordComponent implements OnInit {
           confirmButtonText: 'OK',
         });
         this.forgotPasswordForm.reset();
-        // Show spinner
+        // Hide spinner
         this.showSpinner = false;
-      },
-      // (err) => {
-      //   this.spinner.hide();
-      //   Swal.fire({
-      //     title: 'Error',
-      //     text: 'Failed to send password reset link. Please try again.',
-      //     icon: 'error',
-      //     confirmButtonText: 'Retry',
-      //   });
-      //   console.log(err);
-      // }
+      }
     );
   }
 }

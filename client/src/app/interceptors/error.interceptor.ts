@@ -2,23 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
 import Swal from 'sweetalert2';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private spinner: NgxSpinnerService) { }
+  constructor() { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.spinner.show();
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        this.spinner.hide();
 
-        let errorMessage = 'An error occurred while processing your request.';
+        // let errorMessage = 'An error occurred while processing your request.';
 
-        if (error.error && error.error.message) {
+        if (request.url.includes('/register') && error.error.message) {
+          let errorMessage = 'An error occurred while processing your request.';
           errorMessage = error.error.message;
 
           if (errorMessage.includes('username already exists')) {
@@ -33,6 +31,8 @@ export class ErrorInterceptor implements HttpInterceptor {
           else if (errorMessage.includes('verification code has expired')) {
             errorMessage = 'Verification code has expired.';
           }
+          Swal.fire('Error', errorMessage, 'error');
+
         }
 
         // Check if the request was for login
@@ -40,7 +40,10 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // Handling login errors separately
         if (isLoginRequest && error.status === 401) {
+          let errorMessage = 'An error occurred while processing your request.';
           errorMessage = 'Incorrect username or password. Please try again.';
+          Swal.fire('Error', errorMessage, 'error');
+
         }
 
         // Check if the request was for forgot password
@@ -48,7 +51,10 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // Handling errors separately
         if (forgotpass && error.status === 400) {
+          let errorMessage = 'An error occurred while processing your request.';
           errorMessage = 'Email does not exist';
+          Swal.fire('Error', errorMessage, 'error');
+
         }
 
         // Check if the request was for forgot password
@@ -56,11 +62,13 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // Handling errors separately
         if (resetpass && error.status === 400) {
+          let errorMessage = 'An error occurred while processing your request.';
           errorMessage = 'Token invalid or expired';
+          Swal.fire('Error', errorMessage, 'error');
         }
 
-        Swal.fire('Error', errorMessage, 'error');
-        return throwError(errorMessage);
+        // Swal.fire('Error', errorMessage, 'error');
+        return throwError(error);
       })
     );
   }
