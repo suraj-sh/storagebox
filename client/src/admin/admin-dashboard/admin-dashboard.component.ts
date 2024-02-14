@@ -12,6 +12,9 @@ export class AdminDashboardComponent {
 
   sellers: any[] = [];
   userCount: any;
+  sellerCount: any;
+  verifiedCount: any;
+  notVerifiedCount: number = 0;
 
   constructor(private adminService: AdminService, private router: Router) { }
 
@@ -27,6 +30,8 @@ export class AdminDashboardComponent {
   ngOnInit() {
     this.loadSellers();
     this.loadCount();
+    this.loadSellerCount();
+    this.loadVerifiedCount();
   }
 
   onMenuItemClick(menuItem: string) {
@@ -69,6 +74,20 @@ export class AdminDashboardComponent {
   loadCount() {
     this.adminService.getCount().subscribe((response: any) => {
       this.userCount = response.count;
+    });
+  }
+
+  loadSellerCount() {
+    this.adminService.getSellerCount().subscribe((response: any) => {
+      this.sellerCount = response.count;
+    });
+  }
+
+  loadVerifiedCount() {
+    this.adminService.getVerifiedCount().subscribe((response: any) => {
+      this.verifiedCount = response.count;
+      // Calculate the difference between seller count and verified count
+      this.notVerifiedCount = this.sellerCount - this.verifiedCount;
     });
   }
 

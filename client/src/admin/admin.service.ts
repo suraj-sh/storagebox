@@ -24,13 +24,21 @@ export class AdminService {
     return this.http.get<any>(`${this.apiUrl}/user/get/count`);
   }
 
+  getSellerCount(): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/user/seller-count`);
+  }
+
+  getVerifiedCount(): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/user/verifiedSeller-count`);
+  }
+
   // Method to change user into seller
   changeUserToSeller(userId: string): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/user/change-role/${userId}`, {});
   }
 
   deleteUser(userId: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/user/${userId}`, {});
+    return this.http.delete<any>(`${this.apiUrl}/user/${userId}`, {});
   }
 
 

@@ -4,6 +4,7 @@
         <tr>
             <td class="people-de">User ID</td>
             <td class="people-de">Username</td>
+            <td class="people-de">Role</td>
             <td class="verify">Action</td>
         </tr>
     </thead>
@@ -11,6 +12,7 @@
         <tr *ngFor="let user of users">
             <td>{{ user._id }}</td>
             <td>{{ user.username }}</td>
+            <td>{{ user.isSeller ? 'Owner' : 'Renter' }}
             <td><button (click)="removeUser(user._id)" class="delete-btn">Delete</button></td>
         </tr>
     </tbody>
