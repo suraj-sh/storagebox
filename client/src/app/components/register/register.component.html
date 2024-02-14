@@ -20,19 +20,19 @@
 
         <!-- ID Proof -->
         <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
-          <label for="idProof">Govt. ID Proof: ( Aadhar / Pancard / DL )</label>
+          <label for="idProof">Govt. ID Proof: (Aadhar / Pancard / DL)</label>
           <div class="custom-file-upload">
             <input type="file" id="idProof" formControlName="idProof" (change)="selectFile($event, 'idProof')" required>
-            <span>{{ filesIdProof?.name || 'Choose File' }}</span>
+            <span>{{ filesIdProof?.name || 'Choose file (PDF)' }}</span>
           </div>
         </div>
 
         <!-- Storage Documents Proof -->
         <div *ngIf="showOwnerDocumentsSection" class="input-field owner-documents">
-          <label for="documentProof">Storage Unit Proof: ( Lease Agreement )</label>
+          <label for="documentProof">Storage Unit Proof: (Lease Agreement)</label>
           <div class="custom-file-upload">
             <input type="file" id="documentProof" formControlName="documentProof" (change)="selectFile($event, 'documentProof')" required>
-            <span>{{ filesStorageProof?.name || 'Choose File' }}</span>
+            <span>{{ filesStorageProof?.name || 'Choose file (PDF)' }}</span>
           </div>
         </div>
 
@@ -43,8 +43,7 @@
           <i class="ri-user-3-line"></i>
           <div *ngIf="form.user?.touched">
             <div *ngIf="form.user?.hasError('required')" class="validation-message">**Username is required**</div>
-            <div *ngIf="form.user?.hasError('minlength')" class="validation-message">**Name must be at least 6 characters**
-            </div>
+            <div *ngIf="form.user?.hasError('minlength')" class="validation-message">**Name must be at least 6 characters**</div>
           </div>
         </div>
 
