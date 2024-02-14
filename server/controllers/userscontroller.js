@@ -194,9 +194,9 @@ const deleteUser = async (req, res) => {
         }
         const user = await User.findById(req.params.id);
         if (!user) {
-            return res.sendStatus(404).json({ 'message': 'User not found' });
+            return res.status(404).json({ 'message': 'User not found' });
         }
-        const result = await user.remove();
+        const result = await user.deleteOne({_id:req.params.id});
         if (!result) {
             return res.status(500).json({ 'message': 'User cannot be deleted' });
         }
