@@ -113,11 +113,21 @@ const verifyCodeAndSetPassword = [
         documentProof: storedData.documentProof
       });
 
-      if (storedData.isSeller) {   
+      if (storedData.isSeller) {  
+        const message=`Thank you for registering with StorageBox!
+
+Your account is currently under verification. During this process, you won't be able to list any ads. Our team will review your account details, and we'll notify you once the verification is complete.
+Please note that once your account is verified, any uploaded documents will be automatically deleted from our system, as they are only needed for verification purposes.
+
+If you have any questions or concerns, feel free to reach out to us.
+        
+Thank you,
+The StorageBox Team`
+         
         await sendEmail({
             email: storedData.email,
             subject: `Seller's Account Verification`,
-            message: `\n\nThank you for registering with StorageBox!\n\nYour account is now under verification. Our team will review your account details and notify you once the verification process is complete.\n\nIf you have any questions or concerns, feel free to reach out to us.\n\nThank you,\nThe StorageBox Team`
+            message
         });
     }
       // Remove stored data from temporary storage

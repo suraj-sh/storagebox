@@ -80,23 +80,27 @@ const forgotPassword = async (req, res, next) => {
 
         await user.save({ validateBeforeSave: false });
 
-        const resetUrl = `${req.protocol}://localhost:4200/reset-password/${resetToken}`;
-        const message = `Dear ${user.username},
-We received a request to reset the password associated with your StorageBox account. For your security, please follow the instructions below to complete the process:
-
-1. Click on the following link to reset your password:
-${resetUrl}\n\n
-2. This link is valid for the next 10 minutes.
-
-If you did not initiate this password reset, please contact our support team immediately at support@storagebox.com.
-
-Thank you,
-The StorageBox Team`;
+        const resetUrl = `${req.protocol}://localhost:4200/reset-password/${resetToken}`
 
         await sendEmail({
             email: user.email,
             subject: 'Password change request received',
-            message
+            html:`
+            <html>
+            <head>
+            <title>Password Reset Request</title>
+            </head>
+            <body>
+                <h3>Password Reset Request</h3>
+                <p>Dear ${user.username},</p>
+                <p>We have received a request to reset your password for your account with StorageBox. To complete the password reset process, click on the button below:</p>
+                <a href="${resetUrl}" style="text-decoration: none;">
+                <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">Reset Password</button></a>
+                <p>The link will be valid for 5mins.If you did not request a password reset, please ignore this message.</p>
+                <p>Thank you,<br>
+                StorageBox Team</p>
+            </body>
+            </html>`,
         });
 
         res.status(200).json({ message: 'Password reset link sent to user email' });

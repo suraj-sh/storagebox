@@ -24,7 +24,7 @@ const updateUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
-        // Check if the new username is already taken
+        // Check if the new username is provided
         if (req.body.user) {
             // Check if the new username is already taken
             const existingUser = await User.findOne({ username: req.body.user });
@@ -33,7 +33,9 @@ const updateUser = async (req, res) => {
             }
             user.username = req.body.user;
         }
-
+        if (!user.isSeller && (req.files['idProof'] || req.files['documentProof'])) {
+            return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
+        }
         // Update idProof and documentProof only if isSeller is true
         if (user.isSeller) {
             const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
@@ -47,8 +49,6 @@ const updateUser = async (req, res) => {
                 const documentProof = `${basePath}${req.files['documentProof'][0].filename}`;
                 user.documentProof = documentProof;
             }
-        } else {
-            res.status(403).json({ 'message': "Only Authorized owners can access this" });
         }
         await user.save();
         res.status(200).json({ message: "User updated" });
@@ -57,7 +57,52 @@ const updateUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const wrongCredentials=async(req,res)=>{
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
+        }
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
+        if(user.isSeller){
+        const message=`Dear ${user.username},
 
+Upon reviewing the documents you uploaded for verification, we noticed that there were some discrepancies or the documents provided did not meet our authenticity standards. In order to proceed with the activation of your account, we kindly request you to reupload the required documents.
+
+Please follow these steps to reupload the documents:
+
+1. Log in to your account on our platform.
+2. Navigate to your profile page.
+3. Look for the option of documents to upload the new documents.
+4. Click on the upload button to submit the correct documents.
+
+Once you have reuploaded the documents, our team will review them again and proceed with the activation of your account.
+
+We apologize for any inconvenience this may cause and appreciate your cooperation in ensuring the security and authenticity of our platform.
+
+If you have any questions or need further assistance, please do not hesitate to contact us.
+
+Thank you for your understanding and prompt attention to this matter.
+
+Best regards,
+The StorageBox Team`;
+    await sendEmail({
+        email: user.email,
+        subject: 'Document Reupload for Account Activation',
+         message
+        });
+        return res.status(200).json({ message: 'Email sent successfully' });
+    }else{
+        return res.status(401).json({ message: 'Not a seller user' });
+    }
+   
+    }catch(err){
+        console.error('Error updating user roles:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }   
+}
 const updateUserPic = async (req, res) => {
     try {
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
@@ -146,11 +191,12 @@ const changeUserRole = async (req, res) => {
             user.idProof = undefined;
             await user.save();
             const message = `Dear ${user.username},
-We're delighted to inform you that your role on StorageBox has been updated to Seller. This change grants you access to additional features and privileges within our platform, empowering you to put your storage space from the sale and even edit it.
-
-Thank you for your continued support and contributions to the StorageBox community.
+Welcome to StorageBox!
+            
+We're pleased to inform you that your Seller account has been successfully verified. You can now start listing your storage units on our platform.
+            
 Thank you,
-The StorageBox Team`;
+The StorageBox Team`
 
             await sendEmail({
                 email: user.email,
@@ -254,6 +300,7 @@ module.exports = {
     usersCount,
     deleteUser,
     sellerCount,
+    wrongCredentials,
     verifiedSellerCount,
     getSellerUsers,
     changeUserRole,
