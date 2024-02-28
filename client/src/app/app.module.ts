@@ -5,8 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { AuthenticationService } from './services/authentication.service';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthenticationService } from './services/auth.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AuthGuard } from './guards/auth.guard';
@@ -19,8 +18,9 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ProfileService } from './services/profileservice.service';
+import { ProfileService } from './services/profile.service';
 import { AdminModule } from 'src/admin/admin.module';
+import { AdpostComponent } from './components/adpost/adpost.component';
 
 @NgModule({
   
@@ -33,6 +33,7 @@ import { AdminModule } from 'src/admin/admin.module';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ProfileComponent,
+    AdpostComponent,
     
   ],
   imports: [
@@ -47,7 +48,6 @@ import { AdminModule } from 'src/admin/admin.module';
   ],
   providers: [
     AuthenticationService,
-    CookieService,
     ProfileService,
     AuthGuard,
     {

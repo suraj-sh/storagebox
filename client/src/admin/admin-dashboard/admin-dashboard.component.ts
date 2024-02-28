@@ -11,10 +11,11 @@ import Swal from 'sweetalert2';
 export class AdminDashboardComponent {
 
   sellers: any[] = [];
-  userCount: any;
-  sellerCount: any;
-  verifiedCount: any;
-  notVerifiedCount: number = 0;
+  userCount: number;
+  sellerCount: number;
+  verifiedCount: number;
+  notVerifiedCount: number;
+  showSpinner = false;
 
   constructor(private adminService: AdminService, private router: Router) { }
 
@@ -85,13 +86,18 @@ export class AdminDashboardComponent {
 
   loadVerifiedCount() {
     this.adminService.getVerifiedCount().subscribe((response: any) => {
-      this.verifiedCount = response.count;
-      // Calculate the difference between seller count and verified count
+      // Filter the sellers array to include only active sellers who are verified
+      const verifiedSellers = this.sellers.filter(seller => seller.isSeller && seller.isActiveSeller);
+      // Count the number of verified sellers
+      this.verifiedCount = verifiedSellers.length;
+      // Calculate the number of not verified sellers
       this.notVerifiedCount = this.sellerCount - this.verifiedCount;
     });
   }
 
   verifySeller(userId: string) {
+
+    this.showSpinner = true;
     this.adminService.changeUserToSeller(userId).subscribe(
       (res) => {
         Swal.fire({
@@ -100,6 +106,10 @@ export class AdminDashboardComponent {
           iconColor: '#00ff00',
         }).then(() => {
           this.loadSellers();
+          this.loadCount();
+          this.loadSellerCount();
+          this.loadVerifiedCount();
+          this.showSpinner = false;
         });
       },
     );

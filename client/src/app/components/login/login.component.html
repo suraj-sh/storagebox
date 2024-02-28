@@ -17,6 +17,14 @@
           <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
         </div>
 
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+          <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+            [fullScreen]="true">
+            <p style="color: white"> Sending... </p>
+          </ngx-spinner>
+        </div>
+
         <div class="checkbox-text">
           <a routerLink="/forgot-password" class="text">Forgot password?</a>
         </div>

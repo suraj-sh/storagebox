@@ -1,0 +1,50 @@
+<div class="container">
+    <div class="title">Post an Ad</div>
+    <div class="content">
+        <form action="#">
+            <div class="user-details">
+
+                <!-- File input container -->
+                <div class="file-upload-container">
+                    <span class="details">Upload Images</span>
+                    <label for="imageInput" class="file-upload-button">Select Images</label>
+                    <input #imageInput type="file" (change)="handleFileInput($event)" accept="image/*" multiple required>
+                </div>
+
+                <!-- Image preview container -->
+                <div class="image-preview">
+                    <img *ngFor="let preview of imagePreviews" [src]="preview" alt="Preview">
+                </div>
+                <div class="input-box">
+                    <!-- <span class="details">Title</span> -->
+                    <input type="text" placeholder="Enter Ad title" required>
+                </div>
+                <div class="input-box">
+                    <!-- <span class="details">Description</span> -->
+                    <input type="text" placeholder="Enter description (For e.g. Location, Dimensions)" required>
+                </div>
+                <div class="input-box">
+                    <!-- <span class="details">Price</span> -->
+                    <input type="text" placeholder="Enter price" required>
+                </div>
+                <div class="input-box">
+                    <!-- <span class="details">City</span> -->
+                    <input type="text" placeholder="Enter city" required>
+                </div>
+                <!-- Category -->
+                <div class="input-box">
+                    <!-- <span class="details">Category</span> -->
+                    <select name="category" required>
+                        <option value="" disabled selected>Select category</option>
+                        <option value="Self Storage">Self Storage (Small Storage Space)</option>
+                        <option value="Document Storage">Document Storage (Locker Based Unit)</option>
+                        <option value="Commercial Storage">Commercial Storage (Larger Storage Space)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button">
+                <input type="submit" value="POST AD">
+            </div>
+        </form>
+    </div>
+</div>

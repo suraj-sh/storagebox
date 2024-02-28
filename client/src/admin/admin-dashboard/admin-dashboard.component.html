@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <h3 class="header">Dashboard</h3>
+        <h3 class="header">{{ isUserManagementVisible ? 'User Management' : 'Dashboard' }}</h3>
 
         <div class="values">
             <div class="val-box">
@@ -70,8 +70,16 @@
             </div>
         </div>
 
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+            <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+                [fullScreen]="true">
+                <p style="color: white"> Sending... </p>
+            </ngx-spinner>
+        </div>
+
         <!-- Seller Details Board -->
-        <div class="board" *ngIf="isDashboardVisible">
+        <div class="board" *ngIf="isDashboardVisible && !isUserManagementVisible">
             <table>
                 <thead>
                     <tr>
@@ -80,18 +88,32 @@
                         <td class="people-des">ID Proof</td>
                         <td class="people-des">Document Proof</td>
                         <td class="active-st">Active Status</td>
-                        <td class="verify">Verify</td>
+                        <td class="verify">Action</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let seller of sellers">
                         <td>{{ seller._id }}</td>
                         <td>{{ seller.username }}</td>
-                        <td><a [href]="seller.idProof" target="_blank" class="view-link">View</a></td>
-                        <td><a [href]="seller.documentProof" target="_blank" class="view-link">View</a></td>
+                        <td>
+                            <ng-container *ngIf="!seller.isActiveSeller">
+                                <a [href]="seller.idProof" target="_blank" class="view-link">View</a>
+                            </ng-container>
+                            <span *ngIf="seller.isActiveSeller && !seller.verifiedIdProof"
+                                class="verified-text">Verified</span>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="!seller.isActiveSeller">
+                                <a [href]="seller.documentProof" target="_blank" class="view-link">View</a>
+                            </ng-container>
+                            <span *ngIf="seller.isActiveSeller && !seller.verifiedDocumentProof"
+                                class="verified-text">Verified</span>
+                        </td>
                         <td [class.active]="seller.isActiveSeller">{{ seller.isActiveSeller ? 'Active' : 'Inactive' }}
                         </td>
-                        <td><button (click)="verifySeller(seller._id)" class="verify-button">Verify</button></td>
+                        <td>
+                            <button *ngIf="!seller.isActiveSeller" (click)="verifySeller(seller._id)" class="verify-button">Verify</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

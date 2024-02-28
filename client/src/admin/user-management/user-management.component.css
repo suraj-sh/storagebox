@@ -22,6 +22,10 @@ tbody tr td {
     padding: 10px 15px;
 }
 
+.role{
+    cursor: pointer;
+}
+
 /* Custom button style */
 .delete-btn {
     padding: 8px 16px;

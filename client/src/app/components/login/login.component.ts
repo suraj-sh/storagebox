@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../services/authentication.service';
+import { AuthenticationService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   passwordVisible = false;
+  showSpinner = false;
 
   constructor(
     private authService: AuthenticationService,
@@ -35,6 +36,9 @@ export class LoginComponent implements OnInit {
     
     console.log(formData);
 
+    // Show spinner
+    this.showSpinner = true;
+
     this.authService.loginUser(formData).subscribe(
       (res) => {
         Swal.fire({
@@ -44,6 +48,7 @@ export class LoginComponent implements OnInit {
           confirmButtonText: 'Continue',
           iconColor: '#00ff00',
         }).then(() => {
+          this.showSpinner = false;
           this.router.navigate(['']);
           this.loginForm.reset();
         });
