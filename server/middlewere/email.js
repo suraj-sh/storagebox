@@ -16,7 +16,8 @@ const sendEmail = async (options) => {
         from: 'StorageBox support <support@storagebox.com>',
         to: options.email,
         subject: options.subject,
-        text: options.message
+        text: options.message,
+        html:options.html
     };
 
     await transporter.sendMail(emailOptions);

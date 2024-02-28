@@ -28,6 +28,9 @@ router.route('/change-role/:id')
 router.route('/change-role-user/:id')
 .put(verifyRoles(ROLES_LIST.Admin),userController.changeEditorRole);
 
+router.route('/email/:id')
+.post(verifyRoles(ROLES_LIST.Admin),userController.wrongCredentials);
+
 router.route('/:id')
 .get(userController.getUser)
 .put(uploadDocument.fields([
