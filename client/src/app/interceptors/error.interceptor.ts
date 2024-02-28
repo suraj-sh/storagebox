@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
 import Swal from 'sweetalert2';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor() { }
+
+  constructor(private spinner: NgxSpinnerService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.spinner.show(); // Show spinner before making the request
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -69,6 +72,9 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // Swal.fire('Error', errorMessage, 'error');
         return throwError(error);
+      }),
+      finalize(() => {
+        this.spinner.hide(); // Hide spinner after request completes
       })
     );
   }

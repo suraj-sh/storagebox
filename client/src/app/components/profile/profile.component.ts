@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProfileService } from '../../services/profile.service';
+import { AuthenticationService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -6,51 +9,147 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+  
+  userDetailsForm: FormGroup;
+  userProfile: any;
+  imageFile: File | string = '';
+  isEditMode: boolean = false;
+  userRole: string = ''; // Add userRole property
 
-  profileData: any = {};
+  constructor(private formBuilder: FormBuilder, private profileService: ProfileService,
+    private authService: AuthenticationService) { }
 
   ngOnInit(): void {
-    // Load stored profile data when the component initializes
-    this.getStoredProfileData();
+    this.userDetailsForm = this.formBuilder.group({
+      username: [''],
+      email: [''],
+      image: ['']
+    });
+
+    this.loadUserProfile(); // Load user profile initially
+    this.userDetailsForm.disable(); // Disable form fields initially  
   }
 
-  getStoredProfileData(): void {
-    const storedData = localStorage.getItem('profileData');
-    this.profileData = storedData ? JSON.parse(storedData) : {};
+  editProfile(): void {
+    this.isEditMode = true;
+    this.userDetailsForm.enable();
+    this.userDetailsForm.get('email')?.disable();
+  }
+
+  discardChanges(): void {
+    this.userDetailsForm.reset(this.userProfile);
+    this.isEditMode = false;
+    this.userDetailsForm.disable();
   }
 
   saveProfile(): void {
-    // Validate password
-    if (this.profileData.password && this.profileData.password.length < 8) {
-      alert('Password must be at least 8 characters long.');
+    const decodedToken = this.authService.decodeToken();
+    const userId = decodedToken?.userId;
+    if (!userId) {
+      console.error('User ID not found.');
       return;
     }
 
-    // Save profile data to localStorage
-    localStorage.setItem('profileData', JSON.stringify(this.profileData));
-    alert('Profile saved successfully!');
+    // Update username and email
+    const updatedUserDetails = {
+      username: this.userDetailsForm.get('username')?.value,
+      // email: this.userDetailsForm.get('email')?.value
+    };
+
+    this.profileService.updateUser(userId, updatedUserDetails).subscribe(
+      () => {
+        alert('Profile details updated successfully!');
+        this.loadUserProfile(); // Reload user profile after updating details
+        this.isEditMode = false;
+      },
+      (error: any) => {
+        console.error('Error updating profile details:', error);
+        alert('Failed to update profile details. Please try again later.');
+      }
+    );
   }
 
-  updateProfile(): void {
-    // Load stored profile data before updating
-    this.getStoredProfileData();
-    alert('Profile data updated! You can now make changes and click "Save Profile".');
+  loadUserProfile(): void {
+    const decodedToken = this.authService.decodeToken();
+    if (decodedToken) {
+      const userId = decodedToken.userId;
+      const userRole = decodedToken.role;
+      this.profileService.getUser(userId).subscribe(
+        (userData: any) => {
+          this.userProfile = userData;
+          this.userRole = userRole;
+          this.userDetailsForm.patchValue({
+            username: this.userProfile.username,
+            email: this.userProfile.email,
+            image: this.userProfile.image
+          });
+        },
+        (error: any) => {
+          console.error('Error fetching user details:', error);
+          alert('Failed to fetch user details. Please try again later.');
+        }
+      );
+    } else {
+      console.error('User token not found.');
+    }
   }
 
   loadProfilePicture(event: any): void {
-    const input = event.target;
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.profileData.profilePicture = reader.result as string;
-    };
-    reader.readAsDataURL(input.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const decodedToken = this.authService.decodeToken();
+      const userId = decodedToken?.userId;
+
+      if (!userId) {
+        console.error('User ID not found.');
+        return;
+      }
+
+      this.profileService.updateUserPic(userId, formData).subscribe(
+        () => {
+          // alert('Profile image updated successfully!');
+          this.loadUserProfile(); // Reload user profile after updating image
+        },
+        (error: any) => {
+          console.error('Error updating profile image:', error);
+          alert('Failed to update profile image. Please try again later.');
+        }
+      );
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.userDetailsForm.patchValue({
+          image: reader.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
-  hasProfilePicture(): boolean {
-    return !!this.profileData.profilePicture;
-  }
+
   removeProfilePicture(): void {
-    this.profileData.profilePicture = '';
-  }
-  }
+    const decodedToken = this.authService.decodeToken();
+    const userId = decodedToken?.userId;
+    if (!userId) {
+      console.error('User ID not found.');
+      return;
+    }
 
+    this.profileService.deleteUserPic(userId).subscribe(
+      () => {
+        // Reset the image file and clear the 'image' form control
+        this.imageFile = '';
+        this.userDetailsForm.patchValue({
+          image: ''
+        });
+      },
+      (error: any) => {
+        console.error('Error deleting profile picture:', error);
+        alert('Failed to delete profile picture. Please try again later.');
+      }
+    );
+  }
+}

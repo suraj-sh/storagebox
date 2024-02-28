@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '../../services/authentication.service';
+import { AuthenticationService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
+  showSpinner = false;
   passwordVisible = false;
   token: string;
 
@@ -52,15 +53,18 @@ export class ResetPasswordComponent implements OnInit {
       password: this.resetPasswordForm.value.password,
     };
 
+    this.showSpinner = true;
     this.authService.resetPassword(resetObj).subscribe(
-      (res: any) => {
+      (res) => {
         Swal.fire({
           title: 'Password Reset Successful',
           text: 'Your password has been reset successfully.',
           icon: 'success',
           confirmButtonText: 'Login',
+        }).then(() => {
+          this.showSpinner = false;
+          this.router.navigate(['/login']);
         });
-        this.router.navigate(['/login']);
       }
     );
   }

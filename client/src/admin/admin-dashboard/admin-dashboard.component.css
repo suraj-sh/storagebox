@@ -269,6 +269,11 @@ tbody tr td{
     color: #2b2b2b;
 }
 
+.verified-text{
+    color: rgb(43, 189, 43);
+    font-weight: bold;
+}
+
 .view-link {
     color: #007bff;
     font-weight: 600;

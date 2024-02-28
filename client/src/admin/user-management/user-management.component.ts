@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import Swal from 'sweetalert2';
 import { AdminService } from '../admin.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-management',
@@ -10,8 +10,20 @@ import { AdminService } from '../admin.service';
 export class UserManagementComponent {
 
   users: any[] = [];
+  sortByRoleOrder: boolean = false;
+  showSpinner = false;
 
   constructor(private adminService: AdminService) { }
+
+  toggleRoleOrder(): void {
+    this.sortByRoleOrder = !this.sortByRoleOrder;
+    // Sort the users array based on the role
+    if (this.sortByRoleOrder) {
+      this.users.sort((a, b) => a.isSeller ? -1 : 1); // Sort by role (Owner first)
+    } else {
+      this.users.sort((a, b) => a.isSeller ? 1 : -1); // Sort by role (Renter first)
+    }
+  }
 
   ngOnInit() {
     this.loadUsers();
@@ -24,6 +36,7 @@ export class UserManagementComponent {
   }
 
   removeUser(userId: string) {
+    this.showSpinner = true;
     this.adminService.deleteUser(userId).subscribe(
       (res) => {
         Swal.fire({
@@ -32,6 +45,7 @@ export class UserManagementComponent {
           iconColor: '#00ff00',
         }).then(() => {
           this.loadUsers();
+          this.showSpinner = false;
         });
       },
     );

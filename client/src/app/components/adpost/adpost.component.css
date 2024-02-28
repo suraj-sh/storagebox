@@ -1,0 +1,209 @@
+ .container {
+     max-width: 500px;
+     width: 100%;
+     background-color: #fff;
+     padding: 25px 30px;
+     border-radius: 5px;
+     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+     margin: 2vw auto;
+ }
+
+ .container .title {
+     font-size: 25px;
+     font-weight: 500;
+     position: relative;
+ }
+
+ .container .title::before {
+     content: "";
+     position: absolute;
+     left: 0;
+     bottom: 0;
+     height: 3px;
+     width: 30px;
+     border-radius: 5px;
+     background: linear-gradient(135deg, #71b7e6, #9b59b6);
+ }
+
+
+ .user-details .file-upload-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.user-details .file-upload-container input[type=file] {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.user-details .file-upload-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #9b59b6;
+    color: #fff;
+    border-radius: 5px;
+    margin-left: 15px;
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.image-preview img {
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: transform 0.3s ease;
+}
+
+.image-preview img:hover {
+    transform: scale(1.1);
+}
+
+.additional-images {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #333;
+}
+
+
+
+ .content form .user-details {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: space-between;
+     margin: 20px 0 12px 0;
+ }
+
+ form .user-details .input-box {
+     margin-bottom: 15px;
+     width: calc(100% - 20px);
+ }
+
+ form .input-box span.details {
+     display: block;
+     font-weight: 500;
+     margin-bottom: 5px;
+ }
+
+ .user-details .input-box input {
+     height: 45px;
+     width: 100%;
+     outline: none;
+     font-size: 16px;
+     border-radius: 5px;
+     padding-left: 15px;
+     border: 1px solid #ccc;
+     border-bottom-width: 2px;
+     transition: all 0.3s ease;
+ }
+
+ .user-details .input-box input:focus,
+ .user-details .input-box input:valid {
+     border-color: #9b59b6;
+ }
+
+ form .category {
+     display: flex;
+     width: 80%;
+     margin: 14px 0;
+     justify-content: space-between;
+ }
+
+ form .category label {
+     display: flex;
+     align-items: center;
+     cursor: pointer;
+ }
+
+ /* Dropdown container styling */
+.input-box select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #fff; /* Dropdown background color */
+    color: #555; /* Dropdown text color */
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+}
+
+/* Option styling */
+.input-box select option {
+    background-color: #f9f9f9; /* Option background color */
+    color: #333; /* Option text color */
+    padding: 10px;
+}
+
+/* Hover effect for options */
+.input-box select option:hover {
+    background-color: #e0e0e0; /* Hover background color */
+}
+
+
+ form .button {
+     height: 45px;
+     margin: 20px 0;
+ }
+
+ form .button input {
+     height: 100%;
+     width: 100%;
+     border-radius: 5px;
+     border: none;
+     color: #fff;
+     font-size: 18px;
+     font-weight: 500;
+     letter-spacing: 1px;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     background: linear-gradient(135deg, #71b7e6, #9b59b6);
+ }
+
+ form .button input:hover {
+     background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+ }
+
+ @media(max-width: 600px) {
+     .container {
+         max-width: 380px;
+         margin: 6vw auto;
+     }
+
+     form .user-details .input-box {
+         margin-bottom: 15px;
+         width: 100%;
+     }
+
+     form .category {
+         width: 100%;
+     }
+
+     .content form .user-details {
+         max-height: 300px;
+         overflow-y: scroll;
+     }
+
+     .user-details::-webkit-scrollbar {
+         width: 5px;
+     }
+ }
+
