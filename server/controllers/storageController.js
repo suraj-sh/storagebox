@@ -1,5 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const Storage = require('../model/Storage');
+const path=require('path');
+const fs=require('fs');
 
 const getAllStorage = async (req, res) => {
     try {
@@ -82,56 +84,68 @@ const createNewStorage = async (req, res) => {
         res.status(500).json({ 'message': 'Internal Server Error' }); 
     }
 };
-const updateMultipleImage=async(req,res)=>{
-    if (!req?.body?.name || !req?.body?.description || !req?.body?.address || !req?.body?.category) {
-        return res.status(400).json({ 'message': 'name, description, address, and category name required' });
-    }
-    const files=req.files;
-    let imagePaths=[];
-    const  basePath=`${req.protocol}://${req.get('host')}/public/upload/`;
-    if(files){
-        files.map((file)=>{
-            imagePaths.push(`${basePath}${file.filename}`);
-        })
-    }
-    try{
-    const storage=await Storage.findByIdAndUpdate({_id:req.params.id},
-        {
-            images:imagePaths
-        },
-        {new:true}
-    )
-    if (!storage) return res.status(500).json({ 'message': 'Image cannot be uploaded' });
-    res.status(201).json(storage);
-    } catch (err) {
-    console.log(err);
-    res.status(500).json({ 'message': 'Internal Server Error' }); 
-}
-}
-const deleteImageFromStorage = async (req, res) => {
+const updateMultipleImage = async (req, res) => {
     try {
-        const storage = await Storage.findById(req.params.id);
+        if (!req.params.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
+        }
+        const files = req.files;
+        if (!files || files.length === 0) {
+            return res.status(400).json({ message: 'At least one image is required' });
+        }
+        let imagePaths = [];
+        const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
+        files.forEach(file => {
+            imagePaths.push(`${basePath}${file.filename}`);
+        });
+        const storage = await Storage.findByIdAndUpdate(
+            { _id: req.params.id },
+            { images: imagePaths },
+            { new: true }
+        );
         if (!storage) {
-            return res.status(404).json({ 'message': 'Storage not found' });
+            return res.status(500).json({ message: 'Image cannot be uploaded' });
         }
         if (storage.user.toString() !== req.userId) {
             return res.status(401).send("Not Allowed");
         }
-        const imageIndex = storage.images.findIndex(image => image.endsWith(req.params.imageName));
-
-        if (imageIndex === -1) {
-            return res.status(404).json({ 'message': 'Image not found in the storage' });
-        }
-        // Remove the image path from the images array
-        storage.images.splice(imageIndex, 1);
-        const updatedStorage = await storage.save();
-        res.json(updatedStorage);
-    } catch (error) {
-        console.error('Error deleting image:', error);
-        res.status(500).json({ 'message': 'Internal Server Error' });
+        res.status(201).json(storage);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
+const deleteImageFromStorage = async (req, res) => {
+    try {
+        const storage = await Storage.findById(req.params.id);
+        if (!storage) {
+            return res.status(404).json({ message: 'Storage not found' });
+        }
+        if (storage.user.toString() !== req.userId) {
+            return res.status(401).send('Not Allowed');
+        }       
+        const imageName = req.params.imageName;
+        const imageIndex = storage.images.findIndex(image => image.includes(imageName));
+        if (imageIndex === -1) {
+            return res.status(404).json({ message: 'Image not found in the storage' });
+        }
+        const imagePath = path.join(__dirname, '..', 'public', 'upload',  imageName);
+        fs.unlink(imagePath, async (err) => {
+            if (err) {
+                console.error('Error deleting image file:', err);
+                return res.status(500).json({ message: 'Error deleting image file' });
+            }
+            console.log('Image file deleted successfully');
+            storage.images.splice(imageIndex, 1);
+            await storage.save();
+            return res.json({ message: 'Image deleted successfully', storage });
+        });
+    } catch (error) {
+        console.error('Error deleting image:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
 
 const updateStorage = async (req, res) => {
     try {
