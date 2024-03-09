@@ -61,54 +61,38 @@ const createNewStorage = async (req, res) => {
         return res.status(400).json({ 'message': 'name, description, address, and category name required' });
     }
     try {
-        const storage = await Storage.create({
+        const files = req.files;
+        let imagePaths = [];
+
+        if (files && files.length > 0) {
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
+            files.forEach(file => {
+                imagePaths.push(`${basePath}${file.filename}`);
+            });
+        }
+        const storageData = {
             user: req.userId, 
             name: req.body.name,
             description: req.body.description, 
             city: req.body.city,
             price: req.body.price,
             category: req.body.category,
-            mobileNo:req.body.mobileNo,
-        });        
-        if (!storage) return res.status(500).json({ 'message': 'Storage cannot be created' });
+            mobileNo: req.body.mobileNo,
+        };
+        if (imagePaths.length > 0) {
+            storageData.images = imagePaths;
+        }
+        const storage = await Storage.create(storageData);
+        
+        if (!storage) {
+            return res.status(500).json({ 'message': 'Storage cannot be created' });
+        }
         res.status(201).json(storage);
     } catch (err) {
         console.log(err);
         res.status(500).json({ 'message': 'Internal Server Error' }); 
     }
 };
-const updateMultipleImage = async (req, res) => {
-    try {
-        if (!req.params.id || !mongoose.isValidObjectId(req.params.id)) {
-            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
-        }
-        const files = req.files;
-        if (!files || files.length === 0) {
-            return res.status(400).json({ message: 'At least one image is required' });
-        }
-        let imagePaths = [];
-        const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
-        files.forEach(file => {
-            imagePaths.push(`${basePath}${file.filename}`);
-        });
-        const storage = await Storage.findByIdAndUpdate(
-            { _id: req.params.id },
-            { images: imagePaths },
-            { new: true }
-        );
-        if (!storage) {
-            return res.status(500).json({ message: 'Image cannot be uploaded' });
-        }
-        if (storage.user.toString() !== req.userId) {
-            return res.status(401).send("Not Allowed");
-        }
-        res.status(201).json(storage);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-};
-
 const deleteImageFromStorage = async (req, res) => {
     try {
         const storage = await Storage.findById(req.params.id);
@@ -153,10 +137,19 @@ const updateStorage = async (req, res) => {
         if (storage.user.toString() !== req.userId) {
             return res.status(401).send("Not Allowed");
         }
-        if (!req.body.name && !req.body.description && !req.body.address && !req.body.price && !req.body.category && !req.file) {
+        const files = req.files;
+        let imagePaths = [];
+
+        if (files && files.length > 0) {
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
+            files.forEach(file => {
+                imagePaths.push(`${basePath}${file.filename}`);
+            });
+        }
+        if (!req.body.name && !req.body.description && !req.body.address && !req.body.price && !req.body.category && !files) {
             return res.status(400).json({ 'message': 'At least one field or file should be provided for update' });
         }
-
+       
         let updateFields = {
             name: req.body.name,
             description: req.body.description,
@@ -166,6 +159,9 @@ const updateStorage = async (req, res) => {
             mobileNo:req.body.mobileNo,
             isRented: req.body.isRented
         };
+        if (imagePaths.length > 0) {
+            updateFields.images = imagePaths;
+        }
         const updatedStorage = await Storage.findByIdAndUpdate(
             req.params.id,
             updateFields,
@@ -211,7 +207,6 @@ module.exports = {
     updateStorage,
     deleteStorage,
     storageCount,
-    updateMultipleImage,
     getStorageOfUser,
     deleteImageFromStorage
 }
