@@ -60,19 +60,12 @@ const createNewStorage = async (req, res) => {
     if (!req?.body?.name || !req?.body?.description || !req?.body?.city || !req?.body?.category) {
         return res.status(400).json({ 'message': 'name, description, address, and category name required' });
     }
-    if (!req.file) {
-        return res.status(400).json({ 'message': 'Image file is required' });
-      }
-    
-    const fileName=req.file.filename
-    const basePath=`${req.protocol}://${req.get('host')}/public/upload/`
     try {
         const storage = await Storage.create({
             user: req.userId, 
             name: req.body.name,
             description: req.body.description, 
             city: req.body.city,
-            image: `${basePath}${fileName}`,
             price: req.body.price,
             category: req.body.category,
             mobileNo:req.body.mobileNo,
@@ -173,13 +166,6 @@ const updateStorage = async (req, res) => {
             mobileNo:req.body.mobileNo,
             isRented: req.body.isRented
         };
-
-        // Check if a file is uploaded
-        if (req.file) {
-            const fileName = req.file.filename;
-            const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
-            updateFields.image = `${basePath}${fileName}`;
-        }
         const updatedStorage = await Storage.findByIdAndUpdate(
             req.params.id,
             updateFields,
