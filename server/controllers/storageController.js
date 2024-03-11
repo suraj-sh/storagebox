@@ -7,19 +7,24 @@ const getAllStorage = async (req, res) => {
     try {
         let filter = {};
         if (req.query.categories) {
-            filter = { category: req.query.categories.split(',') };
+            filter.category = { $in: req.query.categories.split(',') };
         }
-        if(req.query.cities){
-            filter = { city: req.query.cities.split(',') };
+        if (req.query.cities) {
+            filter.city = { $in: req.query.cities.split(',') };
         }
-        const storageList = await Storage.find(filter).populate('user' ,'username ').exec();
+        const sortOptions={
+            'high-to-low':{price:-1},
+            'low-to-high':{price:1}
+        }
+        const sortOption=req.query.sort&&sortOptions[req.query.sort]
+        const storageList = await Storage.find(filter).sort(sortOption).populate('user', 'username').exec();
         if (!storageList || storageList.length === 0) {
-            return res.status(204).json({ 'message': 'No Storages found' });
+            return res.status(204).json({ message: 'No Storages found' });
         }
-        
         res.json(storageList);
     } catch (error) {
-        res.status(500).json({ 'message': error.message });
+        console.error('Error fetching storage:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
@@ -99,20 +104,26 @@ const deleteImageFromStorage = async (req, res) => {
         if (!storage) {
             return res.status(404).json({ message: 'Storage not found' });
         }
+        
         if (storage.user.toString() !== req.userId) {
             return res.status(401).send('Not Allowed');
-        }       
-        const imageName = req.params.imageName;
-        const imageIndex = storage.images.findIndex(image => image.includes(imageName));
-        if (imageIndex === -1) {
-            return res.status(404).json({ message: 'Image not found in the storage' });
         }
-        const imagePath = path.join(__dirname, '..', 'public', 'upload',  imageName);
+        
+        const imageIndex = parseInt(req.params.imageIndex);
+        if ( imageIndex < 0 || imageIndex >= storage.images.length) {
+            return res.status(404).json({ message: 'Invalid image index' });
+        }
+        const imageUrl = storage.images[imageIndex];
+        const filename=imageUrl.substring(imageUrl.lastIndexOf('/')+1)
+        const imagePath = path.join(__dirname, '..', 'public', 'upload', filename);
+        console.log('Attempting to delete image at path:', imagePath);
+
         fs.unlink(imagePath, async (err) => {
             if (err) {
                 console.error('Error deleting image file:', err);
                 return res.status(500).json({ message: 'Error deleting image file' });
             }
+
             console.log('Image file deleted successfully');
             storage.images.splice(imageIndex, 1);
             await storage.save();
@@ -123,6 +134,7 @@ const deleteImageFromStorage = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 
 const updateStorage = async (req, res) => {
     try {
@@ -145,6 +157,9 @@ const updateStorage = async (req, res) => {
             files.forEach(file => {
                 imagePaths.push(`${basePath}${file.filename}`);
             });
+            if (storage.images.length + files.length > 8) {
+                return res.status(400).json({ 'message': 'Cannot add more than 8 images' });
+            }
         }
         if (!req.body.name && !req.body.description && !req.body.address && !req.body.price && !req.body.category && !files) {
             return res.status(400).json({ 'message': 'At least one field or file should be provided for update' });
@@ -160,7 +175,7 @@ const updateStorage = async (req, res) => {
             isRented: req.body.isRented
         };
         if (imagePaths.length > 0) {
-            updateFields.images = imagePaths;
+            updateFields.$push ={images:{$each:imagePaths}};
         }
         const updatedStorage = await Storage.findByIdAndUpdate(
             req.params.id,

@@ -12,7 +12,7 @@ router.route('/')
 router.route('/user')
 .get(verifyToken,verifyRoles(ROLES_LIST.Editor),storageController.getStorageOfUser);
 
-router.route('/images/:id/:imageName')
+router.route('/images/:id/:imageIndex')
 .delete(verifyToken,verifyRoles(ROLES_LIST.Editor),verifyToken, storageController.deleteImageFromStorage);
 
 router.route('/:id')
