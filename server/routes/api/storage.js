@@ -7,21 +7,18 @@ const verifyToken = require('../../middlewere/verifyJWT');
 const uploadOptions = require('../../middlewere/uploadImage');
 router.route('/')
 .get(storageController.getAllStorage)
-.post(verifyToken,verifyRoles(ROLES_LIST.Editor), uploadOptions.single('image'),storageController.createNewStorage)
+.post(verifyToken,verifyRoles(ROLES_LIST.Editor), uploadOptions.array('images',8),storageController.createNewStorage)
 
 router.route('/user')
 .get(verifyToken,verifyRoles(ROLES_LIST.Editor),storageController.getStorageOfUser);
 
-router.route('/images/:id')
-.put(verifyToken,verifyRoles(ROLES_LIST.Editor),uploadOptions.array('images',8),storageController.updateMultipleImage);
-
-router.route('/images/:id/:imageName')
+router.route('/images/:id/:imageIndex')
 .delete(verifyToken,verifyRoles(ROLES_LIST.Editor),verifyToken, storageController.deleteImageFromStorage);
 
 router.route('/:id')
 .get(storageController.getStorage)
 .delete(verifyToken,verifyToken,verifyRoles(ROLES_LIST.Editor,ROLES_LIST.Admin),storageController.deleteStorage)
-.put(verifyToken,verifyRoles(ROLES_LIST.Editor),uploadOptions.single('image'),storageController.updateStorage)
+.put(verifyToken,verifyRoles(ROLES_LIST.Editor),uploadOptions.array('images',8),storageController.updateStorage)
 
 router.route('/get/count')
 .get(verifyToken,verifyRoles(ROLES_LIST.Admin),storageController.storageCount);

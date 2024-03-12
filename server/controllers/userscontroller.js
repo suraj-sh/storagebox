@@ -1,9 +1,11 @@
 const { default: mongoose } = require('mongoose');
 const User = require('../model/User');
 const { sendEmail } = require('../middlewere/email');
+const path=require('path');
+const fs=require('fs');
 
 const getAllUser = async (req, res) => {
-    const userList = await User.find().select('-password').exec();
+    const userList = await User.find({ "roles.Admin": { $ne: 515 } }).select('-password').exec();
     if (!userList) return res.sendStatus(204).json({ 'message': 'No users found' });
     res.json(userList);
 }
@@ -17,23 +19,29 @@ const getUser = async (req, res) => {
 }
 const updateUser = async (req, res) => {
     try {
+        // Check if the ID parameter is valid
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
             return res.status(400).json({ 'message': 'Correct ID parameter is required' });
-        }
+        }       
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
+        }    
+        if (req.userId !== req.params.id) {
+            return res.status(403).json({ 'message': 'Unauthorized' });
         }
         // Check if the new username is provided
-        if (req.body.user) {
+        if (req.body.username) {
             // Check if the new username is already taken
-            const existingUser = await User.findOne({ username: req.body.user });
+            const existingUser = await User.findOne({ username: req.body.username });
             if (existingUser && existingUser._id.toString() !== req.params.id) {
                 return res.status(400).json({ 'message': 'Username is already taken' });
             }
-            user.username = req.body.user;
+            user.username = req.body.username;
+        } else {
+            return res.status(400).json({ message: "At least username required" });
         }
-        if (!user.isSeller && (req.files['idProof'] || req.files['documentProof'])) {
+        if (!user.isSeller && req.files) {
             return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
         }
         // Update idProof and documentProof only if isSeller is true
@@ -51,12 +59,13 @@ const updateUser = async (req, res) => {
             }
         }
         await user.save();
-        res.status(200).json({ message: "User updated" });
+        res.status(200).json({ message: "User updated"});
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({ message: error.message });
     }
 };
+
 const wrongCredentials=async(req,res)=>{
     try {
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
@@ -134,10 +143,17 @@ const deleteUserPic = async (req, res) => {
             return res.status(404).json({ 'message': 'User not found' });
         }
         if (user.image) {
-            // Delete the existing profile picture (optional, depending on your use case)
-            user.image = undefined;
-            await user.save();
-            return res.status(200).json({ message: 'Profile picture deleted successfully' });
+            const imagePath = path.join(__dirname, '../public/upload', path.basename(user.image));
+            fs.unlink(imagePath, (err) => {
+                if (err) {
+                    console.error('Error deleting image file:', err);
+                    return res.status(500).json({ message: 'Error deleting image file' });
+                }
+                console.log('Image file deleted successfully');
+                user.image = undefined;
+                user.save();
+                return res.status(200).json({ message: 'Profile picture deleted successfully' });
+            });
         } else {
             return res.status(404).json({ message: 'User does not have a profile picture' });
         }
@@ -145,7 +161,6 @@ const deleteUserPic = async (req, res) => {
         console.error(error);
         return res.status(500).json({ message: 'Server error' });
     }
-
 }
 const usersCount = async (req, res) => {
     try {
@@ -161,7 +176,7 @@ const usersCount = async (req, res) => {
 
 const sellerCount = async (req, res) => {
     try {
-        const sellerCount = await User.countDocuments({ isSeller: true });
+        const sellerCount = await User.countDocuments({ isSeller: true },{ "roles.Admin": { $ne: 515 } });
         res.send({ count: sellerCount });
     } catch (error) {
         console.error('Error counting sellers:', error);
@@ -187,8 +202,16 @@ const changeUserRole = async (req, res) => {
         if (user.isSeller) {
             user.roles = { Editor: 1320 };
             user.isActiveSeller = true;
-            user.documentProof = undefined;
-            user.idProof = undefined;
+            if (user.documentProof) {
+                const documentPath = path.join(__dirname, '..', 'public', 'document', user.documentProof);
+                fs.unlinkSync(documentPath);
+                user.documentProof = undefined;
+            }
+            if (user.idProof) {
+                const idProofPath = path.join(__dirname, '..', 'public', 'document', user.idProof);
+                fs.unlinkSync(idProofPath);
+                user.idProof = undefined;
+            }
             await user.save();
             const message = `Dear ${user.username},
 Welcome to StorageBox!
@@ -269,8 +292,11 @@ const deleteIdProof = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
+        } if (user.idProof) {
+            const idProofPath = path.join(__dirname, '..', 'public', 'document', user.idProof);
+            fs.unlinkSync(idProofPath);
+            user.idProof = undefined;
         }
-        user.idProof = undefined;
         await user.save();
         res.json({ 'message': 'IdProof deleted successfully' });
     } catch (error) {
@@ -285,7 +311,11 @@ const deleteDocumentProof = async (req, res) => {
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
-        user.documentProof = undefined;
+        if (user.documentProof) {
+            const documentPath = path.join(__dirname, '..', 'public', 'document', user.documentProof);
+            fs.unlinkSync(documentPath);
+            user.documentProof = undefined;
+        }
         await user.save();
         res.json({ 'message': 'documentProof deleted successfully' });
     } catch (error) {

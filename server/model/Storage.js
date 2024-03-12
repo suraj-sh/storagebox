@@ -21,10 +21,6 @@ const storageSchema=new Schema({
         type:Number,
         required:true,
     },
-    image:{
-        type:String,
-        default:'',
-    },
     images:[{
         type:String
     }],
