@@ -50,13 +50,15 @@ input[type="file"] {
     margin-top: 220px;
 }
 
-.upload-button {
+.upload-button,
+.remove-button {
     position: relative;
     background-color: #007bff;
     color: #fff;
     padding: 12px 20px;
     border: none;
     border-radius: 20px;
+    font-weight: bold;
     cursor: pointer;
 }
 
@@ -65,14 +67,7 @@ input[type="file"] {
 }
 
 .remove-button {
-    position: relative;
     background-color: #d11a2a;
-    color: #fff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
 .remove-button:hover {
@@ -109,13 +104,24 @@ input {
     font-size: 1em;
 }
 
+.validation-message {
+    color: red;
+    font-size: 16px;
+    margin-top: -2px;
+    margin-bottom: 5px;
+}
+
+.invalid-input {
+    border-color: red;
+}
+
 .buttons {
     display: flex;
     justify-content:space-between;
     margin-top: 20px;
 }
 
-.profile-button {
+.action-btn {
     font-weight: bold;
     background-color: #007bff;
     color: #fff;
@@ -126,56 +132,10 @@ input {
     margin-bottom: 10px;
 }
 
-.profile-button:hover,
-.upload-button:hover {
+.action-btn:hover {
     background-color: #0056b3;
 }
 
-
-.custom-file-upload {
-    display: flex;
-    align-items: center;
-}
-
-.custom-file-upload input[type="file"] {
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    cursor: pointer;
-}
-
-.custom-file-upload span {
-    border: 2px solid #ccc;
-    display: inline-block;
-    padding: 8px 12px;
-    cursor: pointer;
-    background-color: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-top: 3px;
-}
-
-.custom-file-upload:hover span {
-    border-color: #4070f4;
-}
-
-.custom-file-upload input:active+span {
-    border-color: #265df2;
-}
-
-div[style] {
-    display: none;
-}
-
-div[style=''] {
-    display: block;
-}
 
 @media (max-width: 600px) {
     .container {
@@ -227,5 +187,12 @@ div[style=''] {
         padding: 8px;
         margin-top: 5px;
         margin-bottom: 10px;
+    }
+
+    .validation-message {
+        color: red;
+        font-size: 14px;
+        margin-top: -2px;
+        margin-bottom: 5px;
     }
 }

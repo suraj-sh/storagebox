@@ -1,50 +1,80 @@
 <div class="container">
-    <div class="title">Post an Ad</div>
+    <div class="title">{{ adId ? 'Update' : 'Post' }} Ad</div>
     <div class="content">
-        <form action="#">
+        <form [formGroup]="postForm" enctype="multipart/form-data">
             <div class="user-details">
 
                 <!-- File input container -->
                 <div class="file-upload-container">
-                    <span class="details">Upload Images</span>
+                    <span>Upload Images</span>
                     <label for="imageInput" class="file-upload-button">Select Images</label>
-                    <input #imageInput type="file" (change)="handleFileInput($event)" accept="image/*" multiple required>
+                    <input formControlName="image" id="imageInput" type="file" (change)="handleFileInput($event)"
+                        accept="image/*" multiple required>
                 </div>
 
-                <!-- Image preview container -->
                 <div class="image-preview">
-                    <img *ngFor="let preview of imagePreviews" [src]="preview" alt="Preview">
+                    <div *ngFor="let preview of imagePreviews" class="image-container">
+                        <img [src]="preview" alt="Preview">
+                        <button class="delete-icon" (click)="removeImage(preview)">
+                            <i class="ri-close-fill"></i>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Title -->
                 <div class="input-box">
-                    <!-- <span class="details">Title</span> -->
-                    <input type="text" placeholder="Enter Ad title" required>
+                    <span>Title</span>
+                    <input formControlName="name" name="title" type="text" placeholder="Enter Ad title" required>
                 </div>
+
+                <!-- Description -->
                 <div class="input-box">
-                    <!-- <span class="details">Description</span> -->
-                    <input type="text" placeholder="Enter description (For e.g. Location, Dimensions)" required>
+                    <span>Description</span>
+                    <textarea formControlName="description" name="description"
+                        placeholder="Provide additional details like dimensions of the unit, availability"
+                        (input)="autoResize($event)" required></textarea>
                 </div>
-                <div class="input-box">
-                    <!-- <span class="details">Price</span> -->
-                    <input type="text" placeholder="Enter price" required>
-                </div>
-                <div class="input-box">
-                    <!-- <span class="details">City</span> -->
-                    <input type="text" placeholder="Enter city" required>
-                </div>
+
                 <!-- Category -->
                 <div class="input-box">
-                    <!-- <span class="details">Category</span> -->
-                    <select name="category" required>
+                    <span>Category</span>
+                    <select formControlName="category" name="category" required>
                         <option value="" disabled selected>Select category</option>
                         <option value="Self Storage">Self Storage (Small Storage Space)</option>
                         <option value="Document Storage">Document Storage (Locker Based Unit)</option>
                         <option value="Commercial Storage">Commercial Storage (Larger Storage Space)</option>
                     </select>
                 </div>
+
+                <!-- Price -->
+                <div class="input-box">
+                    <span>Price</span>
+                    <input formControlName="price" name="price" type="text" placeholder="Enter price" required>
+                </div>
+
+                <!-- City -->
+                <div class="input-box">
+                    <span>City</span>
+                    <input formControlName="city" name="city" type="text" placeholder="Enter city" required>
+                </div>
+
+                <!-- Status -->
+                <div class="input-box">
+                    <span>Status</span>
+                    <select formControlName="isRented" name="isRented" required>
+                        <option value="false">Available</option>
+                        <option value="true">Rented</option>
+                    </select>
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="input-box">
+                    <span>Mobile Number</span>
+                    <input formControlName="mobileNo" name="mobile" type="text" placeholder="Enter mobile number" required>
+                </div>
             </div>
-            <div class="button">
-                <input type="submit" value="POST AD">
-            </div>
+
+            <button type="button" (click)="post()">{{ adId ? 'Update' : 'Post' }} AD</button>
         </form>
     </div>
 </div>

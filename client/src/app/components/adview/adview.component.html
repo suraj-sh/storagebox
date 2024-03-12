@@ -1,0 +1,73 @@
+<div class="container">
+
+    <!-- Menu Icon -->
+    <div class="menu-icon" *ngIf="!isSidebarOpen" (click)="toggleSidebar()">
+        <i class="ri-equalizer-line"></i> Filter
+    </div>
+
+    <div class="back-icon" *ngIf="isBackIconVisible" (click)="closeFilters()">
+        <i class="ri-arrow-left-line"></i> Back
+    </div>
+
+    <div class="sidebar" [ngClass]="{ 'show': isSidebarOpen, 'show-close': isBackIconVisible }">
+        <h2>Filters</h2>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <select id="city">
+                <option>Select City</option>
+                <option>Pune</option>
+                <option>Mumbai</option>
+                <option>Bangalore</option>
+                <option>Delhi</option>
+                <option>Hyderabad</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="storageType">Storage Type:</label>
+            <select id="storageType">
+                <option>Select category</option>
+                <option>Self Storage</option>
+                <option>Document Storage</option>
+                <option>Commercial Storage</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sortOption">Order By:</label>
+            <select id="sortOption">
+                <option>Select Price</option>
+                <option>Price - Low to High</option>
+                <option>Price - High to Low</option>
+            </select>
+        </div>
+        <button>Apply Filters</button>
+    </div>
+    
+
+    <div class="cards-container">
+        <div class="card" *ngFor="let ad of ads" (click)="viewAdDetails(ad)">
+            <img [src]="ad.image" alt="Product">
+            <div class="card-content">
+                <h2>{{ ad.category }}</h2>
+                <p class="title">{{ ad.name }}</p>
+                <div class="pd">
+                    <p class="price">&#8377;{{ ad.price }} / Month</p>
+                    <p class="location"><i class="ri-map-pin-line"></i> {{ ad.city }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div class="card">
+            <img src="https://imgs.search.brave.com/_oCn6TGcrPwKZ9wtWafO4BAFjr4EietrkkGWei40N44/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9zdDMu/ZGVwb3NpdHBob3Rv/cy5jb20vMjk0MjMz/OS8zNTIyMy9pLzQ1/MC9kZXBvc2l0cGhv/dG9zXzM1MjIzNDI5/Ni1zdG9jay1waG90/by1zZWxmLXN0b3Jh/Z2UtbWluaS1zdG9y/YWdlLWdhcmFnZS5q/cGc"
+                alt="Product 1">
+            <div class="card-content">
+                <h2>SELF STORAGE</h2>
+                <p class="title">Storage space in Pune</p>
+                <div class="pd">
+                    <p class="price">&#8377;1,000 / Month</p>
+                    <p class="location"><i class="ri-map-pin-line"></i> Pune</p>
+                </div>
+            </div>
+        </div>  -->
+        
+    </div>
+</div>

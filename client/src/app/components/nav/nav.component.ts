@@ -18,7 +18,7 @@ export class NavComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
 
   constructor(private router: Router, private authService: AuthenticationService,
-    private profileService: ProfileService) {
+              private profileService: ProfileService) {
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     this.authService.isLoggedInSubject.next(isLoggedIn);

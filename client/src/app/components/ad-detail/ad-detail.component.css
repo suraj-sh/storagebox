@@ -1,0 +1,120 @@
+.container {
+    width: 95%;
+    margin: 1.5vw auto;
+    height: 75vh;
+    background: white;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.left,
+.right {
+    width: 50%;
+    padding: 30px;
+    border: 1px solid #ccc;
+}
+
+.left{
+    width: 55%;
+    border-right: 1px solid #ccc;
+}
+
+.main_image img {
+    width: 100%;
+    object-fit: contain;
+    padding: 2px;
+    height: 55vh;
+    background: #333;
+}
+
+.option img {
+    width: 100px;
+    height: 90px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.option img:hover {
+    transform: scale(1.1);
+}
+
+.right {
+    padding: 20px 80px;
+}
+
+.title{
+    color: #333;
+    margin: 20px 0;
+    font-size: 30px;
+}
+
+.description{
+    color: #666;
+    font-size: 20px;
+    margin: 20px 0 60px 0;
+}
+
+i{
+    font-size: 30px;
+}
+
+.category,
+.mobile,
+.location,
+.date,
+.posted-by,
+.price,
+.rented{
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.price{
+    color: #458DBA;
+}
+
+.rented{
+    color: green
+}
+
+.dl{
+    display: flex;
+    justify-content: space-between; 
+}
+
+.pa{
+    display: flex;
+    justify-content: space-between; 
+}
+
+.contact{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+@media (max-width: 600px) {
+    .container {
+        margin: 2vw auto;
+        height: calc(85vh - 20px);
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .left,
+    .right {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .option {
+        justify-content: center;
+    }
+}
