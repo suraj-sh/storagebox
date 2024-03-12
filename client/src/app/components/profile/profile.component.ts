@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
 import { AuthenticationService } from 'src/app/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -15,13 +16,19 @@ export class ProfileComponent implements OnInit {
   imageFile: File | string = '';
   isEditMode: boolean = false;
   userRole: string = ''; // Add userRole property
+  showSpinner = false;
 
   constructor(private formBuilder: FormBuilder, private profileService: ProfileService,
     private authService: AuthenticationService) { }
 
+  // Common getter function for the form inputs 
+   get userForm() {
+    return this.userDetailsForm.get('username');
+  }
+
   ngOnInit(): void {
     this.userDetailsForm = this.formBuilder.group({
-      username: [''],
+      username: ['', Validators.minLength(6)],
       email: [''],
       image: ['']
     });
@@ -56,15 +63,22 @@ export class ProfileComponent implements OnInit {
       // email: this.userDetailsForm.get('email')?.value
     };
 
+    // Show spinner
+    this.showSpinner = true;
+
     this.profileService.updateUser(userId, updatedUserDetails).subscribe(
       () => {
-        alert('Profile details updated successfully!');
-        this.loadUserProfile(); // Reload user profile after updating details
-        this.isEditMode = false;
-      },
-      (error: any) => {
-        console.error('Error updating profile details:', error);
-        alert('Failed to update profile details. Please try again later.');
+        Swal.fire({
+          title: 'Success',
+          text: 'Profile Updated Successfully',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.loadUserProfile(); // Reload user profile after updating details
+          this.isEditMode = false;
+          this.showSpinner = false;
+        });
       }
     );
   }

@@ -21,6 +21,11 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileService } from './services/profile.service';
 import { AdminModule } from 'src/admin/admin.module';
 import { AdpostComponent } from './components/adpost/adpost.component';
+import { AdpostService } from './services/adpost.service';
+import { AdviewComponent } from './components/adview/adview.component';
+import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
+import { DatePipe } from '@angular/common';
+import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.component';
 
 @NgModule({
   
@@ -34,6 +39,9 @@ import { AdpostComponent } from './components/adpost/adpost.component';
     ResetPasswordComponent,
     ProfileComponent,
     AdpostComponent,
+    AdviewComponent,
+    AdDetailComponent,
+    AdDashboardComponent,
     
   ],
   imports: [
@@ -49,7 +57,9 @@ import { AdpostComponent } from './components/adpost/adpost.component';
   providers: [
     AuthenticationService,
     ProfileService,
+    AdpostService,
     AuthGuard,
+    DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

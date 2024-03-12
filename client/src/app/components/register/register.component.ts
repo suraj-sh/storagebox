@@ -16,6 +16,7 @@ export class RegisterComponent {
   showSpinner = false;
   filesIdProof: File | null = null;
   filesStorageProof: File | null = null;
+  showTooltip = false;
 
   // Common getter function for the form inputs 
   get form() {
@@ -72,6 +73,10 @@ export class RegisterComponent {
   prevStep() {
     this.currentStep--;
   }
+
+  toggleTooltip(tooltipId: string) {
+    this.showTooltip = !this.showTooltip;
+}
 
   sendVerificationCode() {
 

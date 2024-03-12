@@ -17,19 +17,31 @@
             </div>
         </div>
 
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+            <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+              [fullScreen]="true">
+              <p style="color: white"> Sending... </p>
+            </ngx-spinner>
+        </div>
+
         <div class="right">
             <h4>User Profile</h4>
             <div class="role-info">Signed in as: {{ userRole }}</div>
             <label for="name">User Name</label>
-            <input formControlName="username" id="name" type="text" placeholder="User Name" autocomplete="name">
+            <input formControlName="username" id="name" type="text" placeholder="User Name" autocomplete="name"
+                [ngClass]="{ 'invalid-input': userForm?.invalid && userForm?.touched }">
+            <div *ngIf="userForm?.touched">
+                <div *ngIf="userForm?.hasError('minlength')" class="validation-message">
+                    **Username must be at least 6 characters**</div>
+            </div>
             <label for="email">Email ID</label>
             <input formControlName="email" id="email" type="text" placeholder="Enter Email ID" autocomplete="email">
 
             <div class="buttons">
-                <button *ngIf="!isEditMode" class="profile-button" type="button" (click)="editProfile()">Edit</button>
-                <button *ngIf="isEditMode" class="profile-button" type="button" (click)="saveProfile()">Save</button>
-                <button *ngIf="isEditMode" class="profile-button" type="button"
-                    (click)="discardChanges()">Discard</button>
+                <button *ngIf="!isEditMode" class="action-btn" type="button" (click)="editProfile()">Edit</button>
+                <button *ngIf="isEditMode" class="action-btn" type="button" (click)="saveProfile()" [disabled]="userForm?.invalid || userForm?.pristine">Save</button>
+                <button *ngIf="isEditMode" class="action-btn" type="button" (click)="discardChanges()">Discard</button>
             </div>
 
         </div>

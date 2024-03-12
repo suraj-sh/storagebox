@@ -1,4 +1,4 @@
-.content {
+main {
     height: calc(100% - 100px);
     width: 100%;
     display: flex;
@@ -29,7 +29,7 @@
     margin-bottom: 3vw;
 }
 
-.content button {
+button {
     font-size: 1.2vw;
     padding: 1.1vw 2.1vw;
     background-color: rgb(69, 141, 186);
@@ -37,6 +37,11 @@
     border: none;
     border-radius: 5px;
     font-weight: 700;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: #326B95;
 }
 
 .right {
@@ -50,7 +55,7 @@
 }
 
 @media (max-width: 600px) {
-    .content {
+    main {
         height: calc(100% - 60px);
         flex-direction: column;
     }
@@ -78,7 +83,7 @@
         margin-bottom: 6vw;
     }
 
-    .content button {
+    button {
         padding: 3vw 6vw;
         border-radius: 3px;
         font-weight: 600;
