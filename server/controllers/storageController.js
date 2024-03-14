@@ -12,6 +12,7 @@ const getAllStorage = async (req, res) => {
         if (req.query.cities) {
             filter.city = { $in: req.query.cities.split(',') };
         }
+        filter.isRented = false;
         const sortOptions={
             'high-to-low':{price:-1},
             'low-to-high':{price:1}
@@ -21,7 +22,9 @@ const getAllStorage = async (req, res) => {
         if (!storageList || storageList.length === 0) {
             return res.status(204).json({ message: 'No Storages found' });
         }
+        
         res.json(storageList);
+        
     } catch (error) {
         console.error('Error fetching storage:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -192,17 +195,33 @@ const updateStorage = async (req, res) => {
     }
 };
 
-const deleteStorage= async (req,res)=>{
-    if(!req?.params?.id||!mongoose.isValidObjectId(req.params.id)){
-        res.status(400).json({'message':`Correct ID is required`});
+const deleteStorage = async (req, res) => {
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({'message': `Correct ID is required`});
         }
-    const storage=await Storage.findByIdAndDelete({_id:req.params.id}).exec();
-    if(!storage){
-        res.sendStatus(204).json({'message':`No employee matches ID ${req.body.id}`});
+        const storage = await Storage.findByIdAndDelete({_id: req.params.id}).exec();
+        if (!storage) {
+            return res.status(404).json({'message': `No Storage matches ID ${req.body.id}`});
+        }
+        // Delete images asynchronously
+        storage.images.forEach(async (image) => {
+            const imagePath = path.join(__dirname, '..', 'public', 'upload', image);
+            try {
+                await fs.promises.unlink(imagePath);
+                console.log(`Image file ${image} deleted successfully`);
+            } catch (error) {
+                console.error(`Error deleting image file ${image}:`, error);
+            }
+        });
+        // Send response after deleting storage and images
+        return res.json({message: 'Storage and images deleted successfully', storage});
+    } catch (error) {
+        console.error('Error deleting storage:', error);
+        return res.status(500).json({'message': 'Internal Server Error'});
     }
-    const result=await storage.deleteOne({_id:req.body.id});
-    res.json(result);
-}
+};
+
 const storageCount=async(req,res)=>{
     try {
     const storageCount=await Storage.countDocuments();
