@@ -1,0 +1,129 @@
+<body>
+    <section id="menu" [class.open]="isMenuOpen">
+        <div class="logo">
+            <img src="../../../assets/icons/logo.png" alt="">
+            <h2>StorageBox</h2>
+        </div>
+
+        <div class="items">
+            <li (click)="onItemClicked(0)" [ngClass]="{'selected': selectedIndex === 0}">
+                <i class="ri-dashboard-line"></i>
+                <a [routerLink]="['./dashboard']">Dashboard</a>
+            </li>
+            <li (click)="onItemClicked(1)" [ngClass]="{'selected': selectedIndex === 1}">
+                <i class="ri-user-settings-line"></i>
+                <a [routerLink]="['./user-management']">User Management</a>
+            </li>
+
+            <li (click)="logout()"><i class="ri-shut-down-line"></i><a routerLink="/">Logout</a></li>
+        </div>
+    </section>
+
+    <section id="interface">
+        <div class="navigation">
+            <div class="n1">
+                <div>
+                    <i id="menu-btn" class="ri-menu-fill" (click)="toggleMenu()"></i>
+                </div>
+                <div class="search">
+                    <i class="ri-search-line"></i>
+                    <input id="search" type="text" placeholder="Search">
+                </div>
+            </div>
+
+            <div class="profile">
+                <i class="ri-notification-2-line"></i>
+                <img src="../../../assets/images/Profile_image.jpg" alt="">
+            </div>
+        </div>
+
+        <h3 class="header">{{ isUserManagementVisible ? 'User Management' : 'Dashboard' }}</h3>
+
+        <div class="values">
+            <div class="val-box">
+                <i class="ri-team-line"></i>
+                <div>
+                    <h3>{{userCount}}</h3>
+                    <span>Total Users</span>
+                </div>
+            </div>
+            <div class="val-box">
+                <i class="ri-user-line"></i>
+                <div>
+                    <h3>{{sellerCount}}</h3>
+                    <span>Sellers</span>
+                </div>
+            </div>
+            <div class="val-box">
+                <i class="ri-user-follow-line"></i>
+                <div>
+                    <h3>{{verifiedCount}}</h3>
+                    <span>Verified</span>
+                </div>
+            </div>
+            <div class="val-box">
+                <i class="ri-user-unfollow-line"></i>
+                <div>
+                    <h3>{{notVerifiedCount}}</h3>
+                    <span>Not Verified</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+            <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+                [fullScreen]="true">
+                <p style="color: white"> Sending... </p>
+            </ngx-spinner>
+        </div>
+
+        <!-- Seller Details Board -->
+        <div class="board" *ngIf="isDashboardVisible && !isUserManagementVisible">
+            <table>
+                <thead>
+                    <tr>
+                        <td class="people-de">User ID</td>
+                        <td class="people-de">Username</td>
+                        <td class="people-des">ID Proof</td>
+                        <td class="people-des">Document Proof</td>
+                        <td class="active-st">Active Status</td>
+                        <td class="verify">Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let seller of sellers">
+                        <td>{{ seller._id }}</td>
+                        <td>{{ seller.username }}</td>
+                        <td>
+                            <ng-container *ngIf="!seller.isActiveSeller">
+                                <a [href]="seller.idProof" target="_blank" class="view-link">View</a>
+                            </ng-container>
+                            <span *ngIf="seller.isActiveSeller && !seller.verifiedIdProof"
+                                class="verified-text">Verified</span>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="!seller.isActiveSeller">
+                                <a [href]="seller.documentProof" target="_blank" class="view-link">View</a>
+                            </ng-container>
+                            <span *ngIf="seller.isActiveSeller && !seller.verifiedDocumentProof"
+                                class="verified-text">Verified</span>
+                        </td>
+                        <td [class.active]="seller.isActiveSeller">{{ seller.isActiveSeller ? 'Active' : 'Inactive' }}
+                        </td>
+                        <td class="buttons">
+                            <button *ngIf="!seller.isActiveSeller" (click)="verifySeller(seller._id)" class="verify-button">Verify</button>
+                            <button *ngIf="!seller.isActiveSeller" (click)="notifySeller(seller._id)" class="notify-button">Notify</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="board" *ngIf="isUserManagementVisible">
+            <app-user-management></app-user-management>
+        </div>
+
+
+    </section>
+</body>

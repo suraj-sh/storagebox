@@ -302,7 +302,16 @@ button:disabled {
     .title {
         font-size: 24px;
     }
+    
+    .tooltip::after {
+        left: 97%;
+    }
 
+    .input-field.owner-documents i {
+        top: 8px;
+        left: 88%;
+    }
+    
     input {
         font-size: 16px;
         padding: 0 25px;

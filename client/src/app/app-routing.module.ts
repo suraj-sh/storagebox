@@ -6,15 +6,19 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { AdpostComponent } from './components/adpost/adpost.component';
-import { AuthGuard } from '@auth0/auth0-angular';
-import { AdviewComponent } from './components/adview/adview.component';
-import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
-import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.component';
+import { AdpostComponent } from './components/ads/adpost/adpost.component';
+import { AdviewComponent } from './components/ads/adview/adview.component';
+import { AdDetailComponent } from './components/ads/ad-detail/ad-detail.component';
+import { AdDashboardComponent } from './components/ads/ad-dashboard/ad-dashboard.component';
+import { AuthGuard } from './guards/auth.guard'
+import { OwnerGuard } from './guards/owner.guard';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: '', redirectTo: '', pathMatch: 'full' },
 
   // Auth routes
   { path: 'login', component: LoginComponent },
@@ -23,17 +27,30 @@ const routes: Routes = [
   { path: 'reset-password/:token', component: ResetPasswordComponent },
 
   // Profile route
-  { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
 
-  // Ads routes
-  { path: 'post', component: AdpostComponent },
+  // Ad routes
+  { path: 'post', component: AdpostComponent, canActivate: [AuthGuard, OwnerGuard] },
   { path: 'view', component: AdviewComponent },
-  { path: 'details/:id', component: AdDetailComponent},
-  { path: 'ads', component: AdDashboardComponent },
+  { path: 'details/:id', component: AdDetailComponent, canActivate: [AuthGuard] },
+  { path: 'ads', component: AdDashboardComponent, canActivate: [AuthGuard, OwnerGuard] },
+  { path: 'edit-ad/:id', component: AdpostComponent, canActivate: [AuthGuard] },
 
-  // New route for editing an ad
-  { path: 'edit-ad/:id', component: AdpostComponent },
-  
+  // Admin routes
+  {
+    path: 'admin',
+    component: AdminDashboardComponent, 
+    canActivate: [AdminGuard],
+    children: [
+      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'user-management', component: UserManagementComponent },
+      // { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Redirect to dashboard by default
+    ]
+  },
+
+  // 404 Page route
+  { path: '**', component: NotFoundComponent }, // Redirect to NotFoundComponent for any other route
+
 ];
 
 @NgModule({

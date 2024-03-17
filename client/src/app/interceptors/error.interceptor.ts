@@ -5,11 +5,13 @@ import { catchError, finalize } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthenticationService } from '../services/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-  constructor(private spinner: NgxSpinnerService, private router: Router,) { }
+  constructor(private spinner: NgxSpinnerService, private router: Router,
+              private authService: AuthenticationService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.spinner.show(); // Show spinner before making the request
@@ -46,12 +48,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           let errorMessage = 'An error occurred while processing your request.';
           errorMessage = 'Session Expired. Please login again.';
           Swal.fire('Error', errorMessage, 'error');
-
+        
           // Clear localStorage and redirect to login page
           localStorage.clear();
+          this.authService.isLoggedInSubject.next(false); // Update isLoggedIn$ to false
           this.router.navigate(['/login']);
           return throwError(errorMessage); // Return an empty observable to stop further processing
         }
+        
 
         // Check if the request was for login
         const isLoginRequest = request.url.endsWith('/auth');

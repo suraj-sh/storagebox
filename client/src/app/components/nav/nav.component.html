@@ -14,8 +14,10 @@
         </ng-container>
 
         <ng-container *ngIf="isLoggedIn$ | async">
-            <li><a routerLink="/post" (click)="closeMenu()">Post Ad</a></li>
-            <li><a routerLink="/ads" (click)="closeMenu()">My Ads</a></li>
+
+            <li *ngIf="canAccessPostAd()"><a routerLink="/post" (click)="closeMenu()">Post Ad</a></li>
+            <li *ngIf="canAccessMyAds()"><a routerLink="/ads" (click)="closeMenu()">My Ads</a></li>
+
             <li class="profile" routerLink="/profile" (click)="closeMenu()">
                 <div class="profile-info">
                     <span>Welcome, {{ userProfile?.username }}</span>
