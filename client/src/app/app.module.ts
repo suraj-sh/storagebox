@@ -19,13 +19,17 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileService } from './services/profile.service';
-import { AdminModule } from 'src/admin/admin.module';
-import { AdpostComponent } from './components/adpost/adpost.component';
-import { AdpostService } from './services/adpost.service';
-import { AdviewComponent } from './components/adview/adview.component';
-import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
+import { AdpostComponent } from './components/ads/adpost/adpost.component';
+import { AdviewComponent } from './components/ads/adview/adview.component';
+import { AdDetailComponent } from './components/ads/ad-detail/ad-detail.component';
 import { DatePipe } from '@angular/common';
-import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.component';
+import { AdDashboardComponent } from './components/ads/ad-dashboard/ad-dashboard.component';
+import { AdService } from './services/ad.service';
+import { OwnerGuard } from './guards/owner.guard';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AdminGuard } from './guards/admin.guard';
 
 @NgModule({
   
@@ -42,6 +46,9 @@ import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.com
     AdviewComponent,
     AdDetailComponent,
     AdDashboardComponent,
+    NotFoundComponent,
+    AdminDashboardComponent,
+    UserManagementComponent
     
   ],
   imports: [
@@ -51,14 +58,16 @@ import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.com
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxSpinnerModule,
-    AdminModule,
+    NgxSpinnerModule
   ],
+
   providers: [
     AuthenticationService,
     ProfileService,
-    AdpostService,
+    AdService,
     AuthGuard,
+    OwnerGuard,
+    AdminGuard,
     DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
@@ -71,6 +80,8 @@ import { AdDashboardComponent } from './components/ad-dashboard/ad-dashboard.com
       multi: true,
     },
   ],
+
   bootstrap: [AppComponent]
 })
+
 export class AppModule {}

@@ -1,0 +1,65 @@
+<div class="container">
+
+    <!-- Menu Icon -->
+    <div class="menu-icon" *ngIf="!isSidebarOpen" (click)="toggleSidebar()">
+        <i class="ri-equalizer-line"></i> Filter
+    </div>
+
+    <div class="back-icon" *ngIf="isBackIconVisible" (click)="closeFilters()">
+        <i class="ri-arrow-left-line"></i> Back
+    </div>
+
+    <div class="sidebar" [ngClass]="{ 'show': isSidebarOpen, 'show-close': isBackIconVisible }">
+        <h2>Filters</h2>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <select id="city" (change)="onCityChange($event)">
+                <option>Select City</option>
+                <option>Pune</option>
+                <option>Mumbai</option>
+                <option>Bangalore</option>
+                <option>Delhi</option>
+                <option>Hyderabad</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="storageType">Storage Type:</label>
+            <select id="storageType" (change)="onStorageTypeChange($event)">
+                <option>Select category</option>
+                <option>Self Storage</option>
+                <option>Document Storage</option>
+                <option>Commercial Storage</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sortOption">Order By:</label>
+            <select id="sortOption" (change)="onSortOptionChange($event)">
+                <option>Select Price</option>
+                <option>Price - Low to High</option>
+                <option>Price - High to Low</option>
+            </select>
+        </div>
+        <div class="buttons">
+            <button (click)="applyFilters()">Apply Filters</button>
+            <button (click)="clearFilters()">Clear Filters</button>
+        </div>
+        
+    </div>
+    
+    
+
+    <div class="cards-container">
+        <div class="card" *ngFor="let ad of ads" (click)="viewAdDetails(ad)">
+            <img [src]="ad.images[0]" alt="Product">
+            <div class="card-content">
+                <h2>{{ ad.category }}</h2>
+                <p class="title">{{ ad.name }}</p>
+                <div class="pd">
+                    <p class="price">&#8377;{{ ad.price }} / Month</p>
+                    <p class="location"><i class="ri-map-pin-line"></i> {{ ad.city }}</p>
+                </div>
+            </div>
+        </div>     
+    </div>
+
+</div>

@@ -40,7 +40,7 @@ form {
     object-fit: contain;
 }
 
-input[type="file"] {
+.left input[type="file"] {
     display: none;
 }
 
@@ -115,6 +115,45 @@ input {
     border-color: red;
 }
 
+
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.custom-file-upload input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    cursor: pointer;
+}
+
+.custom-file-upload span {
+    border: 2px solid #ccc;
+    display: inline-block;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 3px;
+}
+
+.custom-file-upload:hover span {
+    border-color: #4070f4;
+}
+
+.custom-file-upload input:active+span {
+    border-color: #265df2;
+}
+
 .buttons {
     display: flex;
     justify-content:space-between;
@@ -134,6 +173,11 @@ input {
 
 .action-btn:hover {
     background-color: #0056b3;
+}
+
+.save:disabled{
+    background-color: gray;
+    cursor: not-allowed;
 }
 
 

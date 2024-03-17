@@ -54,13 +54,22 @@ export class NavComponent implements OnInit {
       this.profileService.getUser(userId).subscribe(
         (userData: any) => {
           this.userProfile = userData;
+          // Add role information from decoded token
+          this.userProfile.role = decodedToken.role;
         },
         (error: any) => {
           console.error('Error fetching user details:', error);
-          alert('Failed to fetch user details. Please try again later.');
         }
       );
     } 
+  }
+  
+  canAccessPostAd(): boolean {
+    return this.userProfile?.role === 'Owner' && this.userProfile?.isSeller && this.userProfile?.isActiveSeller;
+  }
+
+  canAccessMyAds(): boolean {
+    return this.userProfile?.role === 'Owner' && this.userProfile?.isSeller && this.userProfile?.isActiveSeller;
   }
 
   toggleMenu() {

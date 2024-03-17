@@ -20,8 +20,8 @@
         <!-- Spinner module -->
         <div *ngIf="showSpinner">
             <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
-              [fullScreen]="true">
-              <p style="color: white"> Sending... </p>
+                [fullScreen]="true">
+                <p style="color: white"> Sending... </p>
             </ngx-spinner>
         </div>
 
@@ -38,9 +38,29 @@
             <label for="email">Email ID</label>
             <input formControlName="email" id="email" type="text" placeholder="Enter Email ID" autocomplete="email">
 
+            <!-- ID Proof -->
+            <div *ngIf="userProfile?.isSeller && !userProfile?.isActiveSeller" class="input-field owner-documents">
+                <label for="idProof">Govt. ID Proof: (Aadhar / Pancard)</label>
+                <div class="custom-file-upload">
+                    <input formControlName="idProof" type="file" id="idProof" (change)="selectFile($event, 'idProof')" accept=".pdf" required>
+                    <span>{{ filesIdProof?.name || 'Choose file (PDF)' }}</span>
+                </div>
+            </div>
+
+            <!-- Storage Documents Proof -->
+            <div *ngIf="userProfile?.isSeller && !userProfile?.isActiveSeller" class="input-field owner-documents">
+                <label for="documentProof">Storage Unit Proof: (Lease Agreement)</label>
+                <div class="custom-file-upload">
+                    <input formControlName="documentProof" type="file" id="documentProof" (change)="selectFile($event, 'documentProof')" accept=".pdf"
+                        required>
+                    <span>{{ filesStorageProof?.name || 'Choose file (PDF)' }}</span>
+                </div>
+            </div>
+
             <div class="buttons">
                 <button *ngIf="!isEditMode" class="action-btn" type="button" (click)="editProfile()">Edit</button>
-                <button *ngIf="isEditMode" class="action-btn" type="button" (click)="saveProfile()" [disabled]="userForm?.invalid || userForm?.pristine">Save</button>
+                <button *ngIf="isEditMode" class="action-btn save" type="button" (click)="saveProfile()"
+                    [disabled]="userForm?.invalid">Save</button>
                 <button *ngIf="isEditMode" class="action-btn" type="button" (click)="discardChanges()">Discard</button>
             </div>
 

@@ -1,0 +1,108 @@
+<div class="container">
+    <div class="title">{{ adId ? 'Update' : 'Post' }} Ad</div>
+    <div class="content">
+        <form [formGroup]="postForm" enctype="multipart/form-data">
+            <div class="user-details">
+
+                <!-- File input container -->
+                <div class="file-upload-container">
+                    <span>Upload Images</span>
+                    <label for="imageInput" class="file-upload-button">Upload</label>
+                    <input formControlName="images" id="imageInput" type="file" (change)="handleFileInput($event)"
+                        accept="image/*" multiple>
+                </div>
+
+                <div class="image-preview">
+                    <div *ngFor="let preview of imagePreviews; let i = index" class="image-container">
+                        <img [src]="preview" alt="Preview">
+                        <button class="delete-icon" (click)="deleteImage(i)">
+                            <i class="ri-close-fill"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="input-box">
+                    <span>Title</span>
+                    <input formControlName="name" name="title" type="text" placeholder="Enter Ad title" required>
+                    <div *ngIf="postForm.controls['name'].touched && postForm.controls['name'].invalid"
+                        class="validation-message">**Title is required**</div>
+                </div>
+
+                <!-- Description -->
+                <div class="input-box">
+                    <span>Description</span>
+                    <textarea formControlName="description" name="description"
+                        placeholder="Provide additional details like dimensions of the unit, availability"
+                        (input)="autoResize($event)" required></textarea>
+                    <div *ngIf="postForm.controls['description'].touched && postForm.controls['description'].invalid"
+                        class="validation-message">**Description is required**</div>
+                </div>
+
+                <!-- Category -->
+                <div class="input-box">
+                    <span>Category</span>
+                    <select formControlName="category" name="category" required>
+                        <option value="" disabled selected>Select category</option>
+                        <option value="Self Storage">Self Storage (Small Storage Space)</option>
+                        <option value="Document Storage">Document Storage (Locker Based Unit)</option>
+                        <option value="Commercial Storage">Commercial Storage (Larger Storage Space)</option>
+                    </select>
+                    <div *ngIf="postForm.controls['category'].touched && postForm.controls['category'].invalid"
+                        class="validation-message">**Category is required**</div>
+                </div>
+
+                <!-- Price -->
+                <div class="input-box">
+                    <span>Price</span>
+                    <input formControlName="price" name="price" type="text" inputmode="numeric"
+                        placeholder="Enter price" (input)="formatPrice($event)" required>
+                    <div *ngIf="postForm.controls['price'].touched && postForm.controls['price'].invalid"
+                        class="validation-message">**Price is required**</div>
+                </div>
+
+                <!-- City -->
+                <div class="input-box">
+                    <span>City</span>
+                    <select formControlName="city" name="city" required>
+                        <option value="" disabled selected>Select city</option>
+                        <option>Pune</option>
+                        <option>Mumbai</option>
+                        <option>Bangalore</option>
+                        <option>Delhi</option>
+                        <option>Hyderabad</option>
+                    </select>
+                    <div *ngIf="postForm.controls['city'].touched && postForm.controls['city'].invalid"
+                        class="validation-message">**City is required**</div>
+                </div>
+
+                <!-- Status -->
+                <div class="input-box">
+                    <span>Status</span>
+                    <select formControlName="isRented" name="isRented" required>
+                        <option value="false">Available</option>
+                        <option value="true">Rented</option>
+                    </select>
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="input-box">
+                    <span>Mobile Number</span>
+                    <input formControlName="mobileNo" name="mobile" type="text" inputmode="numeric"
+                        placeholder="Enter mobile number" required>
+                    <div *ngIf="postForm.controls['mobileNo'].touched && postForm.controls['mobileNo'].invalid"
+                        class="validation-message">
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('required')">**Mobile Number is required**
+                        </div>
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('pattern')">**Mobile Number should be 10
+                            digits only**</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" [disabled]="!postForm.valid || postForm.pristine" (click)="post()">{{ adId ? 'Update' : 'Post' }}
+                AD</button>
+        </form>
+    </div>
+</div>
