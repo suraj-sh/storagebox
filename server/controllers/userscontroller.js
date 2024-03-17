@@ -5,7 +5,7 @@ const path=require('path');
 const fs=require('fs');
 
 const getAllUser = async (req, res) => {
-    const userList = await User.find({ "roles.Admin": { $ne: 515 } }).select('-password').exec();
+    const userList = await User.find({ "roles.Admin": { $ne: 515 } }).sort({ _id: -1 }).select('-password').exec();
     if (!userList) return res.sendStatus(204).json({ 'message': 'No users found' });
     res.json(userList);
 }
@@ -203,15 +203,28 @@ const changeUserRole = async (req, res) => {
             user.roles = { Editor: 1320 };
             user.isActiveSeller = true;
             if (user.documentProof) {
-                const documentPath = path.join(__dirname, '..', 'public', 'document', user.documentProof);
-                fs.unlinkSync(documentPath);
-                user.documentProof = undefined;
+                const documentFileName = user.documentProof.split('/').pop();
+                const documentPath = path.join(__dirname, '..', 'public', 'document', documentFileName);
+                try {
+                    await fs.promises.unlink(documentPath);
+                    user.documentProof = undefined;
+                } catch (error) {
+                    console.error('Error deleting document proof:', error);
+                    return res.status(500).json({ message: 'Error deleting document proof' });
+                }
             }
             if (user.idProof) {
-                const idProofPath = path.join(__dirname, '..', 'public', 'document', user.idProof);
-                fs.unlinkSync(idProofPath);
-                user.idProof = undefined;
+                const idProofFileName = user.idProof.split('/').pop();
+                const idProofPath = path.join(__dirname, '..', 'public', 'document', idProofFileName);
+                try {
+                    await fs.promises.unlink(idProofPath);
+                    user.idProof = undefined;
+                } catch (error) {
+                    console.error('Error deleting id proof:', error);
+                    return res.status(500).json({ message: 'Error deleting id proof' });
+                }
             }
+            
             await user.save();
             const message = `Dear ${user.username},
 Welcome to StorageBox!
@@ -269,6 +282,32 @@ const deleteUser = async (req, res) => {
         if (!result) {
             return res.status(500).json({ 'message': 'User cannot be deleted' });
         }
+        if (user.isSeller) {
+            user.roles = { Editor: 1320 };
+            user.isActiveSeller = true;
+            if (user.documentProof) {
+                const documentFileName = user.documentProof.split('/').pop();
+                const documentPath = path.join(__dirname, '..', 'public', 'document', documentFileName);
+                try {
+                    await fs.promises.unlink(documentPath);
+                    user.documentProof = undefined;
+                } catch (error) {
+                    console.error('Error deleting document proof:', error);
+                    return res.status(500).json({ message: 'Error deleting document proof' });
+                }
+            }
+            if (user.idProof) {
+                const idProofFileName = user.idProof.split('/').pop();
+                const idProofPath = path.join(__dirname, '..', 'public', 'document', idProofFileName);
+                try {
+                    await fs.promises.unlink(idProofPath);
+                    user.idProof = undefined;
+                } catch (error) {
+                    console.error('Error deleting id proof:', error);
+                    return res.status(500).json({ message: 'Error deleting id proof' });
+                }
+            }
+        }
         res.json({ 'message': 'User deleted successfully' });
     } catch (error) {
         console.error('Error deleting user:', error);
@@ -278,7 +317,7 @@ const deleteUser = async (req, res) => {
 
 const getSellerUsers = async (req, res) => {
     try {
-        const sellerUsers = await User.find({ isSeller: true }).select('-password');
+        const sellerUsers = await User.find({ isSeller: true }).sort({ _id: -1 }).select('-password');
         res.json(sellerUsers);
     } catch (error) {
         console.error('Error fetching seller users:', error);
@@ -292,10 +331,16 @@ const deleteIdProof = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
-        } if (user.idProof) {
-            const idProofPath = path.join(__dirname, '..', 'public', 'document', user.idProof);
-            fs.unlinkSync(idProofPath);
-            user.idProof = undefined;
+        }  if (user.idProof) {
+            const idProofFileName = user.idProof.split('/').pop();
+            const idProofPath = path.join(__dirname, '..', 'public', 'document', idProofFileName);
+            try {
+                await fs.promises.unlink(idProofPath);
+                user.idProof = undefined;
+            } catch (error) {
+                console.error('Error deleting id proof:', error);
+                return res.status(500).json({ message: 'Error deleting id proof' });
+            }
         }
         await user.save();
         res.json({ 'message': 'IdProof deleted successfully' });
@@ -312,9 +357,15 @@ const deleteDocumentProof = async (req, res) => {
             return res.status(404).json({ 'message': 'User not found' });
         }
         if (user.documentProof) {
-            const documentPath = path.join(__dirname, '..', 'public', 'document', user.documentProof);
-            fs.unlinkSync(documentPath);
-            user.documentProof = undefined;
+            const documentFileName = user.documentProof.split('/').pop();
+            const documentPath = path.join(__dirname, '..', 'public', 'document', documentFileName);
+            try {
+                await fs.promises.unlink(documentPath);
+                user.documentProof = undefined;
+            } catch (error) {
+                console.error('Error deleting document proof:', error);
+                return res.status(500).json({ message: 'Error deleting document proof' });
+            }
         }
         await user.save();
         res.json({ 'message': 'documentProof deleted successfully' });
