@@ -15,9 +15,9 @@ const getAllStorage = async (req, res) => {
         filter.isRented = false;
         const sortOptions={
             'high-to-low':{price:-1},
-            'low-to-high':{price:1}
+            'low-to-high':{price:1},
         }
-        const sortOption=req.query.sort&&sortOptions[req.query.sort]
+        const sortOption=req.query.sort&&sortOptions[req.query.sort]? sortOptions[req.query.sort] : { dateCreated: -1 };
         const storageList = await Storage.find(filter).sort(sortOption).populate('user', 'username').exec();
         if (!storageList || storageList.length === 0) {
             return res.status(204).json({ message: 'No Storages found' });
