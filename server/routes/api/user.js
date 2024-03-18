@@ -33,15 +33,18 @@ router.route('/email/:id')
 
 router.route('/:id')
 .get(userController.getUser)
-.put(uploadDocument.fields([
-  { name: 'idProof', maxCount: 1 },
-  { name: 'documentProof', maxCount: 1 },
-]),userController.updateUser)
+.put(userController.updateUser)
 .delete(verifyRoles(ROLES_LIST.Admin),userController.deleteUser);
 
 router.route('/profile/:id')
 .put(uploadOptions.single('image'),userController.updateUserPic)
 .delete(userController.deleteUserPic);
+
+router.route('/update-proof/:id')
+.put(uploadDocument.fields([
+  { name: 'idProof', maxCount: 1 },
+  { name: 'documentProof', maxCount: 1 },
+]),userController.updateSellerDocument);
 
 router.route('/idProof/:id')
 .delete(userController.deleteIdProof);
