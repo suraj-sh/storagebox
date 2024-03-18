@@ -19,7 +19,6 @@ const getUser = async (req, res) => {
 }
 const updateUser = async (req, res) => {
     try {
-        // Check if the ID parameter is valid
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
             return res.status(400).json({ 'message': 'Correct ID parameter is required' });
         }       
@@ -30,7 +29,6 @@ const updateUser = async (req, res) => {
         if (req.userId !== req.params.id) {
             return res.status(403).json({ 'message': 'Unauthorized' });
         }
-        // Check if the new username is provided
         if (req.body.username) {
             // Check if the new username is already taken
             const existingUser = await User.findOne({ username: req.body.username });
@@ -41,23 +39,6 @@ const updateUser = async (req, res) => {
         } else {
             return res.status(400).json({ message: "At least username required" });
         }
-        if (!user.isSeller && req.files) {
-            return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
-        }
-        // Update idProof and documentProof only if isSeller is true
-        if (user.isSeller) {
-            const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
-            // Update idProof
-            if (req.files && req.files['idProof']) {
-                const idProof = `${basePath}${req.files['idProof'][0].filename}`;
-                user.idProof = idProof;
-            }
-            // Update documentProof
-            if (req.files && req.files['documentProof']) {
-                const documentProof = `${basePath}${req.files['documentProof'][0].filename}`;
-                user.documentProof = documentProof;
-            }
-        }
         await user.save();
         res.status(200).json({ message: "User updated"});
     } catch (error) {
@@ -65,6 +46,38 @@ const updateUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const updateSellerDocument=async(req,res)=>{
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': 'Correct ID parameter is required' });
+        }       
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
+        if (!user.isSeller && req.files) {
+            return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
+        }
+        // Update idProof and documentProof only if isSeller is true
+        if (user.isSeller) {
+            const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
+            if (req.files && req.files['idProof']) {
+                const idProof = `${basePath}${req.files['idProof'][0].filename}`;
+                user.idProof = idProof;
+            }
+            if (req.files && req.files['documentProof']) {
+                const documentProof = `${basePath}${req.files['documentProof'][0].filename}`;
+                user.documentProof = documentProof;
+            }
+        }
+        await user.save();
+        res.status(200).json({ message: "User  updated"});
+    }catch(error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 const wrongCredentials=async(req,res)=>{
     try {
@@ -378,6 +391,7 @@ module.exports = {
     getAllUser,
     getUser,
     updateUser,
+    updateSellerDocument,
     usersCount,
     deleteUser,
     sellerCount,
