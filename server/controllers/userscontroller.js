@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose');
 const User = require('../model/User');
+const Storage=require('../model/Storage');
 const { sendEmail } = require('../middlewere/email');
 const path=require('path');
 const fs=require('fs');
@@ -55,6 +56,9 @@ const updateSellerDocument=async(req,res)=>{
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
+        if (req.userId !== req.params.id) {
+            return res.status(403).json({ 'message': 'Unauthorized' });
+        }
         if (!user.isSeller && req.files) {
             return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
         }
@@ -79,7 +83,7 @@ const updateSellerDocument=async(req,res)=>{
 }
 
 
-const wrongCredentials=async(req,res)=>{
+const wrongCredentials = async (req, res) => {
     try {
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
             return res.status(400).json({ 'message': 'Correct ID parameter is required' });
@@ -88,8 +92,29 @@ const wrongCredentials=async(req,res)=>{
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
         }
-        if(user.isSeller){
-        const message=`Dear ${user.username},
+        if (user.isSeller) {
+            if (user.documentProof) {
+                const documentFileName = user.documentProof.split('/').pop();
+                const documentPath = path.join(__dirname, '..', 'public', 'document', documentFileName);
+                try {
+                    await fs.promises.unlink(documentPath);
+                } catch (error) {
+                    console.error('Error deleting document proof:', error);
+                    return res.status(500).json({ message: 'Error deleting document proof' });
+                }
+            }
+            if (user.idProof) {
+                const idProofFileName = user.idProof.split('/').pop();
+                const idProofPath = path.join(__dirname, '..', 'public', 'document', idProofFileName);
+                try {
+                    await fs.promises.unlink(idProofPath);
+                } catch (error) {
+                    console.error('Error deleting id proof:', error);
+                    return res.status(500).json({ message: 'Error deleting id proof' });
+                }
+            }
+
+            const message = `Dear ${user.username},
 
 Upon reviewing the documents you uploaded for verification, we noticed that there were some discrepancies or the documents provided did not meet our authenticity standards. In order to proceed with the activation of your account, we kindly request you to reupload the required documents.
 
@@ -110,20 +135,20 @@ Thank you for your understanding and prompt attention to this matter.
 
 Best regards,
 The StorageBox Team`;
-    await sendEmail({
-        email: user.email,
-        subject: 'Document Reupload for Account Activation',
-         message
-        });
-        return res.status(200).json({ message: 'Email sent successfully' });
-    }else{
-        return res.status(401).json({ message: 'Not a seller user' });
-    }
-   
-    }catch(err){
+            await sendEmail({
+                email: user.email,
+                subject: 'Document Reupload for Account Activation',
+                message
+            });
+            return res.status(200).json({ message: 'Email sent successfully' });
+        } else {
+            return res.status(401).json({ message: 'Not a seller user' });
+        }
+
+    } catch (err) {
         console.error('Error updating user roles:', err);
         res.status(500).json({ message: 'Internal Server Error' });
-    }   
+    }
 }
 const updateUserPic = async (req, res) => {
     try {
@@ -133,6 +158,9 @@ const updateUserPic = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
+        }
+        if (req.userId !== req.params.id) {
+            return res.status(403).json({ 'message': 'Unauthorized' });
         }
         if (req.file) {
             const fileName = req.file.filename;
@@ -154,6 +182,9 @@ const deleteUserPic = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ 'message': 'User not found' });
+        }
+        if (req.userId !== req.params.id) {
+            return res.status(403).json({ 'message': 'Unauthorized' });
         }
         if (user.image) {
             const imagePath = path.join(__dirname, '../public/upload', path.basename(user.image));
@@ -296,14 +327,11 @@ const deleteUser = async (req, res) => {
             return res.status(500).json({ 'message': 'User cannot be deleted' });
         }
         if (user.isSeller) {
-            user.roles = { Editor: 1320 };
-            user.isActiveSeller = true;
             if (user.documentProof) {
                 const documentFileName = user.documentProof.split('/').pop();
                 const documentPath = path.join(__dirname, '..', 'public', 'document', documentFileName);
                 try {
                     await fs.promises.unlink(documentPath);
-                    user.documentProof = undefined;
                 } catch (error) {
                     console.error('Error deleting document proof:', error);
                     return res.status(500).json({ message: 'Error deleting document proof' });
@@ -314,11 +342,33 @@ const deleteUser = async (req, res) => {
                 const idProofPath = path.join(__dirname, '..', 'public', 'document', idProofFileName);
                 try {
                     await fs.promises.unlink(idProofPath);
-                    user.idProof = undefined;
                 } catch (error) {
                     console.error('Error deleting id proof:', error);
                     return res.status(500).json({ message: 'Error deleting id proof' });
                 }
+            }
+        }
+        if (user.isActiveSeller) {
+            const userStorage = await Storage.find({ user: req.params.id });
+            if (userStorage && userStorage.length > 0) {
+                await Promise.all(userStorage.map(async (storage) => {
+                    await Promise.all(storage.images.map(async (image) => {
+                        const imageName = image.split('/').pop();
+                        const imagePath = path.join(__dirname, '..', 'public', 'upload', imageName);
+                        try {
+                            await fs.promises.unlink(imagePath);
+                            console.log(`Image file ${image} deleted successfully`);
+                        } catch (error) {
+                            console.error(`Error deleting image file ${image}:`, error);
+                        }
+                    }));
+                    try {
+                        await Storage.findByIdAndDelete(storage._id);
+                        console.log(`Storage deleted successfully`);
+                    } catch (error) {
+                        console.error('Error deleting storage:', error);
+                    }
+                }));
             }
         }
         res.json({ 'message': 'User deleted successfully' });
