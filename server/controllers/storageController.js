@@ -205,17 +205,19 @@ const deleteStorage = async (req, res) => {
             return res.status(404).json({'message': `No Storage matches ID ${req.body.id}`});
         }
         // Delete images asynchronously
-        storage.images.forEach(async (image) => {
-            const imagePath = path.join(__dirname, '..', 'public', 'upload', image);
+        for (const image of storage.images) {
+            const imageName = image.split('/').pop();
+            const imagePath = path.join(__dirname, '..', 'public', 'upload',imageName);
             try {
                 await fs.promises.unlink(imagePath);
                 console.log(`Image file ${image} deleted successfully`);
             } catch (error) {
                 console.error(`Error deleting image file ${image}:`, error);
+                // Handle the error if needed
             }
-        });
+        }
         // Send response after deleting storage and images
-        return res.json({message: 'Storage and images deleted successfully', storage});
+        return res.json({message: 'Storage and images deleted successfully'});
     } catch (error) {
         console.error('Error deleting storage:', error);
         return res.status(500).json({'message': 'Internal Server Error'});
