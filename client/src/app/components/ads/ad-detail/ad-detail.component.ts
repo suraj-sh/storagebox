@@ -23,14 +23,23 @@ export class AdDetailComponent implements OnInit {
 
   getStorageDetails() {
     const storageId = this.route.snapshot.paramMap.get('id');
-    this.adService.getad(storageId).subscribe(
+    this.adService.getAd(storageId).subscribe(
       (data: any) => {
+        data.price = this.formatPrice(data.price);
         this.storage = data;
       },
       (error) => {
         console.error('Error fetching storage details:', error);
       }
     );
+  }
+
+  // Method to format price with commas
+  formatPrice(price: string | number): string {
+    // Convert price to string if it's a number
+    const priceString = typeof price === 'number' ? price.toString() : price;
+    // Use regex to add commas for thousands separator
+    return priceString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   selectImage(index: number) {
@@ -44,7 +53,7 @@ export class AdDetailComponent implements OnInit {
   prevImage() {
     if (this.selectedImageIndex > 0) {
       this.selectedImageIndex--; // Move to the previous image
-    } 
+    }
     else {
       // If at the first image, loop back to the last image
       this.selectedImageIndex = this.storage.images.length - 1;
@@ -54,7 +63,7 @@ export class AdDetailComponent implements OnInit {
   nextImage() {
     if (this.selectedImageIndex < this.storage.images.length - 1) {
       this.selectedImageIndex++; // Move to the next image
-    } 
+    }
     else {
       // If at the last image, loop back to the first image
       this.selectedImageIndex = 0;
@@ -67,10 +76,10 @@ export class AdDetailComponent implements OnInit {
 
     // Check if the dates are from the same day
     if (currentDate.getFullYear() === providedDate.getFullYear() &&
-        currentDate.getMonth() === providedDate.getMonth() &&
-        currentDate.getDate() === providedDate.getDate()) {      
-          return 'Today';
-    } 
+      currentDate.getMonth() === providedDate.getMonth() &&
+      currentDate.getDate() === providedDate.getDate()) {
+      return 'Today';
+    }
     else {
       // Get the date of yesterday
       const yesterday = new Date();
@@ -78,10 +87,10 @@ export class AdDetailComponent implements OnInit {
 
       // Check if the provided date is from yesterday
       if (yesterday.getFullYear() === providedDate.getFullYear() &&
-          yesterday.getMonth() === providedDate.getMonth() &&
-          yesterday.getDate() === providedDate.getDate()) {           
-            return 'Yesterday';
-      } 
+        yesterday.getMonth() === providedDate.getMonth() &&
+        yesterday.getDate() === providedDate.getDate()) {
+        return 'Yesterday';
+      }
       else {
         // Use DatePipe to format the date
         const formattedDate = this.datePipe.transform(providedDate, 'mediumDate');

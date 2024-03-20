@@ -97,7 +97,7 @@ button:hover {
 }
 
 .card-content {
-    padding: 15px;
+    padding: 12px;
 }
 
 .card-content h2 {
@@ -108,6 +108,10 @@ button:hover {
 
 .card-content .title {
     color: #333;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 100%;
 }
 
 .card-content .price {

@@ -2,7 +2,7 @@
     <h3>My Posted Ads</h3>
     <ul>
         <li *ngFor="let ad of postedAds">
-            <div class="ad-card">
+            <div class="ad-card" [ngClass]="{ 'rented': ad.isRented }">
                 <div class="ad-image">
                     <img [src]="ad.images[0]" alt="Ad Image">
                 </div>

@@ -30,10 +30,10 @@ export class AdpostComponent implements OnInit {
       description: ['', Validators.required],
       city: ['', Validators.required],
       mobileNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]], // Valid mobile number pattern
-      price: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]], // Valid price pattern
+      price: ['', [Validators.required]],
       category: ['', Validators.required],
-      isRented: [false, Validators.required],
-      images: [''] // No need for required since it's optional when editing
+      isRented: [false],
+      images: ['']
     });
 
     // Fetch ad details when editing
@@ -42,22 +42,30 @@ export class AdpostComponent implements OnInit {
     }
   }
 
-  removeImage(index: number) {
-    this.selectedImages.splice(index, 1);
-    this.imagePreviews.splice(index, 1);
+  autoResize(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+    if (textarea instanceof HTMLTextAreaElement) {
+      textarea.style.height = 'auto'; // Reset height to auto
+      textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on content
+    }
   }
 
   // Format the price input with commas for thousands separators
   formatPrice(event: any) {
     const input = event.target as HTMLInputElement;
-    const value = input.value.replace(/\D/g, '');
-    const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const value = input.value.replace(/,/g, ''); // Remove existing commas
+    let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Limit the length of the formatted value to prevent issues with large numbers
+    if (formattedValue.length > 15) {
+      formattedValue = formattedValue.substring(0, 15);
+    }
+
     input.value = formattedValue;
   }
 
-
   fetchAdDetails() {
-    this.adService.getad(this.adId).subscribe(
+    this.adService.getAd(this.adId).subscribe(
       (ad: any) => {
         // Assign fetched ad details to ad property
         this.ad = ad;
@@ -68,7 +76,8 @@ export class AdpostComponent implements OnInit {
           city: ad.city,
           mobileNo: ad.mobileNo,
           price: ad.price,
-          category: ad.category
+          category: ad.category,
+          isRented: ad.isRented
         });
 
         // Display the existing images if available
@@ -103,23 +112,11 @@ export class AdpostComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
-
-    // Validate if at least one image is selected
-    if (this.selectedImages.length === 0) {
-      Swal.fire('Error', 'At least one image is required', 'error');
-      return;
-    }
-    // Set flag indicating changes have been made
-    this.postForm.markAsDirty();
   }
 
-
-  autoResize(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement;
-    if (textarea instanceof HTMLTextAreaElement) {
-      textarea.style.height = 'auto'; // Reset height to auto
-      textarea.style.height = textarea.scrollHeight + 'px'; // Set height based on content
-    }
+  removeImage(index: number) {
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
   }
 
   deleteImage(index: number) {
@@ -143,7 +140,7 @@ export class AdpostComponent implements OnInit {
 
       console.log('Deleting image with id:', id, 'and index:', index);
 
-      this.adService.deleteimage(id, index).subscribe(
+      this.adService.deleteImage(id, index).subscribe(
         () => {
           // Image deleted successfully from the backend
           console.log('Image deleted successfully');
@@ -162,23 +159,27 @@ export class AdpostComponent implements OnInit {
   post() {
     // Check if the form is valid
     if (this.postForm.valid) {
+
+      // Remove commas from the price value
+      let price = this.postForm.value.price.toString().replace(/,/g, '');
+      this.postForm.patchValue({ price: price });
+
+      // Validate if at least one image is selected
+      if (this.selectedImages.length === 0 && (!this.ad || !this.ad.images || this.ad.images.length === 0)) {
+        Swal.fire('Error', 'At least one image is required', 'error');
+        return;
+      }
+
       const formData = new FormData();
 
       // Append form data to FormData object
       Object.keys(this.postForm.value).forEach(key => {
         if (key === 'images') {
-          // If there are no new images uploaded and no images removed, keep the existing images
-          if (this.selectedImages.length === 0 && (!this.ad || !this.ad.images)) {
-            formData.append('images', ''); // Append an empty string to indicate no changes to images
-          } 
-          else {
-            // Append each new image file to FormData
-            for (let i = 0; i < this.selectedImages.length; i++) {
-              formData.append('images', this.selectedImages[i]);
-            }
+          // Append each new image file to FormData
+          for (let i = 0; i < this.selectedImages.length; i++) {
+            formData.append('images', this.selectedImages[i]);
           }
-        } 
-        else {
+        } else {
           formData.append(key, this.postForm.value[key]);
         }
       });
@@ -190,7 +191,7 @@ export class AdpostComponent implements OnInit {
       // Determine whether to send a POST or PUT request based on whether adId exists
       const requestObservable = this.adId ?
         this.adService.updateAd(this.adId, formData) :
-        this.adService.listad(formData);
+        this.adService.listAd(formData);
 
       // Send the request to update ad details
       requestObservable.subscribe(
@@ -209,7 +210,7 @@ export class AdpostComponent implements OnInit {
           Swal.fire('Error', errorMessage, 'error');
         }
       );
-    } 
+    }
     else {
       // Form is invalid, display an error message or handle it as needed
       console.error('Form is invalid. Cannot submit.');

@@ -97,11 +97,15 @@
     color: #333;
     margin: 20px 0;
     font-size: 30px;
+    max-width: auto; /* Limit the width */
+    overflow: hidden; /* Hide overflowing text */
 }
+
 
 .description {
     color: #666;
     font-size: 20px;
+    white-space: pre-wrap;
     margin: 20px 0 60px 0;
 }
 

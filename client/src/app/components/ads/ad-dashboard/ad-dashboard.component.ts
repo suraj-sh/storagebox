@@ -21,12 +21,24 @@ export class AdDashboardComponent implements OnInit {
   fetchPostedAds() {
     this.adService.getPostedAds().subscribe(
       (ads: any[]) => {
-        this.postedAds = ads;
+        // Format the price for each ad in the array
+        this.postedAds = ads.map(ad => ({
+          ...ad,
+          price: this.formatPrice(ad.price) // Format the price for this ad
+        }));
       },
       (error) => {
         console.error('Error fetching posted ads:', error);
       }
     );
+  }
+
+  // Method to format price with commas
+  formatPrice(price: string | number): string {
+    // Convert price to string if it's a number
+    const priceString = typeof price === 'number' ? price.toString() : price;
+    // Use regex to add commas for thousands separator
+    return priceString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   viewAdDetails(adId: string) {
@@ -41,7 +53,7 @@ export class AdDashboardComponent implements OnInit {
 
   deleteAd(adId: string): void {
     // Call the deleteAd method from the ad service
-    this.adService.deletead(adId).subscribe(
+    this.adService.deleteAd(adId).subscribe(
       () => {
         Swal.fire({
           title: 'Ad Deleted',

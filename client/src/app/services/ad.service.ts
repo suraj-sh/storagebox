@@ -11,11 +11,11 @@ export class AdService {
 
   constructor(private http: HttpClient) { }
 
-  getads(): Observable<any> {
+  getAds(): Observable<any> {
     return this.http.get(`${this.apiUrl}/storage`);
   }
 
-  getad(id: any): Observable<any> {
+  getAd(id: any): Observable<any> {
     return this.http.get(`${this.apiUrl}/storage/${id}`);
   }
 
@@ -31,11 +31,11 @@ export class AdService {
     return this.http.get(`${this.apiUrl}/storage?cities=${cities}`);
   }
 
-  sortLowToHigh(sort: any): Observable<any> {
+  sortLowToHigh(sort: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/storage?sort=${sort}`);
   }
-
-  sortHighToLow(sort: any): Observable<any> {
+  
+  sortHighToLow(sort: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/storage?sort=${sort}`);
   }
 
@@ -43,8 +43,7 @@ export class AdService {
     return this.http.get(`${this.apiUrl}/storage?categories=${categories}&cities=${cities}&sort=${sort}`);
   }
 
-
-  listad(formData: any) {
+  listAd(formData: any) {
     return this.http.post(`${this.apiUrl}/storage`, formData);
   }
 
@@ -52,15 +51,11 @@ export class AdService {
     return this.http.put(`${this.apiUrl}/storage/${id}`, formData);
   }
 
-  // updateimage(id: any, formData: any) {
-  //   return this.http.put(`${this.apiUrl}/storage/images/${id}`, formData);
-  // }
-
-  deletead(id: any) {
+  deleteAd(id: any) {
     return this.http.delete(`${this.apiUrl}/storage/${id}`);
   }
 
-  deleteimage(id: any, imageIndex: any) {
+  deleteImage(id: any, imageIndex: any) {
     return this.http.delete(`${this.apiUrl}/storage/images/${id}/${imageIndex}`);
   }
 

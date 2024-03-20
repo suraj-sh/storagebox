@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
 import { AuthenticationService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -10,7 +11,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  
+
   userDetailsForm: FormGroup;
   userProfile: any;
   imageFile: File | string = '';
@@ -19,12 +20,13 @@ export class ProfileComponent implements OnInit {
   filesIdProof: File | null = null;
   filesStorageProof: File | null = null;
   showSpinner = false;
+  sellerStatus: string = '';
 
   constructor(private formBuilder: FormBuilder, private profileService: ProfileService,
     private authService: AuthenticationService) { }
 
   // Common getter function for the form inputs 
-   get userForm() {
+  get userForm() {
     return this.userDetailsForm.get('username');
   }
 
@@ -32,13 +34,23 @@ export class ProfileComponent implements OnInit {
     this.userDetailsForm = this.formBuilder.group({
       username: ['', Validators.minLength(6)],
       email: [''],
-      image: [''],
-      idProof: [''],
-      documentProof: ['']
+      image: ['']
     });
 
+    this.userDetailsForm.disable(); // Disable form fields initially
     this.loadUserProfile(); // Load user profile initially
-    this.userDetailsForm.disable(); // Disable form fields initially  
+  }
+
+  editProfile(): void {
+    this.isEditMode = true;
+    this.userDetailsForm.enable();
+    this.userDetailsForm.get('email')?.disable();
+  }
+
+  discardChanges(): void {
+    this.userDetailsForm.reset(this.userProfile);
+    this.isEditMode = false;
+    this.userDetailsForm.disable();
   }
 
   // Method to handle file selection
@@ -55,7 +67,8 @@ export class ProfileComponent implements OnInit {
       // Store the selected file
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      } else if (formControlName === 'documentProof') {
+      }
+      else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
     }
@@ -66,66 +79,12 @@ export class ProfileComponent implements OnInit {
     return file.type === 'application/pdf';
   }
 
-  editProfile(): void {
-    this.isEditMode = true;
-    this.userDetailsForm.enable();
-    this.userDetailsForm.get('email')?.disable();
-  }
-
-  discardChanges(): void {
-    this.userDetailsForm.reset(this.userProfile);
-    this.isEditMode = false;
-    this.userDetailsForm.disable();
-  }
-
-  saveProfile(): void {
-    const decodedToken = this.authService.decodeToken();
-    const userId = decodedToken?.userId;
-    if (!userId) {
-      console.error('User ID not found.');
-      return;
-    }
-  
-    // Update username and email
-    const updatedUserDetails = {
-      username: this.userDetailsForm.get('username')?.value,
-      // Add other user details as needed
-    };
-  
-    // Show spinner
-    this.showSpinner = true;
-  
-    // Provide default values for filesIdProof and filesStorageProof
-    const idProofFile: File = this.filesIdProof || new File([], 'dummy'); // Replace 'dummy' with a default name
-    const documentProofFile: File = this.filesStorageProof || new File([], 'dummy');
-  
-    this.profileService.updateUser(userId, updatedUserDetails, idProofFile, documentProofFile).subscribe(
-      () => {
-        Swal.fire({
-          title: 'Success',
-          text: 'Profile Updated Successfully',
-          icon: 'success',
-          iconColor: '#00ff00',
-          confirmButtonText: 'OK'
-        }).then(() => {
-          this.loadUserProfile(); // Reload user profile after updating details
-          this.isEditMode = false;
-          this.showSpinner = false;
-        });
-      },
-      (error: any) => {
-        console.error('Error updating user details:', error);
-        // Handle error
-      }
-    );
-  }
-  
-
   loadUserProfile(): void {
     const decodedToken = this.authService.decodeToken();
     if (decodedToken) {
       const userId = decodedToken.userId;
-      const userRole = decodedToken.role;
+      let userRole = decodedToken.role;
+
       this.profileService.getUser(userId).subscribe(
         (userData: any) => {
           this.userProfile = userData;
@@ -135,12 +94,18 @@ export class ProfileComponent implements OnInit {
             email: this.userProfile.email,
             image: this.userProfile.image
           });
+
+          if (decodedToken.role === 'Renter' && this.userProfile?.isSeller && !this.userProfile?.isActiveSeller) {
+            this.userRole = 'Owner';
+          }
+
         },
         (error: any) => {
           console.error('Error fetching user details:', error);
         }
       );
-    } else {
+    } 
+    else {
       console.error('User token not found.');
     }
   }
@@ -197,6 +162,89 @@ export class ProfileComponent implements OnInit {
       },
       (error: any) => {
         console.error('Error deleting profile picture:', error);
+      }
+    );
+  }
+
+  sendDocs(): void {
+    const decodedToken = this.authService.decodeToken();
+    const userId = decodedToken?.userId;
+    if (!userId) {
+      console.error('User ID not found.');
+      return;
+    }
+
+    // Check if files are selected
+    if (!this.filesIdProof || !this.filesStorageProof) {
+      console.error('No files selected.');
+      return;
+    }
+
+    // Prepare form data for file uploads
+    const formData = new FormData();
+    formData.append('idProof', this.filesIdProof);
+    formData.append('documentProof', this.filesStorageProof);
+
+    // Show spinner
+    this.showSpinner = true;
+
+    // Call the service method to upload documents
+    this.profileService.uploadDocs(userId, formData).subscribe(
+      () => {
+        Swal.fire({
+          title: 'Success',
+          text: 'Documents Uploaded Successfully',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.loadUserProfile(); // Reload user profile after updating details
+          this.showSpinner = false;
+        });
+      },
+      (error: any) => {
+        console.error('Error uploading docs:', error);
+        this.showSpinner = false;
+      }
+    );
+  }
+
+
+  saveProfile(): void {
+    const decodedToken = this.authService.decodeToken();
+    const userId = decodedToken?.userId;
+    if (!userId) {
+      console.error('User ID not found.');
+      return;
+    }
+
+    // Update username and email
+    const updatedUserDetails = {
+      username: this.userDetailsForm.get('username')?.value,
+      // Add other user details as needed
+    };
+
+    // Show spinner
+    this.showSpinner = true;
+
+    this.profileService.updateUser(userId, updatedUserDetails).subscribe(
+      () => {
+        Swal.fire({
+          title: 'Success',
+          text: 'Profile Updated Successfully',
+          icon: 'success',
+          iconColor: '#00ff00',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.loadUserProfile(); // Reload user profile after updating details
+          this.userDetailsForm.disable();
+          this.isEditMode = false;
+          this.showSpinner = false;
+        });
+      },
+      (error: any) => {
+        console.error('Error updating user details:', error);
+        this.showSpinner = false;
       }
     );
   }

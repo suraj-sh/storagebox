@@ -89,18 +89,6 @@ export class ErrorInterceptor implements HttpInterceptor {
           Swal.fire('Error', errorMessage, 'error');
         }
 
-        // Check if the request was for forgot password
-        const profile = request.url.endsWith('/user/:id');
-
-        // Handling errors separately
-        if (profile && error.status === 409) {
-          let errorMessage = 'An error occurred while processing your request.';
-          if (errorMessage.includes('username already exists')) {
-            errorMessage = 'Username already exists.';
-          }
-          Swal.fire('Error', errorMessage, 'error');
-        }
-
         return throwError(error);
       }),
 
