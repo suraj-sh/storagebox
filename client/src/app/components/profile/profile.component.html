@@ -27,7 +27,20 @@
 
         <div class="right">
             <h4>User Profile</h4>
-            <div class="role-info">Signed in as: {{ userRole }}</div>
+            <div class="role-info">
+                Signed in as: {{ userRole }}
+                <div *ngIf="userProfile?.isSeller">
+                    Account Status: 
+                    <span *ngIf="userProfile.isActiveSeller" class="verified-icon">
+                        Verified <i class="ri-verified-badge-line"></i>
+                    </span>
+                    <span *ngIf="!userProfile.isActiveSeller" class="not-verified-icon">
+                        Not Verified <i class="ri-close-circle-line"></i>
+                    </span>
+                </div>
+            </div>
+            
+                       
             <label for="name">User Name</label>
             <input formControlName="username" id="name" type="text" placeholder="User Name" autocomplete="name"
                 [ngClass]="{ 'invalid-input': userForm?.invalid && userForm?.touched }">
@@ -42,7 +55,8 @@
             <div *ngIf="userProfile?.isSeller && !userProfile?.isActiveSeller" class="input-field owner-documents">
                 <label for="idProof">Govt. ID Proof: (Aadhar / Pancard)</label>
                 <div class="custom-file-upload">
-                    <input formControlName="idProof" type="file" id="idProof" (change)="selectFile($event, 'idProof')" accept=".pdf" required>
+                    <input  type="file" id="idProof" (change)="selectFile($event, 'idProof')"
+                        accept=".pdf" required>
                     <span>{{ filesIdProof?.name || 'Choose file (PDF)' }}</span>
                 </div>
             </div>
@@ -51,16 +65,18 @@
             <div *ngIf="userProfile?.isSeller && !userProfile?.isActiveSeller" class="input-field owner-documents">
                 <label for="documentProof">Storage Unit Proof: (Lease Agreement)</label>
                 <div class="custom-file-upload">
-                    <input formControlName="documentProof" type="file" id="documentProof" (change)="selectFile($event, 'documentProof')" accept=".pdf"
-                        required>
+                    <input  type="file" id="documentProof"
+                        (change)="selectFile($event, 'documentProof')" accept=".pdf" required>
                     <span>{{ filesStorageProof?.name || 'Choose file (PDF)' }}</span>
                 </div>
             </div>
 
             <div class="buttons">
+                <button *ngIf="userProfile?.isSeller && !userProfile?.isActiveSeller" class="action-btn" type="button"
+                (click)="sendDocs()">Upload</button>
                 <button *ngIf="!isEditMode" class="action-btn" type="button" (click)="editProfile()">Edit</button>
                 <button *ngIf="isEditMode" class="action-btn save" type="button" (click)="saveProfile()"
-                    [disabled]="userForm?.invalid">Save</button>
+                    [disabled]="userForm?.invalid || userForm?.pristine">Save</button>
                 <button *ngIf="isEditMode" class="action-btn" type="button" (click)="discardChanges()">Discard</button>
             </div>
 

@@ -77,7 +77,7 @@
 
         <!-- Send Verification Code Button -->
         <div class="input-field button">
-          <button [disabled]="!form.email.valid" (click)="sendVerificationCode()" type="button">Send Verification
+          <button [disabled]="isSendVerificationDisabled()" (click)="sendVerificationCode()" type="button">Send Verification
             Code</button>
         </div>
 

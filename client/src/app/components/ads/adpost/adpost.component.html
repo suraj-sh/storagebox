@@ -25,8 +25,9 @@
                 <div class="input-box">
                     <span>Title</span>
                     <input formControlName="name" name="title" type="text" placeholder="Enter Ad title" required>
-                    <div *ngIf="postForm.controls['name'].touched && postForm.controls['name'].invalid"
-                        class="validation-message">**Title is required**</div>
+                    <div *ngIf="postForm.controls['name'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['name'].hasError('required')">**Title is required**</div>
+                    </div>
                 </div>
 
                 <!-- Description -->
@@ -35,8 +36,9 @@
                     <textarea formControlName="description" name="description"
                         placeholder="Provide additional details like dimensions of the unit, availability"
                         (input)="autoResize($event)" required></textarea>
-                    <div *ngIf="postForm.controls['description'].touched && postForm.controls['description'].invalid"
-                        class="validation-message">**Description is required**</div>
+                    <div *ngIf="postForm.controls['description'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['description'].hasError('required')">**Description is required**</div>
+                    </div>
                 </div>
 
                 <!-- Category -->
@@ -48,8 +50,9 @@
                         <option value="Document Storage">Document Storage (Locker Based Unit)</option>
                         <option value="Commercial Storage">Commercial Storage (Larger Storage Space)</option>
                     </select>
-                    <div *ngIf="postForm.controls['category'].touched && postForm.controls['category'].invalid"
-                        class="validation-message">**Category is required**</div>
+                    <div *ngIf="postForm.controls['category'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['category'].hasError('required')">**Category is required**</div>
+                    </div>
                 </div>
 
                 <!-- Price -->
@@ -57,8 +60,9 @@
                     <span>Price</span>
                     <input formControlName="price" name="price" type="text" inputmode="numeric"
                         placeholder="Enter price" (input)="formatPrice($event)" required>
-                    <div *ngIf="postForm.controls['price'].touched && postForm.controls['price'].invalid"
-                        class="validation-message">**Price is required**</div>
+                    <div *ngIf="postForm.controls['price'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['price'].hasError('required')">**Price is required**</div>
+                    </div>
                 </div>
 
                 <!-- City -->
@@ -72,8 +76,9 @@
                         <option>Delhi</option>
                         <option>Hyderabad</option>
                     </select>
-                    <div *ngIf="postForm.controls['city'].touched && postForm.controls['city'].invalid"
-                        class="validation-message">**City is required**</div>
+                    <div *ngIf="postForm.controls['city'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['city'].hasError('required')">**City is required**</div>
+                    </div>
                 </div>
 
                 <!-- Status -->
@@ -90,19 +95,15 @@
                     <span>Mobile Number</span>
                     <input formControlName="mobileNo" name="mobile" type="text" inputmode="numeric"
                         placeholder="Enter mobile number" required>
-                    <div *ngIf="postForm.controls['mobileNo'].touched && postForm.controls['mobileNo'].invalid"
-                        class="validation-message">
-                        <div *ngIf="postForm.controls['mobileNo'].hasError('required')">**Mobile Number is required**
-                        </div>
-                        <div *ngIf="postForm.controls['mobileNo'].hasError('pattern')">**Mobile Number should be 10
-                            digits only**</div>
+                    <div *ngIf="postForm.controls['mobileNo'].touched" class="validation-message">
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('required')">**Mobile Number is required**</div>
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('pattern')">**Mobile Number should be 10 digits only**</div>
                     </div>
                 </div>
 
             </div>
 
-            <button type="button" [disabled]="!postForm.valid || postForm.pristine" (click)="post()">{{ adId ? 'Update' : 'Post' }}
-                AD</button>
+            <button type="button" [disabled]="!postForm.valid || postForm.pristine" (click)="post()">{{ adId ? 'Update' : 'Post' }} AD</button>
         </form>
     </div>
 </div>

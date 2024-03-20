@@ -20,17 +20,8 @@ export class ProfileService {
     );
   }
 
-  updateUser(userId: any, updatedUserDetails: any, idProof?: File, documentProof?: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('username', updatedUserDetails.username);
-
-    if (idProof) {
-      formData.append('idProof', idProof);
-    }
-    if (documentProof) {
-      formData.append('documentProof', documentProof);
-    }
-    return this.http.put<any>(`${this.apiUrl}/user/${userId}`, formData).pipe(
+  updateUser(userId: any, updatedUserDetails: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/user/${userId}`, updatedUserDetails).pipe(
       catchError(this.handleError),
       tap(() => {
         this.userInfoUpdated.emit(updatedUserDetails); // Emit event after updating user info
@@ -53,6 +44,12 @@ export class ProfileService {
       tap(() => {
         this.userInfoUpdated.emit({ userId, profilePic: null }); // Emit event after deleting user pic
       })
+    );
+  }
+
+  uploadDocs(userId: any, formData: any):Observable<any>{
+    return this.http.put<any>(`${this.apiUrl}/user/update-proof/${userId}`, formData).pipe(
+      catchError(this.handleError),
     );
   }
 

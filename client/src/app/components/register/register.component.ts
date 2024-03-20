@@ -32,7 +32,7 @@ export class RegisterComponent {
     verificationCode: ['', Validators.required],
     pwd: ['', [Validators.required, Validators.minLength(12), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
     confirmPassword: ['', [Validators.required]],
-    isSeller: [false, Validators.required],
+    isSeller: [false],
     idProof: [''],
     documentProof: ['']
   });
@@ -133,16 +133,16 @@ export class RegisterComponent {
     if (!this.registrationForm.invalid) {
       console.log(this.registrationForm.value);
       const formData = new FormData();
-
+  
       // Append all form controls to FormData
       Object.entries(this.form).forEach(([controlName, control]) => {
         if (control instanceof FormControl) {
           formData.append(controlName, String(control.value));
         }
       });
-
+  
       this.showSpinner = true;
-
+  
       this.authService.registerUser(formData).subscribe(
         (response) => {
           console.log('User registered successfully', response);
@@ -152,19 +152,41 @@ export class RegisterComponent {
             icon: 'success',
             iconColor: '#00ff00',
             confirmButtonText: 'OK'
+          }).then(() => {
+            // Redirect to login or perform any other post-registration actions
+            this.router.navigate(['/login']);
+            this.showSpinner = false; // Move spinner hide logic here
           });
-          // Redirect to login or perform any other post-registration actions
-          this.showSpinner = false;
-          this.router.navigate(['/login']);
         }
       );
     }
   }
+  
 
   isButtonDisabled(): boolean {
     return this.registrationForm.invalid || this.registrationForm.get('pwd')?.value !== this.registrationForm.get('confirmPassword')?.value;
   }
 
+  isSendVerificationDisabled(): boolean {
+    const userControl = this.registrationForm.get('user');
+    const emailControl = this.registrationForm.get('email');
+  
+    // Check if the username and email are not entered or valid
+    if (!userControl?.value || userControl?.invalid || !emailControl?.value || emailControl.invalid ) {
+      return true;
+    }
+  
+    const isSellerValue = this.form.isSeller?.value;
+    if (isSellerValue) {
+      if (!this.filesIdProof || !this.filesStorageProof) {
+        return true;
+      }
+    }
+
+    // Return false if all conditions are met
+    return false;
+  }
+  
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }

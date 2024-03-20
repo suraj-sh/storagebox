@@ -21,23 +21,25 @@ export class AdviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
-      const city = params.get('city');
-      const storageType = params.get('storageType');
-      const sortOption = params.get('sortOption');
+      const cities = params.get('cities');
+      const categories = params.get('categories');
+      const sort = params.get('sort');
 
-      this.selectedCity = city || 'Select City';
-      this.selectedStorageType = storageType || 'Select category';
-      this.selectedSortOption = sortOption || 'Select Price';
+      this.selectedCity = cities || 'Select City';
+      this.selectedStorageType = categories || 'Select category';
+      this.selectedSortOption = sort || 'Select Price';
 
       this.applyFilters();
     });
   }
 
   fetchAds() {
-    this.adService.getads().subscribe(
+    this.adService.getAds().subscribe(
       (data: any[]) => {
         this.ads = data.map(ad => {
           const clonedAd = { ...ad };
+          // Format price for the cloned ad
+          clonedAd.price = this.formatPrice(clonedAd.price);
           clonedAd.images.sort((a: { index: number }, b: { index: number }) => a.index - b.index);
           return clonedAd;
         });
@@ -46,6 +48,14 @@ export class AdviewComponent implements OnInit {
         console.error('Error fetching ads:', error);
       }
     );
+  }
+
+  // Method to format price with commas
+  formatPrice(price: string | number): string {
+    // Convert price to string if it's a number
+    const priceString = typeof price === 'number' ? price.toString() : price;
+    // Use regex to add commas for thousands separator
+    return priceString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   toggleSidebar() {
@@ -74,23 +84,28 @@ export class AdviewComponent implements OnInit {
   }
 
   applyFilters() {
+    console.log('Selected Sort Option:', this.selectedSortOption);
     // Update query parameters
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        city: this.selectedCity !== 'Select City' ? this.selectedCity : null,
-        storageType: this.selectedStorageType !== 'Select category' ? this.selectedStorageType : null,
-        sortOption: this.selectedSortOption !== 'Select Price' ? this.selectedSortOption : null
+        cities: this.selectedCity !== 'Select City' ? this.selectedCity : null,
+        categories: this.selectedStorageType !== 'Select category' ? this.selectedStorageType : null,
+        sort: this.selectedSortOption !== 'Select Price' ? this.selectedSortOption : null
       },
       queryParamsHandling: 'merge' // Preserve existing query parameters
     });
 
     this.isSidebarOpen = false
     this.isBackIconVisible = false;
+
     if (this.selectedStorageType !== 'Select category' && this.selectedCity !== 'Select City' && this.selectedSortOption !== 'Select Price') {
-      this.adService.allFilters(this.selectedStorageType, this.selectedCity, this.selectedSortOption).subscribe(
+      this.adService.allFilters(this.selectedStorageType, this.selectedCity, this.getSortOptionValue()).subscribe(
         (filteredAds: any[]) => {
-          this.ads = filteredAds;
+          this.ads = filteredAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
+          });
         },
         (error) => {
           console.error('Error applying filters:', error);
@@ -100,7 +115,10 @@ export class AdviewComponent implements OnInit {
     else if (this.selectedCity !== 'Select City') {
       this.adService.filterByCity(this.selectedCity).subscribe(
         (filteredAds: any[]) => {
-          this.ads = filteredAds;
+          this.ads = filteredAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
+          });
         },
         (error) => {
           console.error('Error applying filters:', error);
@@ -110,7 +128,10 @@ export class AdviewComponent implements OnInit {
     else if (this.selectedStorageType !== 'Select category') {
       this.adService.filterByCategory(this.selectedStorageType).subscribe(
         (filteredAds: any[]) => {
-          this.ads = filteredAds;
+          this.ads = filteredAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
+          });
         },
         (error) => {
           console.error('Error applying filters:', error);
@@ -118,9 +139,13 @@ export class AdviewComponent implements OnInit {
       );
     }
     else if (this.selectedSortOption === 'Price - Low to High') {
-      this.adService.sortLowToHigh(this.selectedSortOption).subscribe(
+      console.log('Sorting: Low to High');
+      this.adService.sortLowToHigh('low-to-high').subscribe(
         (sortedAds: any[]) => {
-          this.ads = sortedAds;
+          this.ads = sortedAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
+          });
         },
         (error) => {
           console.error('Error sorting ads:', error);
@@ -128,9 +153,13 @@ export class AdviewComponent implements OnInit {
       );
     }
     else if (this.selectedSortOption === 'Price - High to Low') {
-      this.adService.sortHighToLow(this.selectedSortOption).subscribe(
+      console.log('Sorting: High to Low');
+      this.adService.sortHighToLow('high-to-low').subscribe(
         (sortedAds: any[]) => {
-          this.ads = sortedAds;
+          this.ads = sortedAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
+          });
         },
         (error) => {
           console.error('Error sorting ads:', error);
@@ -138,7 +167,21 @@ export class AdviewComponent implements OnInit {
       );
     }
     else {
+      console.log('No sorting selected, fetching ads');
       this.fetchAds();
+    }
+  }
+
+  // Helper method to get the corresponding sort option value
+  getSortOptionValue(): string | null {
+    if (this.selectedSortOption === 'Price - Low to High') {
+      return 'low-to-high'; // Map to backend value for low-to-high sorting
+    } 
+    else if (this.selectedSortOption === 'Price - High to Low') {
+      return 'high-to-low'; // Map to backend value for high-to-low sorting
+    } 
+    else {
+      return null; // If no sort option is selected, return null
     }
   }
 
@@ -164,4 +207,5 @@ export class AdviewComponent implements OnInit {
   viewAdDetails(ad: any) {
     this.router.navigate(['/details', ad.id]);
   }
+
 }

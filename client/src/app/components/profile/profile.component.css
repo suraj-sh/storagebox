@@ -1,5 +1,5 @@
 .container {
-    width: 50%;
+    width: 60%;
     margin: 50px auto;
     background-color: #fff;
     border: 1px solid #ccc;
@@ -75,7 +75,7 @@ form {
 }
 
 .right {
-    width: 50%;
+    width: 60%;
     padding: 0 30px;
     border-left: 2px solid #ccc;
 }
@@ -89,19 +89,40 @@ h4 {
 .role-info {
     margin-top: -20px;
     margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+}
+
+i{
+    font-size: 18px;
+}
+
+.verified-icon {
+    color: rgb(18, 174, 18); /* Color for verified status */
+    font-weight: bold;
+}
+
+.not-verified-icon {
+    color: rgb(245, 72, 72); /* Color for not verified status */
+    font-weight: bold;
+
 }
 
 label {
     font-weight: bold;
+    width: 100px;
+    display: inline-block;
+    font-size: 1em;
 }
 
 input {
-    width: 100%;
+    width: 80%;
     padding: 8px;
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 10px;
-    font-size: 1em;
+    font-size: 1.2em;
 }
 
 .validation-message {
@@ -116,10 +137,31 @@ input {
 }
 
 
+.input-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-field label {
+    font-weight: bold;
+    width: 220px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.input-field input[type="file"] {
+    flex: 1;
+    margin-top: 10px;
+}
+
 .custom-file-upload {
     display: flex;
     align-items: center;
     position: relative;
+    margin-top: 10px;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .custom-file-upload input[type="file"] {
@@ -154,6 +196,7 @@ input {
     border-color: #265df2;
 }
 
+
 .buttons {
     display: flex;
     justify-content:space-between;
@@ -183,7 +226,7 @@ input {
 
 @media (max-width: 600px) {
     .container {
-        width: 85%;
+        width: 85%; 
         margin: 15px auto;
     }
 
@@ -216,8 +259,12 @@ input {
         margin-top: 170px;
     }
 
+    .role-info{
+        display: block;
+    }
+
     .right {
-        width: 80%;
+        width: 100%;
         border-left: none;
         margin-top: 30px;
     }
@@ -227,7 +274,7 @@ input {
     }
 
     input {
-        width: 270px;
+        width: 100%;
         padding: 8px;
         margin-top: 5px;
         margin-bottom: 10px;
@@ -238,5 +285,14 @@ input {
         font-size: 14px;
         margin-top: -2px;
         margin-bottom: 5px;
+    }
+
+    .input-field label {
+        width: auto; 
+        margin-right: 5px; 
+    }
+
+    .input-field input[type="file"] {
+        width: calc(100% - 100px);
     }
 }

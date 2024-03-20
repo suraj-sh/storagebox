@@ -34,7 +34,7 @@
         <div class="form-group">
             <label for="sortOption">Order By:</label>
             <select id="sortOption" (change)="onSortOptionChange($event)">
-                <option>Select Price</option>
+                <option>Sort by Price</option>
                 <option>Price - Low to High</option>
                 <option>Price - High to Low</option>
             </select>
@@ -44,9 +44,7 @@
             <button (click)="clearFilters()">Clear Filters</button>
         </div>
         
-    </div>
-    
-    
+    </div> 
 
     <div class="cards-container">
         <div class="card" *ngFor="let ad of ads" (click)="viewAdDetails(ad)">
