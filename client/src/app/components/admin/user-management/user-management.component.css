@@ -1,0 +1,42 @@
+/* Main Board */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid #eef0f3;
+}
+
+thead td {
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: #F9FAFB;
+    text-align: start;
+    padding: 15px;
+}
+
+tbody tr td {
+    padding: 10px 15px;
+}
+
+.role{
+    cursor: pointer;
+}
+
+/* Custom button style */
+.delete-btn {
+    padding: 8px 16px;
+    background-color: #d11a2a;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: rgb(245, 72, 72);
+}

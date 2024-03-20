@@ -5,8 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { AuthenticationService } from './services/authentication.service';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthenticationService } from './services/auth.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AuthGuard } from './guards/auth.guard';
@@ -19,8 +18,18 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ProfileService } from './services/profileservice.service';
-import { AdminModule } from 'src/admin/admin.module';
+import { ProfileService } from './services/profile.service';
+import { AdpostComponent } from './components/ads/adpost/adpost.component';
+import { AdviewComponent } from './components/ads/adview/adview.component';
+import { AdDetailComponent } from './components/ads/ad-detail/ad-detail.component';
+import { DatePipe } from '@angular/common';
+import { AdDashboardComponent } from './components/ads/ad-dashboard/ad-dashboard.component';
+import { AdService } from './services/ad.service';
+import { OwnerGuard } from './guards/owner.guard';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AdminGuard } from './guards/admin.guard';
 
 @NgModule({
   
@@ -33,6 +42,13 @@ import { AdminModule } from 'src/admin/admin.module';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ProfileComponent,
+    AdpostComponent,
+    AdviewComponent,
+    AdDetailComponent,
+    AdDashboardComponent,
+    NotFoundComponent,
+    AdminDashboardComponent,
+    UserManagementComponent
     
   ],
   imports: [
@@ -42,14 +58,17 @@ import { AdminModule } from 'src/admin/admin.module';
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxSpinnerModule,
-    AdminModule,
+    NgxSpinnerModule
   ],
+
   providers: [
     AuthenticationService,
-    CookieService,
     ProfileService,
+    AdService,
     AuthGuard,
+    OwnerGuard,
+    AdminGuard,
+    DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -61,6 +80,8 @@ import { AdminModule } from 'src/admin/admin.module';
       multi: true,
     },
   ],
+
   bootstrap: [AppComponent]
 })
+
 export class AppModule {}

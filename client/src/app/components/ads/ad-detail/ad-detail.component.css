@@ -1,0 +1,164 @@
+.container {
+    width: 98%;
+    height: calc(80vh - 20px);
+    margin: 1vw auto;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+}
+
+.left,
+.right {
+    width: 50%;
+    padding: 30px;
+    background-color: white;
+    border: 1px solid #cccccc;  
+}
+
+.left {
+    width: 55%;
+}
+
+.main_image {
+    position: relative; /* Position the buttons relative to this container */
+}
+
+.main_image img {
+    width: 100%;
+    object-fit: contain;
+    height: 55vh;
+    background: #333;
+    margin-bottom: 20px;
+}
+
+.option {
+    display: flex;
+    overflow-x: scroll;
+   
+}
+
+.option::-webkit-scrollbar {
+    display: none; /* Hide scrollbar on Chrome, Safari, and Opera */
+}
+
+.option img {
+    width: 100px;
+    height: 80px;
+    padding: 5px;
+    border-radius: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.option img:hover {
+    transform: scale(1.1);
+}
+
+.option img.selected {
+    border: 2px solid #333;
+}
+
+.slide-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.prev-button,
+.next-button {
+    color: whitesmoke;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.prev-button i,
+.next-button i {
+    font-size: 3rem;
+}
+
+.right {
+    padding: 20px 60px;
+    overflow-y: scroll; /* Enable vertical scrolling */
+    max-height: calc(100vh - 120px);
+}
+
+.right::-webkit-scrollbar {
+    display: none; /* Hide scrollbar on Chrome, Safari, and Opera */
+}
+
+.title {
+    color: #333;
+    margin: 20px 0;
+    font-size: 30px;
+    max-width: auto; /* Limit the width */
+    overflow: hidden; /* Hide overflowing text */
+}
+
+
+.description {
+    color: #666;
+    font-size: 20px;
+    white-space: pre-wrap;
+    margin: 20px 0 60px 0;
+}
+
+i {
+    font-size: 30px;
+}
+
+.category,
+.mobile,
+.location,
+.date,
+.posted-by,
+.price,
+.rented {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.price {
+    color: #458DBA;
+}
+
+.rented {
+    color: green
+}
+
+.dl {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pa {
+    display: flex;
+    justify-content: space-between;
+}
+
+.contact {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+@media (max-width: 600px) {
+    .container {
+        margin: 2vw auto;
+        height: auto;
+        flex-direction: column;        
+    }
+
+    .left,
+    .right {
+        width: 100%;
+        padding: 20px;
+    }
+}

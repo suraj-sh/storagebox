@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="left">
+        <div class="main_image">
+            <img [src]="storage?.images[selectedImageIndex]" class="slide">
+            <div class="slide-buttons">
+                <button class="prev-button" (click)="prevImage()"><i class="ri-arrow-left-s-line"></i></button>
+                <button class="next-button" (click)="nextImage()"><i class="ri-arrow-right-s-line"></i></button>
+            </div>
+        </div>
+        <div class="option">
+            <img *ngFor="let image of storage?.images; let i = index" [src]="image" [alt]="'Image ' + (i + 1)"
+                (click)="selectImage(i)" [ngClass]="{ 'selected': isSelectedImage(i) }">
+        </div>
+    </div>
+
+    <div class="right">
+        <h3 class="title">{{ storage?.name }}</h3>
+        <div class="category">
+            <i class="ri-archive-line"></i> {{ storage?.category }}
+        </div>
+
+        <div class="dl">
+            <div class="location">
+                <i class="ri-map-pin-line"></i> {{ storage?.city }}
+            </div>
+            <div class="date">
+                <i class="ri-calendar-line"></i> {{ formatDate(storage?.dateCreated) }}
+            </div>
+        </div>
+
+        <div class="pa">
+            <div class="price">
+                <i class="ri-money-rupee-circle-line"></i> &#8377;{{ storage?.price }} / Month
+            </div>
+
+            <div class="rented">
+                <i class="ri-checkbox-circle-line"></i> {{ storage?.isRented ? 'Rented' : 'Available' }}
+            </div>
+        </div>
+
+        <div class="contact">
+            <div class="posted-by">
+                <i class="ri-user-line"></i> {{ storage?.user?.username }}
+            </div>
+            <div class="mobile">
+                <i class="ri-phone-line"></i> +91 {{ storage?.mobileNo }}
+            </div>
+        </div>
+
+        <p class="description">{{ storage?.description }}</p>
+
+    </div>
+
+</div>

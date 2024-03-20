@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
-import { HttpClient } from '@angular/common/http';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,17 +11,65 @@ import { HttpClient } from '@angular/common/http';
 })
 export class NavComponent implements OnInit {
 
-  isMenuOpen = false;
-  isCloseIconVisible = false;
-
+  isMenuOpen: boolean = false;
+  isCloseIconVisible: boolean = false;
+  userProfile: any;
   currentYear: number;
   isLoggedIn$: Observable<boolean>;
 
-  constructor(private router: Router, public authService: AuthenticationService,
-    private cookieService: CookieService, private http: HttpClient) {
+  constructor(private router: Router, private authService: AuthenticationService,
+              private profileService: ProfileService) {
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     this.authService.isLoggedInSubject.next(isLoggedIn);
+  }
+
+
+  ngOnInit() {
+    this.currentYear = new Date().getFullYear();
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
+    // Subscribe to isLoggedIn$ to update user profile after login
+    this.isLoggedIn$.subscribe(isLoggedIn => {
+      if (isLoggedIn) {
+        this.loadUserProfile();
+      } else {
+        // Clear user profile if not logged in
+        this.userProfile = null;
+      }
+    });
+    
+    // Subscribe to userInfoUpdated event from ProfileService
+    this.profileService.userInfoUpdated.subscribe(updatedUserInfo => {
+      // Check if user is logged in before updating profile
+      if (this.authService.isLoggedInSubject.value) {
+        this.loadUserProfile();
+      }
+    });
+  }
+
+  loadUserProfile(): void {
+    const decodedToken = this.authService.decodeToken();
+    if (decodedToken) {
+      const userId = decodedToken.userId;
+      this.profileService.getUser(userId).subscribe(
+        (userData: any) => {
+          this.userProfile = userData;
+          // Add role information from decoded token
+          this.userProfile.role = decodedToken.role;
+        },
+        (error: any) => {
+          console.error('Error fetching user details:', error);
+        }
+      );
+    } 
+  }
+  
+  canAccessPostAd(): boolean {
+    return this.userProfile?.role === 'Owner' && this.userProfile?.isSeller && this.userProfile?.isActiveSeller;
+  }
+
+  canAccessMyAds(): boolean {
+    return this.userProfile?.role === 'Owner' && this.userProfile?.isSeller && this.userProfile?.isActiveSeller;
   }
 
   toggleMenu() {
@@ -49,10 +96,4 @@ export class NavComponent implements OnInit {
     this.authService.logout();
     this.closeMenu();
   }
-
-  ngOnInit() {
-    this.currentYear = new Date().getFullYear();
-    this.isLoggedIn$ = this.authService.isLoggedIn$;
-  }
-  
 }

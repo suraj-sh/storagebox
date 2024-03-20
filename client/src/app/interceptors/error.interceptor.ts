@@ -1,21 +1,27 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthenticationService } from '../services/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor() { }
+
+  constructor(private spinner: NgxSpinnerService, private router: Router,
+              private authService: AuthenticationService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.spinner.show(); // Show spinner before making the request
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
 
         // let errorMessage = 'An error occurred while processing your request.';
 
-        if (request.url.includes('/register') && error.error.message) {
+        if (error.error.message) {
           let errorMessage = 'An error occurred while processing your request.';
           errorMessage = error.error.message;
 
@@ -34,6 +40,22 @@ export class ErrorInterceptor implements HttpInterceptor {
           Swal.fire('Error', errorMessage, 'error');
 
         }
+
+        const isRefresh = request.url.endsWith('/refresh');
+
+        // Handling Refresh errors separately
+        if (isRefresh && error.status === 401) {
+          let errorMessage = 'An error occurred while processing your request.';
+          errorMessage = 'Session Expired. Please login again.';
+          Swal.fire('Error', errorMessage, 'error');
+        
+          // Clear localStorage and redirect to login page
+          localStorage.clear();
+          this.authService.isLoggedInSubject.next(false); // Update isLoggedIn$ to false
+          this.router.navigate(['/login']);
+          return throwError(errorMessage); // Return an empty observable to stop further processing
+        }
+        
 
         // Check if the request was for login
         const isLoginRequest = request.url.endsWith('/auth');
@@ -67,8 +89,11 @@ export class ErrorInterceptor implements HttpInterceptor {
           Swal.fire('Error', errorMessage, 'error');
         }
 
-        // Swal.fire('Error', errorMessage, 'error');
         return throwError(error);
+      }),
+
+      finalize(() => {
+        this.spinner.hide(); // Hide spinner after request completes
       })
     );
   }

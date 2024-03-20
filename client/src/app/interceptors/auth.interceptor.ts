@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
               }),
               catchError(() => {
                 this.isRefreshing = false;
-                this.router.navigate(['/login']);
+                // this.router.navigate(['']);
                 return throwError(error);
               }),
               finalize(() => {

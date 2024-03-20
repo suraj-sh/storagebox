@@ -4,6 +4,7 @@
       <span class="title">Login</span>
 
       <form [formGroup]="loginForm">
+
         <div class="input-field">
           <input id="name" type="text" formControlName="user" autocomplete="name" placeholder="Enter your username or email" required>
           <i class="ri-user-3-line"></i>
@@ -17,6 +18,14 @@
           <i *ngIf="!passwordVisible" class="ri-eye-off-line showHidePw " (click)="togglePasswordVisibility()"></i>
         </div>
 
+        <!-- Spinner module -->
+        <div *ngIf="showSpinner">
+          <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+            [fullScreen]="true">
+            <p style="color: white"> Sending... </p>
+          </ngx-spinner>
+        </div>
+
         <div class="checkbox-text">
           <a routerLink="/forgot-password" class="text">Forgot password?</a>
         </div>
@@ -24,6 +33,7 @@
         <div class="input-field button">
           <button [disabled]="loginForm.invalid" type="button" (click)="login()">Login</button>
         </div>
+        
       </form>
 
       <div class="login-signup">
@@ -31,6 +41,7 @@
           <a routerLink="/register" class="text signup-link">Register Now</a>
         </span>
       </div>
+
     </div>
   </div>
 </div>

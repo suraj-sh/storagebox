@@ -1,0 +1,26 @@
+<!-- Spinner module -->
+<div *ngIf="showSpinner">
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+        [fullScreen]="true">
+        <p style="color: white"> Sending... </p>
+    </ngx-spinner>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <td class="people">User ID</td>
+            <td class="people">Username</td>
+            <td class="role" (click)="toggleRoleOrder()">Role <span>{{ sortByRoleOrder ? '▲' : '▼' }}</span></td>
+            <td class="verify">Action</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <td>{{ user._id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.isSeller ? 'Owner' : 'Renter' }}
+            <td><button (click)="removeUser(user._id)" class="delete-btn">Delete</button></td>
+        </tr>
+    </tbody>
+</table>

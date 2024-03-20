@@ -1,31 +1,45 @@
 <header>
+
     <div class="logo">
         <img src="../../../assets/icons/logo.png" alt="company logo">
         <span>StorageBox</span>
     </div>
 
-    <ul class="nav" [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
+    <menu [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
         <li><a routerLink="" (click)="closeMenu()">Home</a></li>
-        <li><a routerLink="/chats" (click)="closeMenu()">Chats</a></li>
-        <li><a routerLink="/settings" (click)="closeMenu()">Settings</a></li>
 
-        <!-- Display these buttons if the user is not logged in -->
         <ng-container *ngIf="!(isLoggedIn$ | async)">
             <li><button (click)="redirectToLogin()">Login</button></li>
             <li><button (click)="redirectToRegister()">Register</button></li>
         </ng-container>
 
-        <!-- Display this button if the user is logged in -->
         <ng-container *ngIf="isLoggedIn$ | async">
+
+            <li *ngIf="canAccessPostAd()"><a routerLink="/post" (click)="closeMenu()">Post Ad</a></li>
+            <li *ngIf="canAccessMyAds()"><a routerLink="/ads" (click)="closeMenu()">My Ads</a></li>
+
+            <li class="profile" routerLink="/profile" (click)="closeMenu()">
+                <div class="profile-info">
+                    <span>Welcome, {{ userProfile?.username }}</span>
+                    <div class="profile-picture-container">
+                        <img *ngIf="userProfile?.image; else defaultProfilePic" [src]="userProfile.image"
+                            alt="Profile Picture">
+                        <ng-template #defaultProfilePic>
+                            <img src="../../../assets/images/Profile_image.jpg" alt="Default Profile Picture">
+                        </ng-template>
+                    </div>
+                </div>
+            </li>
             <li><button (click)="logout()">Logout</button></li>
         </ng-container>
-    </ul>
+        
+    </menu>
+
     <i class="ri-menu-3-fill" *ngIf="!isMenuOpen" (click)="toggleMenu()"></i>
     <i class="ri-close-fill" *ngIf="isCloseIconVisible" (click)="closeMenu()"></i>
+
 </header>
 
 <footer>
-    <div class="footer-content">
-        <p>&copy; {{ currentYear }} StorageBox. All rights reserved.</p>
-    </div>
+    <p>&copy; {{ currentYear }} StorageBox. All rights reserved.</p>
 </footer>
