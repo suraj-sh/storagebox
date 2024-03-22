@@ -1,6 +1,14 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    max-height: calc(100vh - 125px);
+}
+
 #adsList {
     max-width: 500px;
-    margin: 0 auto;
+    margin: auto;
     padding: 20px;
 }
 

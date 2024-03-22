@@ -71,12 +71,12 @@ button:hover {
     gap: 50px;
     padding: 30px;
     margin-left: 200px;
-    margin-top: 110px;
+    margin-top: auto;
 }
 
 
 .card {
-    max-width: 300px; 
+    width: 300px; 
     border: 1px solid #ddd; 
     border-radius: 20px;
     overflow: hidden;
