@@ -18,11 +18,16 @@ const getAllStorage = async (req, res) => {
             'low-to-high':{price:1},
         }
         const sortOption=req.query.sort&&sortOptions[req.query.sort]? sortOptions[req.query.sort] : { dateCreated: -1 };
-        const storageList = await Storage.find(filter).sort(sortOption).populate('user', 'username').exec();
+        const storageList = await Storage.find(filter).sort({dateCreated: -1}).populate('user', 'username').exec();
         if (!storageList || storageList.length === 0) {
             return res.status(204).json({ message: 'No Storages found' });
         }
-        
+        if (req.query.sort === 'high-to-low') {
+            storageList.sort((a, b) => b.price - a.price);
+        } else if (req.query.sort === 'low-to-high') {
+            storageList.sort((a, b) => a.price - b.price);
+        }
+
         res.json(storageList);
         
     } catch (error) {
