@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AdService } from 'src/app/services/ad.service';
 
 @Component({
@@ -11,23 +12,30 @@ export class AdviewComponent implements OnInit {
 
   isSidebarOpen: boolean = false;
   isBackIconVisible: boolean = false;
-  selectedCity: string = 'Select City';
-  selectedStorageType: string = 'Select category';
-  selectedSortOption: string = 'Select Price';
   ads: any[];
+  noAdsFound: boolean = false;
+  filterForm: FormGroup;
 
   constructor(private adService: AdService, private router: Router,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.filterForm = this.fb.group({
+      city: ['Select City'],
+      category: ['Select category'],
+      price: ['Sort by Price']
+    });
+
     this.route.queryParamMap.subscribe(params => {
       const cities = params.get('cities');
       const categories = params.get('categories');
-      const sort = params.get('sort');
+      const price = params.get('price');
 
-      this.selectedCity = cities || 'Select City';
-      this.selectedStorageType = categories || 'Select category';
-      this.selectedSortOption = sort || 'Select Price';
+      this.filterForm.patchValue({
+        city: cities || 'Select City',
+        category: categories || 'Select category',
+        price: price || 'Sort by Price'
+      });
 
       this.applyFilters();
     });
@@ -38,9 +46,9 @@ export class AdviewComponent implements OnInit {
       (data: any[]) => {
         this.ads = data.map(ad => {
           const clonedAd = { ...ad };
-          // Format price for the cloned ad
           clonedAd.price = this.formatPrice(clonedAd.price);
-          clonedAd.images.sort((a: { index: number }, b: { index: number }) => a.index - b.index);
+          clonedAd.images.forEach((image: any) => {
+          });
           return clonedAd;
         });
       },
@@ -50,11 +58,8 @@ export class AdviewComponent implements OnInit {
     );
   }
 
-  // Method to format price with commas
   formatPrice(price: string | number): string {
-    // Convert price to string if it's a number
     const priceString = typeof price === 'number' ? price.toString() : price;
-    // Use regex to add commas for thousands separator
     return priceString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
@@ -68,186 +73,97 @@ export class AdviewComponent implements OnInit {
     this.isBackIconVisible = false;
   }
 
-  onCityChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.selectedCity = target.value;
-  }
-
-  onStorageTypeChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.selectedStorageType = target.value;
-  }
-
-  onSortOptionChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.selectedSortOption = target.value;
-  }
-
   applyFilters() {
-
-    // Close the sidebar and hide the back icon
+    this.noAdsFound = false;
     this.isSidebarOpen = false;
     this.isBackIconVisible = false;
-    
-    // Update query parameters
+
+    const filters = this.filterForm.value;
+    let queryParams: any = {};
+
+    if (filters.city !== 'Select City') {
+      queryParams['cities'] = filters.city;
+    }
+    if (filters.category !== 'Select category') {
+      queryParams['categories'] = filters.category;
+    }
+    if (filters.price !== 'Sort by Price') {
+      queryParams['sort'] = filters.price === 'Price - Low to High' ? 'low-to-high' : 'high-to-low';
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        cities: this.selectedCity !== 'Select City' ? this.selectedCity : null,
-        categories: this.selectedStorageType !== 'Select category' ? this.selectedStorageType : null,
-        sort: this.selectedSortOption
-      },
-      queryParamsHandling: 'merge' // Preserve existing query parameters
+      queryParams: queryParams,
+      queryParamsHandling: 'merge'
     });
 
-    // Check if all filters are selected
-    if (this.selectedCity !== 'Select City' && this.selectedStorageType !== 'Select category' && this.selectedSortOption !== 'Select Price') {
-      this.applyAllFilters();
-      return; // Return to prevent further execution
-    }
+    if (Object.keys(queryParams).length) {
+      this.adService.allFilters(this.constructQueryString(queryParams)).subscribe(
+        (filteredAds: any[]) => {
 
-    // Apply city filter
-    if (this.selectedCity !== 'Select City') {
-      this.filterByCity(this.selectedCity, this.selectedSortOption);
-      return; // Return to prevent further execution
-    }
+          if (filteredAds !== null && filteredAds.length > 0) {
+            this.ads = filteredAds.map(ad => {
+              ad.price = this.formatPrice(ad.price);
+              return ad;
+            });
+            this.noAdsFound = false;
+          }
+          else {
+            this.ads = [];
+            this.noAdsFound = true;
+          }
 
-    // Apply category filter
-    if (this.selectedStorageType !== 'Select category') {
-      this.filterByCategory(this.selectedStorageType, this.selectedSortOption);
-      return; // Return to prevent further execution
-    }
+          // Update the form control for price to retain the selected value
+          this.filterForm.patchValue({
+            price: filters.price
+          });
 
-    // Apply sorting option
-    if (this.selectedSortOption === 'Price - Low to High') {
-      this.sortLowToHigh();
-    } 
-    else if (this.selectedSortOption === 'Price - High to Low') {
-      this.sortHighToLow();
-    } 
+        },
+        (error) => {
+          console.error('Error applying filters:', error);
+        }
+      );
+    }
     else {
-      // Fetch all ads if no filters are applied
       this.fetchAds();
     }
+
   }
 
-  getSortOptionValue(): string {
-    if (this.selectedSortOption === 'Price - Low to High') {
-      return 'low-to-high'; // Map to backend value for low-to-high sorting
-    } else if (this.selectedSortOption === 'Price - High to Low') {
-      return 'high-to-low'; // Map to backend value for high-to-low sorting
-    } else {
-      return 'dateCreated'; // If no sort option is selected, return null
+  constructQueryString(params: any): string {
+    let queryString = '';
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        queryString += `${key}=${encodeURIComponent(params[key])}&`;
+      }
     }
-  }
-
-
-  applyAllFilters() {
-    const selectedCategory: string = this.selectedStorageType !== 'Select category' ? this.selectedStorageType : '';
-    const selectedCity: string = this.selectedCity !== 'Select City' ? this.selectedCity : '';
-    const selectedSortOption: string = this.selectedSortOption !== 'Select Price' ? this.getSortOptionValue() : '';
-  
-    this.adService.allFilters(selectedCategory, selectedCity, selectedSortOption).subscribe(
-      (filteredAds: any[]) => {
-        this.ads = filteredAds.map(ad => {
-          ad.price = this.formatPrice(ad.price);
-          return ad;
-        });
-      },
-      (error) => {
-        console.error('Error applying all filters:', error);
-      }
-    );
-  }
-
-  filterByCity(city: string, sortOption: string | null = null) {
-    this.adService.filterByCity(city).subscribe(
-      (filteredAds: any[]) => {
-        this.ads = filteredAds.map(ad => {
-          ad.price = this.formatPrice(ad.price);
-          return ad;
-        });
-      },
-      (error) => {
-        console.error('Error applying city filter:', error);
-      }
-    );
-  }
-
-  filterByCategory(category: string, sortOption: string | null = null) {
-    this.adService.filterByCategory(category).subscribe(
-      (filteredAds: any[]) => {
-        this.ads = filteredAds.map(ad => {
-          ad.price = this.formatPrice(ad.price);
-          return ad;
-        });
-      },
-      (error) => {
-        console.error('Error applying category filter:', error);
-      }
-    );
-  }
-
-  sortLowToHigh() {
-    this.adService.sortLowToHigh('low-to-high').subscribe(
-      (sortedAds: any[]) => {
-        this.ads = sortedAds.map(ad => {
-          ad.price = this.formatPrice(ad.price);
-          return ad;
-        });
-      },
-      (error) => {
-        console.error('Error sorting ads:', error);
-      }
-    );
-  }
-
-  sortHighToLow() {
-    this.adService.sortHighToLow('high-to-low').subscribe(
-      (sortedAds: any[]) => {
-        this.ads = sortedAds.map(ad => {
-          ad.price = this.formatPrice(ad.price);
-          return ad;
-        });
-      },
-      (error) => {
-        console.error('Error sorting ads:', error);
-      }
-    );
+    return queryString.slice(0, -1); // Remove trailing '&'
   }
 
 
   clearFilters() {
+    this.filterForm.reset({
+      city: 'Select City',
+      category: 'Select category',
+      price: 'Sort by Price'
+    });
 
-    // Reset filter selections
-    this.selectedCity = 'Select City';
-    this.selectedStorageType = 'Select category';
-    this.selectedSortOption = 'Select Price';
-
-    // Reset filter menu options
-    const citySelect = document.getElementById('city') as HTMLSelectElement;
-    citySelect.selectedIndex = 0;
-
-    const storageTypeSelect = document.getElementById('storageType') as HTMLSelectElement;
-    storageTypeSelect.selectedIndex = 0;
-
-    const sortOptionSelect = document.getElementById('sortOption') as HTMLSelectElement;
-    sortOptionSelect.selectedIndex = 0;
-
-    // Remove query parameters from the URL
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {},
-      queryParamsHandling: 'merge' // Preserve existing query parameters
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      // Navigate again to remove the URL fragment
+      this.router.navigate(['.'], { relativeTo: this.route, replaceUrl: true });
     });
 
-    // Close the sidebar and hide the back icon
+    this.noAdsFound = false;
     this.isSidebarOpen = false;
     this.isBackIconVisible = false;
 
-    // Apply filters with cleared selections
-    this.applyFilters();
+    this.fetchAds(); // Fetch all ads when filters are cleared
   }
+
 
   viewAdDetails(ad: any) {
     this.router.navigate(['/details', ad.id]);
