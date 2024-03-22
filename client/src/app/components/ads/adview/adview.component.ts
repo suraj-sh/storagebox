@@ -84,113 +84,155 @@ export class AdviewComponent implements OnInit {
   }
 
   applyFilters() {
-    console.log('Selected Sort Option:', this.selectedSortOption);
+
+    // Close the sidebar and hide the back icon
+    this.isSidebarOpen = false;
+    this.isBackIconVisible = false;
+    
     // Update query parameters
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         cities: this.selectedCity !== 'Select City' ? this.selectedCity : null,
         categories: this.selectedStorageType !== 'Select category' ? this.selectedStorageType : null,
-        sort: this.selectedSortOption !== 'Select Price' ? this.selectedSortOption : null
+        sort: this.selectedSortOption
       },
       queryParamsHandling: 'merge' // Preserve existing query parameters
     });
 
-    this.isSidebarOpen = false
-    this.isBackIconVisible = false;
+    // Check if all filters are selected
+    if (this.selectedCity !== 'Select City' && this.selectedStorageType !== 'Select category' && this.selectedSortOption !== 'Select Price') {
+      this.applyAllFilters();
+      return; // Return to prevent further execution
+    }
 
-    if (this.selectedStorageType !== 'Select category' && this.selectedCity !== 'Select City' && this.selectedSortOption !== 'Select Price') {
-      this.adService.allFilters(this.selectedStorageType, this.selectedCity, this.getSortOptionValue()).subscribe(
-        (filteredAds: any[]) => {
-          this.ads = filteredAds.map(ad => {
-            ad.price = this.formatPrice(ad.price);
-            return ad;
-          });
-        },
-        (error) => {
-          console.error('Error applying filters:', error);
-        }
-      );
+    // Apply city filter
+    if (this.selectedCity !== 'Select City') {
+      this.filterByCity(this.selectedCity, this.selectedSortOption);
+      return; // Return to prevent further execution
     }
-    else if (this.selectedCity !== 'Select City') {
-      this.adService.filterByCity(this.selectedCity).subscribe(
-        (filteredAds: any[]) => {
-          this.ads = filteredAds.map(ad => {
-            ad.price = this.formatPrice(ad.price);
-            return ad;
-          });
-        },
-        (error) => {
-          console.error('Error applying filters:', error);
-        }
-      );
+
+    // Apply category filter
+    if (this.selectedStorageType !== 'Select category') {
+      this.filterByCategory(this.selectedStorageType, this.selectedSortOption);
+      return; // Return to prevent further execution
     }
-    else if (this.selectedStorageType !== 'Select category') {
-      this.adService.filterByCategory(this.selectedStorageType).subscribe(
-        (filteredAds: any[]) => {
-          this.ads = filteredAds.map(ad => {
-            ad.price = this.formatPrice(ad.price);
-            return ad;
-          });
-        },
-        (error) => {
-          console.error('Error applying filters:', error);
-        }
-      );
-    }
-    else if (this.selectedSortOption === 'Price - Low to High') {
-      console.log('Sorting: Low to High');
-      this.adService.sortLowToHigh('low-to-high').subscribe(
-        (sortedAds: any[]) => {
-          this.ads = sortedAds.map(ad => {
-            ad.price = this.formatPrice(ad.price);
-            return ad;
-          });
-        },
-        (error) => {
-          console.error('Error sorting ads:', error);
-        }
-      );
-    }
+
+    // Apply sorting option
+    if (this.selectedSortOption === 'Price - Low to High') {
+      this.sortLowToHigh();
+    } 
     else if (this.selectedSortOption === 'Price - High to Low') {
-      console.log('Sorting: High to Low');
-      this.adService.sortHighToLow('high-to-low').subscribe(
-        (sortedAds: any[]) => {
-          this.ads = sortedAds.map(ad => {
-            ad.price = this.formatPrice(ad.price);
-            return ad;
-          });
-        },
-        (error) => {
-          console.error('Error sorting ads:', error);
-        }
-      );
-    }
+      this.sortHighToLow();
+    } 
     else {
-      console.log('No sorting selected, fetching ads');
+      // Fetch all ads if no filters are applied
       this.fetchAds();
     }
   }
 
-  // Helper method to get the corresponding sort option value
-  getSortOptionValue(): string | null {
+  getSortOptionValue(): string {
     if (this.selectedSortOption === 'Price - Low to High') {
       return 'low-to-high'; // Map to backend value for low-to-high sorting
-    } 
-    else if (this.selectedSortOption === 'Price - High to Low') {
+    } else if (this.selectedSortOption === 'Price - High to Low') {
       return 'high-to-low'; // Map to backend value for high-to-low sorting
-    } 
-    else {
-      return null; // If no sort option is selected, return null
+    } else {
+      return 'dateCreated'; // If no sort option is selected, return null
     }
   }
 
 
+  applyAllFilters() {
+    const selectedCategory: string = this.selectedStorageType !== 'Select category' ? this.selectedStorageType : '';
+    const selectedCity: string = this.selectedCity !== 'Select City' ? this.selectedCity : '';
+    const selectedSortOption: string = this.selectedSortOption !== 'Select Price' ? this.getSortOptionValue() : '';
+  
+    this.adService.allFilters(selectedCategory, selectedCity, selectedSortOption).subscribe(
+      (filteredAds: any[]) => {
+        this.ads = filteredAds.map(ad => {
+          ad.price = this.formatPrice(ad.price);
+          return ad;
+        });
+      },
+      (error) => {
+        console.error('Error applying all filters:', error);
+      }
+    );
+  }
+
+  filterByCity(city: string, sortOption: string | null = null) {
+    this.adService.filterByCity(city).subscribe(
+      (filteredAds: any[]) => {
+        this.ads = filteredAds.map(ad => {
+          ad.price = this.formatPrice(ad.price);
+          return ad;
+        });
+      },
+      (error) => {
+        console.error('Error applying city filter:', error);
+      }
+    );
+  }
+
+  filterByCategory(category: string, sortOption: string | null = null) {
+    this.adService.filterByCategory(category).subscribe(
+      (filteredAds: any[]) => {
+        this.ads = filteredAds.map(ad => {
+          ad.price = this.formatPrice(ad.price);
+          return ad;
+        });
+      },
+      (error) => {
+        console.error('Error applying category filter:', error);
+      }
+    );
+  }
+
+  sortLowToHigh() {
+    this.adService.sortLowToHigh('low-to-high').subscribe(
+      (sortedAds: any[]) => {
+        this.ads = sortedAds.map(ad => {
+          ad.price = this.formatPrice(ad.price);
+          return ad;
+        });
+      },
+      (error) => {
+        console.error('Error sorting ads:', error);
+      }
+    );
+  }
+
+  sortHighToLow() {
+    this.adService.sortHighToLow('high-to-low').subscribe(
+      (sortedAds: any[]) => {
+        this.ads = sortedAds.map(ad => {
+          ad.price = this.formatPrice(ad.price);
+          return ad;
+        });
+      },
+      (error) => {
+        console.error('Error sorting ads:', error);
+      }
+    );
+  }
+
+
   clearFilters() {
+
     // Reset filter selections
     this.selectedCity = 'Select City';
     this.selectedStorageType = 'Select category';
     this.selectedSortOption = 'Select Price';
+
+    // Reset filter menu options
+    const citySelect = document.getElementById('city') as HTMLSelectElement;
+    citySelect.selectedIndex = 0;
+
+    const storageTypeSelect = document.getElementById('storageType') as HTMLSelectElement;
+    storageTypeSelect.selectedIndex = 0;
+
+    const sortOptionSelect = document.getElementById('sortOption') as HTMLSelectElement;
+    sortOptionSelect.selectedIndex = 0;
 
     // Remove query parameters from the URL
     this.router.navigate([], {
@@ -199,10 +241,13 @@ export class AdviewComponent implements OnInit {
       queryParamsHandling: 'merge' // Preserve existing query parameters
     });
 
+    // Close the sidebar and hide the back icon
+    this.isSidebarOpen = false;
+    this.isBackIconVisible = false;
+
     // Apply filters with cleared selections
     this.applyFilters();
   }
-
 
   viewAdDetails(ad: any) {
     this.router.navigate(['/details', ad.id]);

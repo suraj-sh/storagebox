@@ -1,23 +1,25 @@
-<div id="adsList">
-    <h3>My Posted Ads</h3>
-    <ul>
-        <li *ngFor="let ad of postedAds">
-            <div class="ad-card" [ngClass]="{ 'rented': ad.isRented }">
-                <div class="ad-image">
-                    <img [src]="ad.images[0]" alt="Ad Image">
+<div class="container">
+    <div id="adsList">
+        <h3>My Posted Ads</h3>
+        <ul>
+            <li *ngFor="let ad of postedAds">
+                <div class="ad-card" [ngClass]="{ 'rented': ad.isRented }">
+                    <div class="ad-image">
+                        <img [src]="ad.images[0]" alt="Ad Image">
+                    </div>
+                    <div class="ad-details">
+                        <h4>{{ ad.title }}</h4>
+                        <p class="ad-price">Price: {{ ad.price }}</p>
+                        <p class="ad-location">Location: {{ ad.city }}</p>
+                        <p class="ad-status">Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
+                        <div class="action">
+                            <button class="view-btn" (click)="viewAdDetails(ad.id)">View</button>
+                            <button class="edit-btn" (click)="editAd(ad.id)">Edit</button>
+                            <button class="delete-btn" (click)="deleteAd(ad._id)">Delete</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="ad-details">
-                    <h4>{{ ad.title }}</h4>
-                    <p class="ad-price">Price: {{ ad.price }}</p>
-                    <p class="ad-location">Location: {{ ad.city }}</p>
-                    <p class="ad-status">Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
-                    <div class="action">
-                        <button class="view-btn" (click)="viewAdDetails(ad.id)">View</button>
-                        <button class="edit-btn" (click)="editAd(ad.id)">Edit</button>
-                        <button class="delete-btn" (click)="deleteAd(ad._id)">Delete</button>
-                    </div> 
-                </div>
-            </div>
-        </li>
-    </ul>
+            </li>
+        </ul>
+    </div>
 </div>
