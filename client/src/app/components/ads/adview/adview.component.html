@@ -11,39 +11,40 @@
 
     <div class="sidebar" [ngClass]="{ 'show': isSidebarOpen, 'show-close': isBackIconVisible }">
         <h2>Filters</h2>
-        <div class="form-group">
-            <label for="city">City:</label>
-            <select id="city" (change)="onCityChange($event)">
-                <option>Select City</option>
-                <option>Pune</option>
-                <option>Mumbai</option>
-                <option>Bangalore</option>
-                <option>Delhi</option>
-                <option>Hyderabad</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="storageType">Storage Type:</label>
-            <select id="storageType" (change)="onStorageTypeChange($event)">
-                <option>Select category</option>
-                <option>Self Storage</option>
-                <option>Document Storage</option>
-                <option>Commercial Storage</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="sortOption">Order By:</label>
-            <select id="sortOption" (change)="onSortOptionChange($event)">
-                <option>Sort by Price</option>
-                <option>Price - Low to High</option>
-                <option>Price - High to Low</option>
-            </select>
-        </div>
-        <div class="buttons">
-            <button (click)="applyFilters()">Apply Filters</button>
-            <button (click)="clearFilters()">Clear Filters</button>
-        </div>
-        
+        <form [formGroup]="filterForm">
+            <div class="form-group">
+                <label for="city">City:</label>
+                <select id="city" formControlName="city">
+                    <option>Select City</option>
+                    <option>Pune</option>
+                    <option>Mumbai</option>
+                    <option>Bangalore</option>
+                    <option>Delhi</option>
+                    <option>Hyderabad</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="category">Storage Type:</label>
+                <select id="category" formControlName="category">
+                    <option>Select category</option>
+                    <option>Self Storage</option>
+                    <option>Document Storage</option>
+                    <option>Commercial Storage</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Order By:</label>
+                <select id="price" formControlName="price">
+                    <option>Sort by Price</option>
+                    <option>Price - Low to High</option>
+                    <option>Price - High to Low</option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button type="button" (click)="applyFilters()">Apply Filters</button>
+                <button type="button" (click)="clearFilters()">Clear Filters</button>
+            </div>
+        </form>
     </div> 
 
     <div class="cards-container">
@@ -59,5 +60,8 @@
             </div>
         </div>     
     </div>
-
+    <div *ngIf="noAdsFound" class="no-ads-message">
+        No ads found matching the selected filters.
+    </div>
+      
 </div>

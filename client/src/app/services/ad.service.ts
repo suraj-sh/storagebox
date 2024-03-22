@@ -23,24 +23,8 @@ export class AdService {
     return this.http.get(`${this.apiUrl}/storage/user`);
   }
 
-  filterByCategory(categories: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/storage?categories=${categories}`);
-  }
-
-  filterByCity(cities: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/storage?cities=${cities}`);
-  }
-
-  sortLowToHigh(sort: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/storage?sort=${sort}`);
-  }
-  
-  sortHighToLow(sort: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/storage?sort=${sort}`);
-  }
-
-  allFilters(categories: any, cities: any, sort: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/storage?categories=${categories}&cities=${cities}&sort=${sort}`);
+  allFilters(queryParams: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/storage?${queryParams}`);
   }
 
   listAd(formData: any) {

@@ -136,6 +136,15 @@ button:hover {
     font-size: 1.2em;
 }
 
+.no-ads-message {
+    margin: 5vw;
+    color: #555;
+    font-size: 2vw;
+    line-height: 1.5; 
+    font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif;
+}
+
+
 @media(max-width: 600px) {
 
     .sidebar{
@@ -201,6 +210,11 @@ button:hover {
         grid-template-columns: repeat(1, 1fr);
         gap: 30px;
         margin: auto;
+    }
+
+    .no-ads-message{
+        margin: 10vw;
+        font-size: 5vw;
     }
     
 }
