@@ -18,6 +18,7 @@ import { UserManagementComponent } from './components/admin/user-management/user
 import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
+
   { path: '', component: HomeComponent },
 
   // Auth routes
@@ -34,7 +35,7 @@ const routes: Routes = [
   { path: 'view', component: AdviewComponent },
   { path: 'details/:id', component: AdDetailComponent, canActivate: [AuthGuard] },
   { path: 'ads', component: AdDashboardComponent, canActivate: [AuthGuard, OwnerGuard] },
-  { path: 'edit-ad/:id', component: AdpostComponent, canActivate: [AuthGuard] },
+  { path: 'edit-ad/:id', component: AdpostComponent, canActivate: [AuthGuard, OwnerGuard] },
 
   // Admin routes
   {
@@ -44,7 +45,6 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'user-management', component: UserManagementComponent },
-      // { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Redirect to dashboard by default
     ]
   },
 

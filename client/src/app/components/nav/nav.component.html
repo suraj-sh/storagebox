@@ -20,7 +20,7 @@
 
             <li class="profile" routerLink="/profile" (click)="closeMenu()">
                 <div class="profile-info">
-                    <span>Welcome, {{ userProfile?.username }}</span>
+                    <span>{{ userProfile?.username }}</span>
                     <div class="profile-picture-container">
                         <img *ngIf="userProfile?.image; else defaultProfilePic" [src]="userProfile.image"
                             alt="Profile Picture">
