@@ -48,8 +48,8 @@ import { AdminGuard } from './guards/admin.guard';
     AdDashboardComponent,
     NotFoundComponent,
     AdminDashboardComponent,
-    UserManagementComponent
-    
+    UserManagementComponent    
+      
   ],
   imports: [
     BrowserModule,
