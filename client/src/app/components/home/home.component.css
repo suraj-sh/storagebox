@@ -21,7 +21,7 @@ main {
 }
 
 .left p {
-    font-size: 1.2vw;
+    font-size: 1.3vw;
     font-weight: 600;
     color: #666;
     width: 80%;
@@ -35,7 +35,7 @@ button {
     background-color: rgb(69, 141, 186);
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     font-weight: 700;
     cursor: pointer;
 }
