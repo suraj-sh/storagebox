@@ -6,18 +6,29 @@ const path=require('path');
 const fs=require('fs');
 
 const getAllUser = async (req, res) => {
-    const userList = await User.find({ "roles.Admin": { $ne: 515 } }).sort({ _id: -1 }).select('-password').exec();
-    if (!userList) return res.sendStatus(204).json({ 'message': 'No users found' });
-    res.json(userList);
-}
-const getUser = async (req, res) => {
-    if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
-        res.status(400).json({ 'message': `Correct ID parameter is required` });
+    try {
+        const userList = await User.find({ "roles.Admin": { $ne: 515 } }).sort({ _id: -1 }).select('-password').exec();
+        if (!userList) return res.sendStatus(204).json({ 'message': 'No users found' });
+        res.json(userList);
+    } catch (error) {
+        console.error('Error fetching all users:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-    const user = await User.findById({ _id: req.params.id }).select('-password').exec();
-    if (!user) return res.sendStatus(204).json({ 'message': 'No user found' });
-    res.json(user);
-}
+};
+
+const getUser = async (req, res) => {
+    try {
+        if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ 'message': `Correct ID parameter is required` });
+        }
+        const user = await User.findById(req.params.id).select('-password').exec();
+        if (!user) return res.sendStatus(204).json({ 'message': 'No user found' });
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
 const updateUser = async (req, res) => {
     try {
         if (!req?.params?.id || !mongoose.isValidObjectId(req.params.id)) {

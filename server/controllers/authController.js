@@ -66,22 +66,17 @@ const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-
         if (!user) {
             return res.status(400).json({ success: false, msg: "This email does not exist" });
         }
-
         const resetToken = jwt.sign({ email: user.email }, process.env.RESET_TOKEN_SECRET, { expiresIn: 300 });
         const newUserToken = new userToken({
             userId: user._id,
             token: resetToken
         });
         await newUserToken.save();
-
         await user.save({ validateBeforeSave: false });
-
         const resetUrl = `${req.protocol}://localhost:4200/reset-password/${resetToken}`
-
         await sendEmail({
             email: user.email,
             subject: 'Password change request received',
@@ -102,7 +97,6 @@ const forgotPassword = async (req, res, next) => {
             </body>
             </html>`,
         });
-
         res.status(200).json({ message: 'Password reset link sent to user email' });
     } catch (error) {
         return res.status(500).json({ message: error.message });

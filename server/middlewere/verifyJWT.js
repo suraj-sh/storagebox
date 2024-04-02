@@ -10,12 +10,9 @@ const verifyToken = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        console.log('Decoded Token:', decoded);
         req.user = decoded.UserInfo.username;
-        console.log(req.user);
         req.roles = decoded.UserInfo.roles;
         req.userId = decoded.UserInfo.userId;        
-        console.log(req.userId);
         next();
     } catch (error) {
         console.error('Token verification error:', error);

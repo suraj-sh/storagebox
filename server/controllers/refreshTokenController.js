@@ -26,7 +26,6 @@ const handleRefreshToken =async (req, res) => {
         if(err){
             foundUser.refreshToken=[...newRefreshTokenArray];
             const result=await foundUser.save();
-            console.log(result);
         }
         if (err || foundUser.username !== decoded.username) {
             return res.sendStatus(403);
