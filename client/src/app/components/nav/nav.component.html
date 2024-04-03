@@ -7,6 +7,8 @@
 
     <menu [ngClass]="{ 'show-menu': isMenuOpen, 'show-close': isCloseIconVisible }">
         <li><a routerLink="" (click)="closeMenu()">Home</a></li>
+        <li><a routerLink="/about" (click)="closeMenu()">About Us</a></li>
+
 
         <ng-container *ngIf="!(isLoggedIn$ | async)">
             <li><button (click)="redirectToLogin()">Login</button></li>

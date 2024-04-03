@@ -27,9 +27,9 @@ import { AdDashboardComponent } from './components/ads/ad-dashboard/ad-dashboard
 import { AdService } from './services/ad.service';
 import { OwnerGuard } from './guards/owner.guard';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AdminComponent } from './components/admin/admin.component';
 import { AdminGuard } from './guards/admin.guard';
+import { AboutUsComponent } from './components/about-us/about-us.component';
 
 @NgModule({
   
@@ -47,8 +47,9 @@ import { AdminGuard } from './guards/admin.guard';
     AdDetailComponent,
     AdDashboardComponent,
     NotFoundComponent,
-    AdminDashboardComponent,
-    UserManagementComponent    
+    AdminComponent,
+    AboutUsComponent,
+    AdminComponent    
       
   ],
   imports: [

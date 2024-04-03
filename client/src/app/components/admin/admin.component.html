@@ -6,17 +6,20 @@
         </div>
 
         <div class="items">
-            <li (click)="onItemClicked(0)" [ngClass]="{'selected': selectedIndex === 0}">
+            <li (click)="onItemClicked(0)" [ngClass]="{'selected': isDashboardVisible}">
                 <i class="ri-dashboard-line"></i>
-                <a [routerLink]="['./dashboard']">Dashboard</a>
+                <a>Dashboard</a>
             </li>
-            <li (click)="onItemClicked(1)" [ngClass]="{'selected': selectedIndex === 1}">
+            <li (click)="onItemClicked(1)" [ngClass]="{'selected': isUserManagementVisible}">
                 <i class="ri-user-settings-line"></i>
-                <a [routerLink]="['./user-management']">User Management</a>
+                <a>User Management</a>
             </li>
-
-            <li (click)="logout()"><i class="ri-shut-down-line"></i><a routerLink="/">Logout</a></li>
+            <li (click)="logout()">
+                <i class="ri-shut-down-line"></i>
+                <a>Logout</a>
+            </li>
         </div>
+        
     </section>
 
     <section id="interface">
@@ -112,18 +115,38 @@
                         <td [class.active]="seller.isActiveSeller">{{ seller.isActiveSeller ? 'Active' : 'Inactive' }}
                         </td>
                         <td class="buttons">
-                            <button *ngIf="!seller.isActiveSeller" (click)="verifySeller(seller._id)" class="verify-button">Verify</button>
-                            <button *ngIf="!seller.isActiveSeller" (click)="notifySeller(seller._id)" class="notify-button">Notify</button>
+                            <button *ngIf="!seller.isActiveSeller" (click)="verifySeller(seller._id)"
+                                class="verify-button">Verify</button>
+                            <button *ngIf="!seller.isActiveSeller" (click)="notifySeller(seller._id)"
+                                class="notify-button">Notify</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="board" *ngIf="isUserManagementVisible">
-            <app-user-management></app-user-management>
+        <!-- User Management Table -->
+        <div class="board2" *ngIf="isUserManagementVisible">
+            <table>
+                <thead>
+                    <tr>
+                        <td class="people">User ID</td>
+                        <td class="people">Username</td>
+                        <td class="role" (click)="toggleRoleOrder()">Role <span>{{ sortByRoleOrder ? '▲' : '▼' }}</span>
+                        </td>
+                        <td class="verify">Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users">
+                        <td>{{ user._id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.isSeller ? 'Owner' : 'Renter' }}</td>
+                        <td><button (click)="removeUser(user._id)" class="delete-btn">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
 
     </section>
 </body>

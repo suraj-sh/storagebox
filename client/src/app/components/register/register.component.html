@@ -3,6 +3,14 @@
     <span class="title">Registration</span>
     <form [formGroup]="registrationForm" enctype="multipart/form-data">
 
+      <!-- Spinner module -->
+      <div *ngIf="showSpinner">
+        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+          [fullScreen]="true">
+          <p style="color: white"> Sending... </p>
+        </ngx-spinner>
+      </div>
+
       <div *ngIf="currentStep === 1">
         <!-- Step 1: Role Selection, Username and Email -->
         <div class="input-field">
@@ -67,25 +75,15 @@
           </div>
         </div>
 
-        <!-- Spinner module -->
-        <div *ngIf="showSpinner">
-          <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
-            [fullScreen]="true">
-            <p style="color: white"> Sending... </p>
-          </ngx-spinner>
-        </div>
-
         <!-- Send Verification Code Button -->
         <div class="input-field button">
-          <button [disabled]="isSendVerificationDisabled()" (click)="sendVerificationCode()" type="button">Send Verification
+          <button [disabled]="isSendVerificationDisabled()" (click)="sendVerificationCode()" type="button">Send
+            Verification
             Code</button>
         </div>
 
-        <!-- Next Button for Step 2 -->
-        <!-- <div class="input-field button">
-          <button (click)="nextStep()" type="button">Next</button>
-        </div> -->
       </div>
+
 
       <div *ngIf="currentStep === 2">
         <!-- Verfication code for Email (OTP), Password and Confirm Password -->
@@ -133,10 +131,6 @@
           <button [disabled]="isButtonDisabled()" (click)="register()" type="button">Register</button>
         </div>
 
-        <!-- Previous Button for Step 1 -->
-        <!-- <div class="input-field button">
-          <button type="button" (click)="prevStep()">Previous</button>
-        </div> -->
       </div>
 
     </form>

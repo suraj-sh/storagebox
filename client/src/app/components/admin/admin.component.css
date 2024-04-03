@@ -212,7 +212,8 @@ body{
 
 /* Main Board */
 
-.board{
+.board,
+.board2{
     width: 95%;
     margin: 30px 0 30px 30px;
     overflow: auto;
@@ -255,6 +256,7 @@ thead td{
     text-align: start;
     padding: 15px;
 }
+
 
 tbody tr td{
     padding: 10px 15px;
@@ -310,6 +312,25 @@ tbody tr td{
 
 .notify-button:hover {
     background-color: #1006a2;
+}
+
+
+.role{
+    cursor: pointer;
+}
+
+.delete-btn {
+    padding: 8px 16px;
+    background-color: #d11a2a;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: rgb(245, 72, 72);
 }
 
 

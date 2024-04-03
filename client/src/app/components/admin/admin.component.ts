@@ -1,23 +1,26 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AdminService } from 'src/app/services/admin.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-admin-dashboard',
-  templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css']
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.css']
 })
-export class AdminDashboardComponent {
+export class AdminComponent {
 
   sellers: any[] = [];
+  users: any[] = [];
   userCount: number;
   sellerCount: number;
   verifiedCount: number;
-  notVerifiedCount: number;
+  notVerifiedCount: number = 0;
+  notVerifiedCountLoaded: boolean = false;
+  sortByRoleOrder: boolean = false;
   showSpinner = false;
 
-  constructor(private adminService: AdminService, private router: Router) { }
+  constructor(private adminService: AdminService, private route: ActivatedRoute) { }
 
   isDashboardVisible: boolean = true;
   isUserManagementVisible: boolean = false;
@@ -28,43 +31,50 @@ export class AdminDashboardComponent {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  toggleRoleOrder(): void {
+    this.sortByRoleOrder = !this.sortByRoleOrder;
+    // Sort the users array based on the role
+    if (this.sortByRoleOrder) {
+      this.users.sort((a, b) => a.isSeller ? -1 : 1); // Sort by role (Owner first)
+    } else {
+      this.users.sort((a, b) => a.isSeller ? 1 : -1); // Sort by role (Renter first)
+    }
+  }
+
   ngOnInit() {
+    this.route.url.subscribe(url => {
+      if (url.length > 0 && url[0].path === 'user-management') {
+        this.isDashboardVisible = false;
+        this.isUserManagementVisible = true;
+      } else {
+        this.isDashboardVisible = true;
+        this.isUserManagementVisible = false;
+      }
+    });
     this.loadSellers();
     this.loadCount();
     this.loadSellerCount();
     this.loadVerifiedCount();
+    this.loadUsers();
   }
-
-  onMenuItemClick(menuItem: string) {
-    switch (menuItem) {
-      case 'dashboard':
-        this.isDashboardVisible = true;
-        this.isUserManagementVisible = false;
-        this.selectedIndex = 0; // Update selected menu item index
-        break;
-      case 'user-management':
-        this.isDashboardVisible = false;
-        this.isUserManagementVisible = true;
-        this.selectedIndex = 1; // Update selected menu item index
-        break;
-    }
-  }
-
 
   onItemClicked(menuItemIndex: number) {
-    this.selectedIndex = menuItemIndex;
     if (menuItemIndex === 0) {
       this.isDashboardVisible = true;
       this.isUserManagementVisible = false;
-      this.router.navigateByUrl('/admin/dashboard'); // Navigate to dashboard URL
     } else if (menuItemIndex === 1) {
       this.isDashboardVisible = false;
       this.isUserManagementVisible = true;
-      this.router.navigateByUrl('/admin/user-management'); // Navigate to user management URL
     }
-    this.isMenuOpen = false; // Close the sidebar
+
+    this.isMenuOpen = false;
   }
 
+  loadUsers() {
+    this.adminService.getUsers().subscribe((data: any[]) => {
+      this.users = data;
+    });
+  }
 
   loadSellers() {
     this.adminService.getSellers().subscribe((data: any[]) => {
@@ -86,12 +96,10 @@ export class AdminDashboardComponent {
 
   loadVerifiedCount() {
     this.adminService.getVerifiedCount().subscribe((response: any) => {
-      // Filter the sellers array to include only active sellers who are verified
       const verifiedSellers = this.sellers.filter(seller => seller.isSeller && seller.isActiveSeller);
-      // Count the number of verified sellers
       this.verifiedCount = verifiedSellers.length;
-      // Calculate the number of not verified sellers
       this.notVerifiedCount = this.sellerCount - this.verifiedCount;
+      this.notVerifiedCountLoaded = true; // Indicate that the data is loaded
     });
   }
 
@@ -130,8 +138,27 @@ export class AdminDashboardComponent {
     );
   }
 
+  removeUser(userId: string) {
+    this.showSpinner = true;
+    this.adminService.deleteUser(userId).subscribe(
+      (res) => {
+        Swal.fire({
+          title: 'User Account Deleted',
+          icon: 'success',
+          iconColor: '#00ff00',
+        }).then(() => {
+          this.loadUsers();
+          this.loadSellers();
+          this.loadCount();
+          this.loadSellerCount();
+          this.loadVerifiedCount()
+          this.showSpinner = false;
+        });
+      },
+    );
+  }
+
   logout() {
     this.adminService.logout();
   }
-
 }

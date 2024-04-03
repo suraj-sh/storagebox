@@ -13,13 +13,14 @@ import { AdDashboardComponent } from './components/ads/ad-dashboard/ad-dashboard
 import { AuthGuard } from './guards/auth.guard'
 import { OwnerGuard } from './guards/owner.guard';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AdminComponent } from './components/admin/admin.component';
 import { AdminGuard } from './guards/admin.guard';
+import { AboutUsComponent } from './components/about-us/about-us.component';
 
 const routes: Routes = [
 
   { path: '', component: HomeComponent },
+  { path: 'about', component: AboutUsComponent },
 
   // Auth routes
   { path: 'login', component: LoginComponent },
@@ -37,16 +38,8 @@ const routes: Routes = [
   { path: 'ads', component: AdDashboardComponent, canActivate: [AuthGuard, OwnerGuard] },
   { path: 'edit-ad/:id', component: AdpostComponent, canActivate: [AuthGuard, OwnerGuard] },
 
-  // Admin routes
-  {
-    path: 'admin',
-    component: AdminDashboardComponent, 
-    canActivate: [AdminGuard],
-    children: [
-      { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'user-management', component: UserManagementComponent },
-    ]
-  },
+  // Admin route
+  { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
 
   // 404 Page route
   { path: '**', component: NotFoundComponent }, // Redirect to NotFoundComponent for any other route

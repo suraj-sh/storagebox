@@ -29,8 +29,6 @@ export class LoginComponent {
       pwd: this.loginForm.value.pwd,
     };
 
-    console.log(formData);
-
     // Show spinner
     this.showSpinner = true;
 

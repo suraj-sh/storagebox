@@ -91,42 +91,32 @@ export class AdviewComponent implements OnInit {
       queryParams['sort'] = filters.price === 'Price - Low to High' ? 'low-to-high' : 'high-to-low';
     }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: queryParams,
-      queryParamsHandling: 'merge'
-    });
+    // this.router.navigate([], {
+    //   relativeTo: this.route,
+    //   queryParams: queryParams,
+    //   queryParamsHandling: 'merge'
+    // });
 
-    if (Object.keys(queryParams).length) {
-      this.adService.allFilters(this.constructQueryString(queryParams)).subscribe(
-        (filteredAds: any[]) => {
+    this.adService.allFilters(this.constructQueryString(queryParams)).subscribe(
+      (filteredAds: any[]) => {
 
-          if (filteredAds !== null && filteredAds.length > 0) {
-            this.ads = filteredAds.map(ad => {
-              ad.price = this.formatPrice(ad.price);
-              return ad;
-            });
-            this.noAdsFound = false;
-          }
-          else {
-            this.ads = [];
-            this.noAdsFound = true;
-          }
-
-          // Update the form control for price to retain the selected value
-          this.filterForm.patchValue({
-            price: filters.price
+        if (filteredAds !== null && filteredAds.length > 0) {
+          this.ads = filteredAds.map(ad => {
+            ad.price = this.formatPrice(ad.price);
+            return ad;
           });
-
-        },
-        (error) => {
-          console.error('Error applying filters:', error);
+          this.noAdsFound = false;
         }
-      );
-    }
-    else {
-      this.fetchAds();
-    }
+        else {
+          this.ads = [];
+          this.noAdsFound = true;
+        }
+      },
+
+      (error) => {
+        console.error('Error applying filters:', error);
+      }
+    );
 
   }
 
