@@ -12,7 +12,7 @@ header {
 menu {
     display: flex;
     align-items: center;
-    gap: 3vw;
+    gap: 2.5vw;
 }
 
 .logo {
@@ -173,16 +173,18 @@ footer p {
 
     .profile{
         order: -1;
+        position: absolute;
+        top: 20px;
     }
 
     .profile span {
         font-size: 5vw; 
-        color: white; 
-        margin-top: -200px;
+        color: white;
     }
 
-    .profile-picture-container {
-        margin-top: -200px;
+    .profile-picture-container{
+        width: 90px;
+        height: 90px;
     }
 
     .profile-picture-container img {

@@ -54,7 +54,7 @@ export class RegisterComponent {
 
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      } 
+      }
       else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
@@ -76,7 +76,7 @@ export class RegisterComponent {
 
   toggleTooltip(tooltipId: string) {
     this.showTooltip = !this.showTooltip;
-}
+  }
 
   sendVerificationCode() {
 
@@ -108,14 +108,12 @@ export class RegisterComponent {
       }
     }
 
-
     // Show spinner
     this.showSpinner = true;
 
     // Send verification email
     this.authService.sendVerificationEmail(formData).subscribe(
       (response) => {
-        console.log('Verification email sent successfully');
         Swal.fire({
           title: 'Success',
           text: 'Verification Code sent to email',
@@ -131,37 +129,33 @@ export class RegisterComponent {
 
   register() {
     if (!this.registrationForm.invalid) {
-      console.log(this.registrationForm.value);
       const formData = new FormData();
-  
+
       // Append all form controls to FormData
       Object.entries(this.form).forEach(([controlName, control]) => {
         if (control instanceof FormControl) {
           formData.append(controlName, String(control.value));
         }
       });
-  
+
       this.showSpinner = true;
-  
+
       this.authService.registerUser(formData).subscribe(
         (response) => {
-          console.log('User registered successfully', response);
           Swal.fire({
             title: 'Success',
             text: response.success || 'Registration successful',
             icon: 'success',
             iconColor: '#00ff00',
             confirmButtonText: 'OK'
-          }).then(() => {
-            // Redirect to login or perform any other post-registration actions
-            this.router.navigate(['/login']);
-            this.showSpinner = false; // Move spinner hide logic here
           });
+          this.showSpinner = false;
+          this.router.navigate(['/login']);
         }
       );
     }
   }
-  
+
 
   isButtonDisabled(): boolean {
     return this.registrationForm.invalid || this.registrationForm.get('pwd')?.value !== this.registrationForm.get('confirmPassword')?.value;
@@ -170,12 +164,12 @@ export class RegisterComponent {
   isSendVerificationDisabled(): boolean {
     const userControl = this.registrationForm.get('user');
     const emailControl = this.registrationForm.get('email');
-  
+
     // Check if the username and email are not entered or valid
-    if (!userControl?.value || userControl?.invalid || !emailControl?.value || emailControl.invalid ) {
+    if (!userControl?.value || userControl?.invalid || !emailControl?.value || emailControl.invalid) {
       return true;
     }
-  
+
     const isSellerValue = this.form.isSeller?.value;
     if (isSellerValue) {
       if (!this.filesIdProof || !this.filesStorageProof) {
@@ -186,7 +180,7 @@ export class RegisterComponent {
     // Return false if all conditions are met
     return false;
   }
-  
+
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
