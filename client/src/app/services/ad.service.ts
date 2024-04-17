@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@env';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdService {
 
-  private apiUrl = 'http://localhost:3500';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

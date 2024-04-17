@@ -154,7 +154,7 @@ footer p {
     header button {
         margin-top: 15px;
         font-size: 6vw;
-        padding: 2.3vw 5vw;
+        padding: 2.5vw 5vw;
     }
 
     header i {
@@ -183,8 +183,8 @@ footer p {
     }
 
     .profile-picture-container{
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
     }
 
     .profile-picture-container img {
