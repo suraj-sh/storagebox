@@ -24,8 +24,10 @@
       "ES2022",
       "dom"
     ],
-    "types": ["sweetalert2"]
-  
+    "types": ["sweetalert2"],
+    "paths": {
+      "@env": ["src/environments/environment"]
+    } 
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

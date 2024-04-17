@@ -2,13 +2,14 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '@env';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
 
-  private apiUrl = 'http://localhost:3500';
+  private apiUrl = environment.apiUrl;
 
   userInfoUpdated: EventEmitter<any> = new EventEmitter<any>(); // Event emitter for user info changes
 

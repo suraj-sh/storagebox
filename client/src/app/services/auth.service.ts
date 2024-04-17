@@ -5,13 +5,14 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { ProfileService } from './profile.service';
+import { environment } from '@env';
 import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = 'http://localhost:3500';
+  private apiUrl = environment.apiUrl;
 
   isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
