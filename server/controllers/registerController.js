@@ -35,7 +35,7 @@ const handleNewUser = [
 
       const verificationCodeData = generateVerificationCode();
        
-      const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
+      const basePath = `https://storagebox.onrender.com/public/document/`;
       const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
       const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
 
