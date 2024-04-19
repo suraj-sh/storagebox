@@ -42,6 +42,8 @@
 /client/.DS_Store
 /client/Thumbs.db
 
+# Client enrironments directory
+/client/src/environments/
 
 # SERVER DIRECTORY
 /server/node_modules

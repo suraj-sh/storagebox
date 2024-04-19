@@ -71,12 +71,12 @@
 .designation{
     font-style: italic;
     color: #888;
+    font-weight: 500;
     font-size: 18px;
 }
 
 .about{
     margin: 20px 0;
-    font-weight: lighter;
     color: #4e4e4e;
     font-size: 1.2em;
 }
@@ -85,11 +85,12 @@
     margin: 14px;
 }
 
-.social-links a{
+.social-links a {
     display: inline-block;
     height: 30px;
     width: 30px;
     text-decoration: none;
+    margin-right: 10px;
     transition: .4s;
 }
 
@@ -109,9 +110,9 @@
     }
 
     .about-content {
-        font-size: 0.9em;
+        font-size: 0.8em;
         margin: auto;
-        padding: 30px 10px;
+        padding: 30px 15px;
     }
 
 }
