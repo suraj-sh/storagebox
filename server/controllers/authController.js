@@ -1,5 +1,5 @@
 const User = require('../model/User');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { sendEmail } = require('../middlewere/email');
@@ -16,7 +16,7 @@ const handleLogin = async (req, res) => {
     }
     const foundUser = await User.findOne({ $or: [{ username: user }, { email: email }], }).exec();
     if (!foundUser) return res.sendStatus(401);
-    const match = await bcrypt.compare(pwd, foundUser.password);
+    const match = await bcryptjs.compare(pwd, foundUser.password);
     if (match) {
         const roles = Object.values(foundUser.roles);
         const accessToken = jwt.sign(
@@ -76,7 +76,7 @@ const forgotPassword = async (req, res, next) => {
         });
         await newUserToken.save();
         await user.save({ validateBeforeSave: false });
-        const resetUrl = `${req.protocol}://localhost:4200/reset-password/${resetToken}`
+        const resetUrl = `${process.env.RESET_URL}/reset-password/${resetToken}`
         await sendEmail({
             email: user.email,
             subject: 'Password change request received',

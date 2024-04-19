@@ -1,5 +1,5 @@
 const User = require('../model/User');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const { sendEmail } = require('../middlewere/email');
 
@@ -35,7 +35,7 @@ const handleNewUser = [
 
       const verificationCodeData = generateVerificationCode();
        
-      const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
+      const basePath = `${process.env.DOCS_BASE_PATH}/public/document/`;
       const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
       const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
 
@@ -99,7 +99,7 @@ const verifyCodeAndSetPassword = [
       }
 
       // Update stored data with the user-provided password and mark code as used
-      storedData.pwd = await bcrypt.hash(pwd, 10);
+      storedData.pwd = await bcryptjs.hash(pwd, 10);
       storedData.codeUsed = true;
 
       // Create the user account
