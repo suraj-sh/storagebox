@@ -75,7 +75,7 @@ const updateSellerDocument=async(req,res)=>{
         }
         // Update idProof and documentProof only if isSeller is true
         if (user.isSeller) {
-            const basePath = `https://storagebox.onrender.com/public/document/`;
+            const basePath = `${req.protocol}://${req.get('host')}/public/document/`;
             if (req.files && req.files['idProof']) {
                 const idProof = `${basePath}${req.files['idProof'][0].filename}`;
                 user.idProof = idProof;
@@ -175,7 +175,7 @@ const updateUserPic = async (req, res) => {
         }
         if (req.file) {
             const fileName = req.file.filename;
-            const basePath = `https://storagebox.onrender.com/public/upload/`;
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`;
             user.image = `${basePath}${fileName}`;
         }
         await user.save();
