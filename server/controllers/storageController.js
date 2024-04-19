@@ -72,7 +72,7 @@ const createNewStorage = async (req, res) => {
         let imagePaths = [];
 
         if (files && files.length > 0) {
-            const basePath = `https://storagebox.onrender.com/public/upload/`; 
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
             files.forEach(file => {
                 imagePaths.push(`${basePath}${file.filename}`);
             });
@@ -155,7 +155,7 @@ const updateStorage = async (req, res) => {
         let imagePaths = [];
 
         if (files && files.length > 0) {
-            const basePath = `https://storagebox.onrender.com/public/upload/`; 
+            const basePath = `${req.protocol}://${req.get('host')}/public/upload/`; 
             files.forEach(file => {
                 imagePaths.push(`${basePath}${file.filename}`);
             });
