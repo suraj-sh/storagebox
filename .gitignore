@@ -47,3 +47,7 @@
 /server/node_modules
 /server/.env
 /server/logs
+/server/dev-build
+/server/prod-build
+/server/webpack.dev.js
+/server/webpack.prod.js
