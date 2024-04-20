@@ -7,14 +7,13 @@
 }
 
 #adsList {
-    max-width: 500px;
     margin: auto;
     padding: 20px;
 }
 
 h3 {
     margin-bottom: 15px;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
 ul {
@@ -24,14 +23,15 @@ ul {
 
 .ad-card {
     display: flex;
+    max-width: 460px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    margin-bottom: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
 }
 
 .ad-card.rented {
-    background-color: rgba(0, 0, 0, 0.3); /* Add gray overlay for rented ads */
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .ad-image {
@@ -67,7 +67,7 @@ h4 {
 
 .action{
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
 .view-btn{
@@ -104,10 +104,39 @@ button {
     transition: background-color 0.3s;
 }
 
+.mobile-icon {
+    display: none;
+}
+
 @media (max-width: 600px) {
 
+    .ad-card{
+        width: 360px;
+    }
+
+    .ad-image img {
+        width: 90%;
+    }
+
+    .ad-details {
+        padding-left: 0;
+    }
+
+    .action{
+        gap: 6px;
+    }
+
     button {
-        padding: 10px 12px;
+        padding: 10px 15px;
+
+    }
+
+    .desktop-text {
+        display: none;
+    }
+
+    .mobile-icon {
+        display: inline-block;
     }
     
 }

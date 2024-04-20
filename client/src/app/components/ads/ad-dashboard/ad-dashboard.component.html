@@ -13,9 +13,18 @@
                         <p class="ad-location">Location: {{ ad.city }}</p>
                         <p class="ad-status">Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
                         <div class="action">
-                            <button class="view-btn" (click)="viewAdDetails(ad.id)">View</button>
-                            <button class="edit-btn" (click)="editAd(ad.id)">Edit</button>
-                            <button class="delete-btn" (click)="deleteAd(ad._id)">Delete</button>
+                            <button class="view-btn" (click)="viewAdDetails(ad.id)">
+                                <span class="desktop-text">View</span>
+                                <i class="ri-eye-line mobile-icon"></i>
+                            </button>
+                            <button class="edit-btn" (click)="editAd(ad.id)">
+                                <span class="desktop-text">Edit</span>
+                                <i class="ri-edit-line mobile-icon"></i>
+                            </button>
+                            <button class="delete-btn" (click)="deleteAd(ad._id)">
+                                <span class="desktop-text">Delete</span>
+                                <i class="ri-delete-bin-line mobile-icon"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

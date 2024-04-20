@@ -52,21 +52,34 @@ export class AdDashboardComponent implements OnInit {
   }
 
   deleteAd(adId: string): void {
-    // Call the deleteAd method from the ad service
-    this.adService.deleteAd(adId).subscribe(
-      () => {
-        Swal.fire({
-          title: 'Ad Deleted',
-          icon: 'success',
-          iconColor: '#00ff00',
-        }).then(() => {
-          this.fetchPostedAds();
-        });
-      },
-      (error) => {
-        console.error('Error deleting ad:', error);
-        // Handle error (e.g., display error message)
+    // Display confirmation message
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this ad!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Call the deleteAd method from the ad service
+        this.adService.deleteAd(adId).subscribe(
+          () => {
+            Swal.fire({
+              title: 'Ad Deleted',
+              text: 'Your ad has been deleted.',
+              icon: 'success',
+              iconColor: '#00ff00',
+            }).then(() => {
+              this.fetchPostedAds();
+            });
+          },
+          (error) => {
+            console.error('Error deleting ad:', error);
+          }
+        );
       }
-    );
-  }
+    });
+}
 }

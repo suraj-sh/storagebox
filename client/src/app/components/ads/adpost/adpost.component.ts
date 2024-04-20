@@ -126,6 +126,11 @@ export class AdpostComponent implements OnInit {
     // Remove the corresponding file from the selectedImages array
     this.selectedImages.splice(index, 1);
 
+    // Reset selectedImages array when all images are cleared
+    if (this.imagePreviews.length === 0) {
+      this.selectedImages = [];
+    }
+
     // Mark form as dirty to indicate changes
     this.postForm.markAsDirty();
 

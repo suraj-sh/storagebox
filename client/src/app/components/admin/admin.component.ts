@@ -138,25 +138,43 @@ export class AdminComponent {
     );
   }
 
-  removeUser(userId: string) {
-    this.showSpinner = true;
-    this.adminService.deleteUser(userId).subscribe(
-      (res) => {
-        Swal.fire({
-          title: 'User Account Deleted',
-          icon: 'success',
-          iconColor: '#00ff00',
-        }).then(() => {
-          this.loadUsers();
-          this.loadSellers();
-          this.loadCount();
-          this.loadSellerCount();
-          this.loadVerifiedCount()
-          this.showSpinner = false;
-        });
-      },
-    );
-  }
+  removeUser(userId: string): void {
+    // Display confirmation message
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this user account!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with deleting the user account
+        this.showSpinner = true;
+        this.adminService.deleteUser(userId).subscribe(
+          (res) => {
+            Swal.fire({
+              title: 'User Account Deleted',
+              text: 'The user account has been deleted.',
+              icon: 'success',
+              iconColor: '#00ff00',
+            }).then(() => {
+              this.loadUsers();
+              this.loadSellers();
+              this.loadCount();
+              this.loadSellerCount();
+              this.loadVerifiedCount();
+              this.showSpinner = false;
+            });
+          },
+          (error) => {
+            console.error('Error deleting user account:', error);
+          }
+        );
+      }
+    });
+}
 
   logout() {
     this.adminService.logout();

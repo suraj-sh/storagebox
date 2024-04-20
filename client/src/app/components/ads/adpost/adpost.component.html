@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Status -->
-                <div class="input-box">
+                <div class="input-box" *ngIf="adId">
                     <span>Status</span>
                     <select formControlName="isRented" name="isRented" required>
                         <option value="false">Available</option>

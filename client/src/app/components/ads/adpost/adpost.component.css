@@ -78,7 +78,6 @@
      width: 5px;
      height: 40px;
      border-radius: 50%;
-
      cursor: pointer;
      display: flex;
      justify-content: center;
@@ -114,26 +113,13 @@
      color: #333;
  }
 
- form::-webkit-scrollbar {
-     width: 5px;
-     height: 5px;
- }
-
- form::-webkit-scrollbar-thumb {
-     background-color: #458DBA;
-     border-radius: 10px;
- }
-
- form::-webkit-scrollbar-track {
-     background-color: #f1f1f1;
+ ::-webkit-scrollbar {
+     display: none;
  }
 
  form {
      max-height: 480px;
      overflow-y: auto;
-     padding-right: 15px;
-     scrollbar-width: thin;
-     scrollbar-color: #458DBA #f1f1f1;
  }
 
  .user-details {
@@ -145,7 +131,7 @@
 
  .input-box {
      margin-bottom: 15px;
-     width: calc(100% - 20px);
+     width: 100%;
  }
 
  .input-box span {
@@ -228,7 +214,7 @@
 
  .input-box input,
  .category,
-  textarea {
+ textarea {
      border-bottom-color: #ff0000;
  }
 
@@ -272,9 +258,9 @@
          margin: 6vw auto;
      }
 
-     form {
-         max-height: 480px;
-         padding-right: 30px;
+     .image-preview img{
+        width: 130px;
+        height: 130px;
      }
 
  }
