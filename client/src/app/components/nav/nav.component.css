@@ -204,7 +204,7 @@ footer p {
         z-index: 100;
         background-color: rgba(0, 0, 0, 0.85);
         transition: all 0.2s ease-in-out;
-        padding-bottom: 25vh;
+        padding-bottom: 20vh;
     }
 
     menu.show-menu li {

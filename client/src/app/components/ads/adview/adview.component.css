@@ -201,7 +201,7 @@ button:hover {
     }
 
     .container {
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 130px);
         margin-top: 35px;
     }
 
