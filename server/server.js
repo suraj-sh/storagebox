@@ -35,7 +35,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // Serve static files from the client directory
-app.use(express.static(path.join(__dirname, '/client')));
+app.use(express.static(path.join(__dirname, './client/dist/client/')));
 
 // Connect to DB
 connectDB();
