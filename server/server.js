@@ -37,10 +37,6 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // Connect to DB
 connectDB();
 
-// Serve static files from the client directory
-const clientPath = path.resolve(__dirname, '../storage-box');
-app.use(express.static(clientPath));
-
 // Routes
 app.use('/public/document',express.static(__dirname+'/public/document'))
 app.use('/public/upload',express.static(__dirname + '/public/upload'));
@@ -54,11 +50,35 @@ app.use(verifyToken);
 app.use('/user',require('./routes/api/user'));
 app.use('/chat',require('./routes/chat'));
 
+// Proxy requests to Netlify for non-API routes
+app.get('/*', (req, res) => {
+    const options = {
+        hostname: 'https://storagebox.onrender.com',
+        path: req.url,
+        method: 'GET',
+    };
 
-// Catch-all route handler to serve index.html for client-side routing
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(clientPath, 'index.html'));
+    const protocol = https; // Assuming requests to Netlify are over HTTPS
+
+    const netlifyReq = protocol.request(options, (netlifyRes) => {
+        let body = '';
+        netlifyRes.on('data', (chunk) => {
+            body += chunk;
+        });
+        netlifyRes.on('end', () => {
+            res.writeHead(netlifyRes.statusCode, netlifyRes.headers);
+            res.end(body);
+        });
+    });
+
+    netlifyReq.on('error', (error) => {
+        console.error('Error proxying request to Netlify:', error);
+        res.status(500).send('Error proxying request to Netlify');
+    });
+
+    netlifyReq.end();
 });
+
 
 // 404 handler
 app.all('*', (req, res) => {
