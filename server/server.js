@@ -35,7 +35,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // Serve static files from the client directory
-app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.static(path.join(__dirname, 'storage-box')));
 
 // Connect to DB
 connectDB();
@@ -55,7 +55,7 @@ app.use('/chat',require('./routes/chat'));
 
 // Define a catch-all route to serve index.html for client-side routing
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html'));
+    res.sendFile(path.join(__dirname, 'storage-box', 'index.html'));
 });
 
 // 404 handler
