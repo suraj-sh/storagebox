@@ -34,11 +34,20 @@ app.use(cookieParser());
 // Serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-// Serve static files from the client directory
-app.use(express.static(path.join(__dirname, './client/dist/client/')));
-
 // Connect to DB
 connectDB();
+
+// Define a route to proxy requests to the Angular frontend on Netlify
+app.use('/', (req, res) => {
+    // Adjust the base URL to point to your deployed Angular app on Netlify
+    const netlifyBaseUrl = 'https://your-angular-app.netlify.app';
+    
+    // Construct the URL by appending the original request path
+    const targetUrl = netlifyBaseUrl + req.originalUrl;
+    
+    // Proxy the request to the Angular frontend on Netlify
+    req.pipe(http.request(targetUrl)).pipe(res);
+});
 
 // Routes
 app.use('/public/document',express.static(__dirname+'/public/document'))
@@ -52,11 +61,6 @@ app.use('/storage', require('./routes/api/storage'));
 app.use(verifyToken);
 app.use('/user',require('./routes/api/user'));
 app.use('/chat',require('./routes/chat'));
-
-// Define a catch-all route to serve index.html for client-side routing
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html'));
-});
 
 // 404 handler
 app.all('*', (req, res) => {
