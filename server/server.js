@@ -54,7 +54,7 @@ app.use('/user',require('./routes/api/user'));
 app.use('/chat',require('./routes/chat'));
 
 // Define a catch-all route to serve index.html for client-side routing
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'index.html'));
 });
 
