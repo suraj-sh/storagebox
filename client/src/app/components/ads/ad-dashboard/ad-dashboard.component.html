@@ -3,15 +3,15 @@
         <h3>My Posted Ads</h3>
         <ul>
             <li *ngFor="let ad of postedAds">
-                <div class="ad-card" [ngClass]="{ 'rented': ad.isRented }">
+                <div class="ads" [ngClass]="{ 'rented': ad.isRented }">
                     <div class="ad-image">
                         <img [src]="ad.images[0]" alt="Ad Image">
                     </div>
                     <div class="ad-details">
-                        <h4>{{ ad.title }}</h4>
-                        <p class="ad-price">Price: {{ ad.price }}</p>
-                        <p class="ad-location">Location: {{ ad.city }}</p>
-                        <p class="ad-status">Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
+                        <h4>{{ ad.name }}</h4>
+                        <p>Price: {{ ad.price }}</p>
+                        <p>Location: {{ ad.city }}</p>
+                        <p>Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
                         <div class="action">
                             <button class="view-btn" (click)="viewAdDetails(ad.id)">
                                 <span class="desktop-text">View</span>
@@ -21,7 +21,7 @@
                                 <span class="desktop-text">Edit</span>
                                 <i class="ri-edit-line mobile-icon"></i>
                             </button>
-                            <button class="delete-btn" (click)="deleteAd(ad._id)">
+                            <button class="delete-btn" (click)="deleteAd(ad.id)">
                                 <span class="desktop-text">Delete</span>
                                 <i class="ri-delete-bin-line mobile-icon"></i>
                             </button>

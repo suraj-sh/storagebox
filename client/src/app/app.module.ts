@@ -48,10 +48,9 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
     AdDashboardComponent,
     NotFoundComponent,
     AdminComponent,
-    AboutUsComponent,
-    AdminComponent    
-      
+    AboutUsComponent    
   ],
+
   imports: [
     BrowserModule,
     AppRoutingModule,
