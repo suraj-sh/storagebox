@@ -38,7 +38,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 connectDB();
 
 // Serve static files from the client directory
-const clientPath = path.resolve(__dirname, '../storage-box/');
+const clientPath = path.resolve(__dirname, '../storage-box');
 app.use(express.static(clientPath));
 
 // Routes
