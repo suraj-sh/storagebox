@@ -50,36 +50,6 @@ app.use(verifyToken);
 app.use('/user',require('./routes/api/user'));
 app.use('/chat',require('./routes/chat'));
 
-// Proxy requests to Netlify for non-API routes
-app.get('/*', (req, res) => {
-    const options = {
-        hostname: 'https://storagebox.onrender.com',
-        path: req.url,
-        method: 'GET',
-    };
-
-    const protocol = https; // Assuming requests to Netlify are over HTTPS
-
-    const netlifyReq = protocol.request(options, (netlifyRes) => {
-        let body = '';
-        netlifyRes.on('data', (chunk) => {
-            body += chunk;
-        });
-        netlifyRes.on('end', () => {
-            res.writeHead(netlifyRes.statusCode, netlifyRes.headers);
-            res.end(body);
-        });
-    });
-
-    netlifyReq.on('error', (error) => {
-        console.error('Error proxying request to Netlify:', error);
-        res.status(500).send('Error proxying request to Netlify');
-    });
-
-    netlifyReq.end();
-});
-
-
 // 404 handler
 app.all('*', (req, res) => {
     res.status(404);
