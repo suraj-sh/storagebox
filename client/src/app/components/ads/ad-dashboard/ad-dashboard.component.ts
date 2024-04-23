@@ -81,5 +81,5 @@ export class AdDashboardComponent implements OnInit {
         );
       }
     });
-}
+  }
 }
