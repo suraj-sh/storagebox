@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Serve static files
-app.use('/', express.static(path.join(__dirname, '/public')));
+app.use('/', express.static(path.join(__dirname, '..', 'storage-box')));
 
 // Connect to DB
 connectDB();
@@ -50,16 +50,9 @@ app.use(verifyToken);
 app.use('/user',require('./routes/api/user'));
 app.use('/chat',require('./routes/chat'));
 
-// 404 handler
-app.all('*', (req, res) => {
-    res.status(404);
-    if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (req.accepts('json')) {
-        res.json({ error: '404 not found' });
-    } else {
-        res.type('txt').send('404 not found');
-    }
+// Wildcard route for Angular client-side routing
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'storage-box', 'index.html'));
 });
 
 // Overall error handling
