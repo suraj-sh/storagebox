@@ -1,7 +1,7 @@
 //cors origin resource sharing
 const whitelist=['https://storagebox.onrender.com',
 'https://storage-box.netlify.app',
-'https://vercel.com/surajs-projects-00bb4e84/storagebox/793cd1Gyzye7FgxLZedmLQMpZgom',
+'https://storagebox.vercel.app',
 'http://localhost:3500',
 'http://localhost:4200'];
 const corsOptions={
