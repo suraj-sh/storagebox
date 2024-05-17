@@ -4,7 +4,7 @@ const { bucket } = require('../config/firebase'); // Adjust the path as needed
 
 const uploadMiddleware = multer({
     storage: multer.memoryStorage(), // Use memory storage since we're uploading to Firebase Storage directly
-    limits: { fileSize: 5 * 1024 * 1024 }, // Adjust file size limit as needed
+    limits: { fileSize: 10 * 1024 * 1024 }, // Adjust file size limit as needed
 });
 
 const uploadOptions = uploadMiddleware.array('images', 8);
