@@ -11,6 +11,9 @@ import Swal from 'sweetalert2';
 export class AdDashboardComponent implements OnInit {
 
   postedAds: any[] = [];
+  dataLoaded: boolean = false; // Add dataLoaded property
+  skeletonAds: any[] = Array(6).fill({});
+  showSpinner: boolean = false;
 
   constructor(private adService: AdService, private router: Router) { }
 
@@ -26,6 +29,7 @@ export class AdDashboardComponent implements OnInit {
           ...ad,
           price: this.formatPrice(ad.price) // Format the price for this ad
         }));
+        this.dataLoaded = true;
       },
       (error) => {
         console.error('Error fetching posted ads:', error);
@@ -63,6 +67,7 @@ export class AdDashboardComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
+        this.showSpinner = true;
         // Call the deleteAd method from the ad service
         this.adService.deleteAd(adId).subscribe(
           () => {
@@ -72,6 +77,7 @@ export class AdDashboardComponent implements OnInit {
               icon: 'success',
               iconColor: '#00ff00',
             }).then(() => {
+              this.showSpinner = false;
               this.fetchPostedAds();
             });
           },

@@ -1,7 +1,8 @@
 const User = require('../model/User');
 const bcryptjs = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
-const { sendEmail } = require('../middlewere/email');
+const { sendEmail } = require('../middleware/email');
+const { bucket } = require('../config/firebase');
 
 const generateVerificationCode = () => {
   const code = Math.random().toString().slice(2, 8);
@@ -10,6 +11,20 @@ const generateVerificationCode = () => {
 };
 
 const temporaryStorage = {};
+
+const uploadFile = async (filePath, file) => {
+  const fileUpload = bucket.file(filePath);
+  await fileUpload.save(file.buffer, {
+    metadata: {
+      contentType: file.mimetype
+    }
+  });
+  const [url] = await fileUpload.getSignedUrl({
+    action: 'read',
+    expires: '03-09-2491' // Adjust expiration as needed
+  });
+  return url;
+};
 
 const handleNewUser = [
   body('user', 'Name should contain at least 6 alphabets').isLength({ min: 6 }),
@@ -34,10 +49,9 @@ const handleNewUser = [
       if (userEmail) return res.status(400).json({ 'message': 'Email already exists' });
 
       const verificationCodeData = generateVerificationCode();
-       
-      const basePath = `${process.env.DOCS_BASE_PATH}/public/document/`;
-      const idProof = req.files && req.files['idProof'] ? `${basePath}${req.files['idProof'][0].filename}` : null;
-      const documentProof = req.files && req.files['documentProof'] ? `${basePath}${req.files['documentProof'][0].filename}` : null;
+
+      const idProof = req.files && req.files['idProof'] ? await uploadFile(`documents/${Date.now()}-${req.files['idProof'][0].originalname}`, req.files['idProof'][0]) : null;
+      const documentProof = req.files && req.files['documentProof'] ? await uploadFile(`documents/${Date.now()}-${req.files['documentProof'][0].originalname}`, req.files['documentProof'][0]) : null;
 
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -50,6 +64,7 @@ const handleNewUser = [
         idProof,
         documentProof,
       };
+
       await sendEmail({
         email,
         subject: 'Email Verification Code',
@@ -65,7 +80,7 @@ const handleNewUser = [
   }
 ];
 
-const verifyCodeAndSetPassword = [ 
+const verifyCodeAndSetPassword = [
   body('pwd', 'Enter at least one alphabet and one number').isLength({ min: 6 }),
   async (req, res) => {
     const { verificationCode, pwd } = req.body;
@@ -75,7 +90,6 @@ const verifyCodeAndSetPassword = [
     }
 
     try {
-      // Fetch email from temporary storage
       const storedData = Object.values(temporaryStorage)[0];
 
       if (!storedData || !storedData.verificationCode || storedData.codeUsed) {
@@ -84,8 +98,8 @@ const verifyCodeAndSetPassword = [
 
       const currentTimestamp = Date.now();
       const codeTimestamp = storedData.timestamp;
-      const codeExpiration = 5 * 60 * 1000; 
-      
+      const codeExpiration = 5 * 60 * 1000;
+
       if (currentTimestamp - codeTimestamp > codeExpiration) {
         return res.status(400).json({ 'message': 'Verification code has expired' });
       }
@@ -98,11 +112,9 @@ const verifyCodeAndSetPassword = [
         return res.status(400).json({ 'message': 'Password has already been set' });
       }
 
-      // Update stored data with the user-provided password and mark code as used
       storedData.pwd = await bcryptjs.hash(pwd, 10);
       storedData.codeUsed = true;
 
-      // Create the user account
       const result = await User.create({
         username: storedData.user,
         email: storedData.email,
@@ -112,26 +124,26 @@ const verifyCodeAndSetPassword = [
         documentProof: storedData.documentProof
       });
 
-      if (storedData.isSeller) {  
-        const message=`Thank you for registering with StorageBox!
-
-Your account is currently under verification. During this process, you won't be able to list any ads. Our team will review your account details, and we'll notify you once the verification is complete.
-Please note that once your account is verified, any uploaded documents will be automatically deleted from our system, as they are only needed for verification purposes.
-
-If you have any questions or concerns, feel free to reach out to us.
+      if (storedData.isSeller) {
+        const message = `Thank you for registering with StorageBox!
         
-Thank you,
-The StorageBox Team`
-         
+        Your account is currently under verification. During this process, you won't be able to list any ads. Our team will review your account details, and we'll notify you once the verification is complete.
+        Please note that once your account is verified, any uploaded documents will be automatically deleted from our system, as they are only needed for verification purposes.
+
+        If you have any questions or concerns, feel free to reach out to us.
+                
+        Thank you,
+        The StorageBox Team`;
+
         await sendEmail({
-            email: storedData.email,
-            subject: `Seller's Account Verification`,
-            message
+          email: storedData.email,
+          subject: `Seller's Account Verification`,
+          message
         });
-    }
-      // Remove stored data from temporary storage
+      }
+
       delete temporaryStorage[storedData.email];
-     
+
       res.status(200).json({
         'message': 'User registered successfully',
         'user': result,
@@ -146,4 +158,3 @@ module.exports = {
   handleNewUser,
   verifyCodeAndSetPassword
 };
-

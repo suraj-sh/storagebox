@@ -35,7 +35,7 @@
             the uploaded documents will be automatically deleted from our system.
           </div>
           <div class="custom-file-upload">
-            <input type="file" id="idProof" formControlName="idProof" (change)="selectFile($event, 'idProof')" required>
+            <input type="file" id="idProof" formControlName="idProof" (change)="selectFile($event, 'idProof')" accept=".pdf" required>
             <span>{{ filesIdProof?.name || 'Choose file (PDF)' }}</span>
           </div>
         </div>
@@ -45,7 +45,7 @@
           <label for="documentProof">Storage Unit Proof: (Lease Agreement)</label>
           <div class="custom-file-upload">
             <input type="file" id="documentProof" formControlName="documentProof"
-              (change)="selectFile($event, 'documentProof')" required>
+              (change)="selectFile($event, 'documentProof')" accept=".pdf" required>
             <span>{{ filesStorageProof?.name || 'Choose file (PDF)' }}</span>
           </div>
         </div>

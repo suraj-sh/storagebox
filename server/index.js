@@ -3,12 +3,12 @@ const express = require('express');
 const http = require('http');
 const app = express();
 const path = require('path');
-const { logger } = require('./middlewere/logEvents');
+const { logger } = require('./middleware/logEvents');
 const cors = require('cors');
 const socketIo = require('socket.io');
 const corsOptions = require('./config/corsOptions');
-const errorhandler = require('./middlewere/errorHandler');
-const verifyToken = require('./middlewere/verifyJWT');
+const errorhandler = require('./middleware/errorHandler');
+const verifyToken = require('./middleware/verifyJWT');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConn');
@@ -31,15 +31,10 @@ app.use(express.json());
 // Middleware for cookies
 app.use(cookieParser());
 
-// Serve static files
-app.use('/', express.static(path.join(__dirname, '/public')));
-
 // Connect to DB
 connectDB();
 
 // Routes
-app.use('/public/document',express.static(__dirname+'/public/document'))
-app.use('/public/upload',express.static(__dirname + '/public/upload'));
 app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));

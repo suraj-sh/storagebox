@@ -1,26 +1,102 @@
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow-y: auto;
     max-height: calc(100vh - 125px);
 }
 
 #adsList {
-    margin: auto;
-    padding: 20px;
-    width: 520px;
+    margin: auto 40px;
+    padding: 10px;
 }
 
 h3 {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 1.8rem;
+    text-align: center;
 }
 
 ul {
     list-style-type: none;
     padding: 0;
 }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 30px;
+    row-gap: 20px;
+    padding: 0;
+}
+
+
+/* Styles for skeleton ads */
+
+.skeleton-ads {
+    display: flex;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
+}
+
+.skeleton-ad-image {
+    flex: 0 0 200px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.skeleton-ad-image img {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+}
+
+.skeleton-ad-details {
+    flex-grow: 1;
+    padding: 5px 20px 20px 20px;
+}
+
+.skeleton-ad-details h4 {
+    margin: 5px 0 10px;
+    width: 100%;
+    height: 20px;
+    margin-bottom: 5px;
+}
+
+.skeleton-ad-details p {
+    margin: 10px 0 5px;
+    width: 60%;
+    height: 20px;
+    margin-bottom: 5px;
+}
+
+.skeleton-action {
+    display: flex;
+    gap: 15px;
+}
+
+.skeleton-action button{
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.skeleton-ad-image img,
+.skeleton-ad-details h4,
+.skeleton-ad-details p,
+.skeleton-action button{
+    background: linear-gradient(to right, #d9d9d9 0%, rgba(0, 0, 0, 0.11) 20%, #d9d9d9 40%, #d9d9d9 100%);
+    animation: animation 3s linear infinite;
+}
+
+@keyframes animation {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0; 
+    }
+}
+
 
 .ads {
     display: flex;
@@ -41,14 +117,14 @@ ul {
 
 .ad-image img {
     width: 100%;
-    height: 100%;
+    height: 180px;
     border-radius: 8px;
     object-fit: cover;
 }
 
 .ad-details {
     flex-grow: 1;
-    padding: 5px 20px 20px 20px;
+    padding: 5px 20px 20px 10px;
 }
 
 h4 {
@@ -109,23 +185,32 @@ button {
 @media (max-width: 600px) {
 
     #adsList{
+        margin: auto;
         padding: 15px;
     }
 
+    .grid{
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .skeleton-ad-image img,
     .ad-image img {
         width: 95%;
         height: 100%;
     }
 
+    .skeleton-ad-details,
     .ad-details {
         padding-left: 0px;
     }
 
-    h4{
+    .skeleton-ad-details h4,
+    .ad-details h4 {
         font-size: 1rem;
     }
 
-    .action{
+    .skeleton-action,
+    .ads .action {
         gap: 10px;
     }
 

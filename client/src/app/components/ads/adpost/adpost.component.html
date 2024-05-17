@@ -2,6 +2,15 @@
     <div class="title">{{ adId ? 'Update' : 'Post' }} Ad</div>
     <div class="content">
         <form [formGroup]="postForm" enctype="multipart/form-data">
+
+            <!-- Spinner module -->
+            <div *ngIf="showSpinner">
+                <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+                    [fullScreen]="true">
+                    <p style="color: white"> Sending... </p>
+                </ngx-spinner>
+            </div>
+            
             <div class="user-details">
 
                 <!-- File input container -->
@@ -37,7 +46,8 @@
                         placeholder="Provide additional details like dimensions of the unit, availability"
                         (input)="autoResize($event)" required></textarea>
                     <div *ngIf="postForm.controls['description'].touched" class="validation-message">
-                        <div *ngIf="postForm.controls['description'].hasError('required')">**Description is required**</div>
+                        <div *ngIf="postForm.controls['description'].hasError('required')">**Description is required**
+                        </div>
                     </div>
                 </div>
 
@@ -57,7 +67,7 @@
 
                 <!-- Price -->
                 <div class="input-box">
-                    <span>Price</span>
+                    <span>Price (Monthly)</span>
                     <input formControlName="price" name="price" type="text" inputmode="numeric"
                         placeholder="Enter price" (input)="formatPrice($event)" required>
                     <div *ngIf="postForm.controls['price'].touched" class="validation-message">
@@ -72,6 +82,7 @@
                         <option value="" disabled selected>Select city</option>
                         <option>Pune</option>
                         <option>Mumbai</option>
+                        <option>Nashik</option>
                         <option>Bangalore</option>
                         <option>Delhi</option>
                         <option>Hyderabad</option>
@@ -96,14 +107,17 @@
                     <input formControlName="mobileNo" name="mobile" type="text" inputmode="numeric"
                         placeholder="Enter mobile number" required>
                     <div *ngIf="postForm.controls['mobileNo'].touched" class="validation-message">
-                        <div *ngIf="postForm.controls['mobileNo'].hasError('required')">**Mobile Number is required**</div>
-                        <div *ngIf="postForm.controls['mobileNo'].hasError('pattern')">**Mobile Number should be 10 digits only**</div>
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('required')">**Mobile Number is required**
+                        </div>
+                        <div *ngIf="postForm.controls['mobileNo'].hasError('pattern')">**Mobile Number should be 10
+                            digits only**</div>
                     </div>
                 </div>
 
             </div>
 
-            <button type="button" [disabled]="!postForm.valid || postForm.pristine" (click)="post()">{{ adId ? 'Update' : 'Post' }} AD</button>
+            <button type="button" [disabled]="!postForm.valid || postForm.pristine" (click)="post()">{{ adId ? 'Update'
+                : 'Post' }} AD</button>
         </form>
     </div>
 </div>

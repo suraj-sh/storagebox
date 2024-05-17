@@ -19,6 +19,8 @@
 
             <li *ngIf="canAccessPostAd()"><a routerLink="/post" (click)="closeMenu()">Post Ad</a></li>
             <li *ngIf="canAccessMyAds()"><a routerLink="/ads" (click)="closeMenu()">My Ads</a></li>
+            <li *ngIf="canAccessDashboard()"><a routerLink="/admin" (click)="closeMenu()">Dashboard</a></li>
+
 
             <li class="profile" routerLink="/profile" (click)="closeMenu()">
                 <div class="profile-info">

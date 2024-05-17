@@ -6,6 +6,93 @@
     display: flex;
 }
 
+.skeleton-left,
+.skeleton-right {
+    width: 50%;
+    padding: 30px;
+    border: 1px solid #cccccc;  
+}
+
+.skeleton-left {
+    width: 55%;
+}
+
+.main_image.skeleton img {
+    width: 100%;
+    height: 55vh;
+    margin-bottom: 20px;
+}
+
+.skeleton-left .option img {
+    width: 100px;
+    height: 80px;
+    padding: 5px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+.skeleton-right {
+    padding: 20px 60px;
+}
+
+.title.skeleton, 
+.category.skeleton,
+.location.skeleton,
+.date.skeleton,
+.price.skeleton,
+.rented.skeleton,
+.posted-by.skeleton,
+.mobile.skeleton,
+.description.skeleton {
+    width: 100%;
+    height: 30px;
+    margin: 20px 0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.category.skeleton{
+    width: 50%;
+}
+
+.dl,
+.pa,
+.contact {
+    display: flex;
+    justify-content: space-between;
+    gap: 5vw;
+}
+
+.description.skeleton{
+    height: 60px;
+}
+
+.main_image.skeleton img,
+.skeleton-left .option img,
+.title.skeleton, 
+.category.skeleton,
+.location.skeleton,
+.date.skeleton,
+.price.skeleton,
+.rented.skeleton,
+.posted-by.skeleton,
+.mobile.skeleton,
+.description.skeleton{
+    background: linear-gradient(to right, #d9d9d9 0%, rgba(0, 0, 0, 0.11) 20%, #d9d9d9 40%, #d9d9d9 100%);
+    animation: animation 2s linear infinite;
+}
+
+@keyframes animation {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0; 
+    }
+}
+
+
 .left,
 .right {
     width: 50%;
@@ -132,16 +219,8 @@ i {
     color: green
 }
 
-.dl {
-    display: flex;
-    justify-content: space-between;
-}
-
-.pa {
-    display: flex;
-    justify-content: space-between;
-}
-
+.dl,
+.pa,
 .contact {
     display: flex;
     justify-content: space-between;
@@ -158,10 +237,38 @@ i {
         height: auto;        
     }
 
+    .skeleton-left,
+    .skeleton-right,
     .left,
     .right {
         width: 100%;
         padding: 20px;
+    }
+
+    .main_image.skeleton img {
+        height: 50vh;
+        margin-bottom: 10px;
+    }
+
+    .category.skeleton,
+    .location.skeleton,
+    .date.skeleton,
+    .price.skeleton,
+    .rented.skeleton,
+    .posted-by.skeleton,
+    .mobile.skeleton,
+    .description.skeleton {
+        width: 100%;
+        height: 20px;
+        margin: 10px 0;
+    }
+
+    .title.skeleton {
+        height: 40px;
+    }
+
+    .description.skeleton {
+        height: 40px;
     }
 
     .right{
