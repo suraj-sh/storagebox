@@ -31,7 +31,6 @@ app.use(express.json());
 // Middleware for cookies
 app.use(cookieParser());
 
-
 // Connect to DB
 connectDB();
 
