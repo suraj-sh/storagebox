@@ -15,6 +15,7 @@ export class AdpostComponent implements OnInit {
   selectedImages: File[] = [];
   ad: any; // Define ad property
   adId: string | null = null;
+  showSpinner: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,13 +51,11 @@ export class AdpostComponent implements OnInit {
     }
   }
 
-  // Format the price input with commas for thousands separators
   formatPrice(event: any) {
     const input = event.target as HTMLInputElement;
     const value = input.value.replace(/,/g, ''); // Remove existing commas
     let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    // Limit the length of the formatted value to prevent issues with large numbers
     if (formattedValue.length > 15) {
       formattedValue = formattedValue.substring(0, 15);
     }
@@ -67,9 +66,7 @@ export class AdpostComponent implements OnInit {
   fetchAdDetails() {
     this.adService.getAd(this.adId).subscribe(
       (ad: any) => {
-        // Assign fetched ad details to ad property
         this.ad = ad;
-        // Populate form fields with ad details
         this.postForm.patchValue({
           name: ad.name,
           description: ad.description,
@@ -80,7 +77,6 @@ export class AdpostComponent implements OnInit {
           isRented: ad.isRented
         });
 
-        // Display the existing images if available
         if (ad.images && ad.images.length > 0) {
           this.imagePreviews = ad.images;
         }
@@ -96,16 +92,13 @@ export class AdpostComponent implements OnInit {
     const totalImages = this.selectedImages.length + fileList.length;
 
     if (totalImages > 8) {
-      // More than 8 images selected, show error message
       Swal.fire('Error', 'Maximum 8 images allowed', 'error');
       return;
     }
 
     for (let i = 0; i < fileList.length; i++) {
       const file: File = fileList[i];
-      // Add the image to the selectedImages array
       this.selectedImages.push(file);
-      // Optional: Display image preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagePreviews.push(e.target.result);
@@ -120,67 +113,47 @@ export class AdpostComponent implements OnInit {
   }
 
   deleteImage(index: number) {
-    // Remove the image preview from the imagePreviews array
-    this.imagePreviews.splice(index, 1);
-
-    // Remove the corresponding file from the selectedImages array
-    this.selectedImages.splice(index, 1);
-
-    // Reset selectedImages array when all images are cleared
-    if (this.imagePreviews.length === 0) {
-      this.selectedImages = [];
+    if (!this.adId) {
+      this.removeImage(index);
+      return;
     }
 
-    // Mark form as dirty to indicate changes
-    this.postForm.markAsDirty();
+    if (!this.ad || !this.ad.images) {
+      console.error('Invalid ad object or ad images:', this.ad);
+      return;
+    }
 
-    if (this.adId) {
-      // Deleting an image when editing an existing ad
-      if (!this.ad || !this.ad.images) {
-        console.error('Invalid ad object or ad images:', this.ad);
-        return;
+    const id = this.adId;
+    console.log('Deleting image with id:', id, 'and index:', index);
+
+    this.adService.deleteImage(id, index).subscribe(
+      () => {
+        console.log('Image deleted successfully');
+        this.imagePreviews = this.imagePreviews.filter((_, i: number) => i !== index);
+        this.ad.images = this.ad.images.filter((_: any, i: number) => i !== index);
+        this.selectedImages = this.selectedImages.filter((_, i: number) => i !== index);
+        this.postForm.markAsDirty();
+      },
+      (error) => {
+        console.error('Error deleting image:', error);
+        Swal.fire('Error', 'Failed to delete image', 'error');
       }
-
-      const id = this.adId;
-
-      console.log('Deleting image with id:', id, 'and index:', index);
-
-      this.adService.deleteImage(id, index).subscribe(
-        () => {
-          // Image deleted successfully from the backend
-          console.log('Image deleted successfully');
-          // Remove the image from the ad object
-          this.ad.images.splice(index, 1);
-        },
-        (error) => {
-          console.error('Error deleting image:', error);
-          Swal.fire('Error', 'Failed to delete image', 'error');
-        }
-      );
-    }
+    );
   }
 
-
   post() {
-    // Check if the form is valid
     if (this.postForm.valid) {
-
-      // Remove commas from the price value
       let price = this.postForm.value.price.toString().replace(/,/g, '');
       this.postForm.patchValue({ price: price });
 
-      // Validate if at least one image is selected
       if (this.selectedImages.length === 0 && (!this.ad || !this.ad.images || this.ad.images.length === 0)) {
         Swal.fire('Error', 'At least one image is required', 'error');
         return;
       }
 
       const formData = new FormData();
-
-      // Append form data to FormData object
-      Object.keys(this.postForm.value).forEach(key => {
+      Object.keys(this.postForm.value).forEach((key: string) => {
         if (key === 'images') {
-          // Append each new image file to FormData
           for (let i = 0; i < this.selectedImages.length; i++) {
             formData.append('images', this.selectedImages[i]);
           }
@@ -193,34 +166,32 @@ export class AdpostComponent implements OnInit {
         formData.append('id', this.adId);
       }
 
-      // Determine whether to send a POST or PUT request based on whether adId exists
+      this.showSpinner = true;
       const requestObservable = this.adId ?
         this.adService.updateAd(this.adId, formData) :
         this.adService.listAd(formData);
 
-      // Send the request to update ad details
       requestObservable.subscribe(
         (response) => {
           const successMessage = this.adId ? 'Ad updated successfully' : 'Ad posted successfully';
           console.log('Ad details updated:', response);
 
           Swal.fire('Success', successMessage, 'success');
-          this.postForm.reset(); // Reset form
-          this.imagePreviews = []; // Clear image preview
+          this.postForm.reset();
+          this.imagePreviews = [];
+          this.selectedImages = [];
+          this.showSpinner = false;
           this.router.navigate(['/ads']);
         },
         (error) => {
           console.error('Error posting ad details:', error);
           const errorMessage = this.adId ? 'Failed to update ad' : 'Failed to post ad';
           Swal.fire('Error', errorMessage, 'error');
+          this.showSpinner = false;
         }
       );
-    }
-    else {
-      // Form is invalid, display an error message or handle it as needed
-      console.error('Form is invalid. Cannot submit.');
+    } else {
       Swal.fire('Error', 'Please fill in all required fields correctly.', 'error');
     }
   }
-
 }

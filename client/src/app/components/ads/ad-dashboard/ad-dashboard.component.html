@@ -1,34 +1,69 @@
 <div class="container">
     <div id="adsList">
         <h3>My Posted Ads</h3>
-        <ul>
-            <li *ngFor="let ad of postedAds">
-                <div class="ads" [ngClass]="{ 'rented': ad.isRented }">
-                    <div class="ad-image">
-                        <img [src]="ad.images[0]" alt="Ad Image">
-                    </div>
-                    <div class="ad-details">
-                        <h4>{{ ad.name }}</h4>
-                        <p>Price: {{ ad.price }}</p>
-                        <p>Location: {{ ad.city }}</p>
-                        <p>Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
-                        <div class="action">
-                            <button class="view-btn" (click)="viewAdDetails(ad.id)">
-                                <span class="desktop-text">View</span>
-                                <i class="ri-eye-line mobile-icon"></i>
-                            </button>
-                            <button class="edit-btn" (click)="editAd(ad.id)">
-                                <span class="desktop-text">Edit</span>
-                                <i class="ri-edit-line mobile-icon"></i>
-                            </button>
-                            <button class="delete-btn" (click)="deleteAd(ad.id)">
-                                <span class="desktop-text">Delete</span>
-                                <i class="ri-delete-bin-line mobile-icon"></i>
-                            </button>
+        <ul class="grid">
+
+            <!-- Spinner module -->
+            <div *ngIf="showSpinner">
+                <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-pulse"
+                    [fullScreen]="true">
+                    <p style="color: white"> Sending... </p>
+                </ngx-spinner>
+            </div>
+
+            <!-- Skeleton Dashboard Page -->
+            <ng-container *ngIf="!dataLoaded">
+                <li *ngFor="let skeleton of skeletonAds">
+                    <div class="skeleton-ads">
+                        <div class="skeleton-ad-image">
+                            <img>
+                        </div>
+                        <div class="skeleton-ad-details">
+                            <h4></h4>
+                            <p></p>
+                            <p></p>
+                            <p></p>
+                            <div class="skeleton-action">
+                                <button class="view-btn"></button>
+                                <button class="edit-btn"></button>
+                                <button class="delete-btn"></button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            </ng-container>
+
+            <!-- Dashboard Page -->
+            <ng-container *ngIf="dataLoaded">
+                <li *ngFor="let ad of postedAds">
+                    <div class="ads" [ngClass]="{ 'rented': ad.isRented }">
+                        <div class="ad-image">
+                            <img [src]="ad.images[0]" alt="Ad Image">
+                        </div>
+                        <div class="ad-details">
+                            <h4>{{ ad.name }}</h4>
+                            <p>Price: {{ ad.price }}</p>
+                            <p>Location: {{ ad.city }}</p>
+                            <p>Status: {{ ad.isRented ? 'Rented' : 'Available' }}</p>
+                            <div class="action">
+                                <button class="view-btn" (click)="viewAdDetails(ad.id)">
+                                    <span class="desktop-text">View</span>
+                                    <i class="ri-eye-line mobile-icon"></i>
+                                </button>
+                                <button class="edit-btn" (click)="editAd(ad.id)">
+                                    <span class="desktop-text">Edit</span>
+                                    <i class="ri-edit-line mobile-icon"></i>
+                                </button>
+                                <button class="delete-btn" (click)="deleteAd(ad.id)">
+                                    <span class="desktop-text">Delete</span>
+                                    <i class="ri-delete-bin-line mobile-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ng-container>
+
         </ul>
     </div>
 </div>

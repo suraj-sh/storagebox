@@ -2,9 +2,9 @@ const User = require('../model/User');
 const bcryptjs = require('bcryptjs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { sendEmail } = require('../middlewere/email');
+const { sendEmail } = require('../middleware/email');
 const { user } = require('../config/roles_list');
-const errorhandler = require('../middlewere/errorHandler');
+const errorhandler = require('../middleware/errorHandler');
 const userToken=require('../model/UserToken');
 
 const handleLogin = async (req, res) => {
@@ -133,11 +133,3 @@ module.exports = {
     forgotPassword,
     resetPassword,
 };
-
-//sameSite:'None'
-//const ohterUsers=userDB.users.filter(person=>person.username !==foundUser.username);
-// const currentUser={...foundUser,refreshToken};
-// userDB.setUsers([...ohterUsers,currentUser]);
-// await fsPromises.writeFile(path.join(__dirname,'..','model','users.json'),
-//     JSON.stringify(userDB.users),
-// ) 

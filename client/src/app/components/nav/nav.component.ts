@@ -72,6 +72,10 @@ export class NavComponent implements OnInit {
     return this.userProfile?.role === 'Owner' && this.userProfile?.isSeller && this.userProfile?.isActiveSeller;
   }
 
+  canAccessDashboard(): boolean {
+    return this.userProfile?.role === 'Admin';
+  }
+
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
     this.isCloseIconVisible = this.isMenuOpen;

@@ -21,6 +21,7 @@ export class ProfileComponent implements OnInit {
   filesStorageProof: File | null = null;
   showSpinner = false;
   sellerStatus: string = '';
+  dataLoaded: boolean = false;
 
   constructor(private formBuilder: FormBuilder, private profileService: ProfileService,
     private authService: AuthenticationService) { }
@@ -99,12 +100,13 @@ export class ProfileComponent implements OnInit {
             this.userRole = 'Owner';
           }
 
+          this.dataLoaded = true;
         },
         (error: any) => {
           console.error('Error fetching user details:', error);
         }
       );
-    } 
+    }
     else {
       console.error('User token not found.');
     }
@@ -200,6 +202,8 @@ export class ProfileComponent implements OnInit {
         }).then(() => {
           this.loadUserProfile(); // Reload user profile after updating details
           this.showSpinner = false;
+          this.filesIdProof = null;
+          this.filesStorageProof = null;
         });
       },
       (error: any) => {

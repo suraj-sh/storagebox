@@ -13,6 +13,8 @@ export class AdviewComponent implements OnInit {
   isSidebarOpen: boolean = false;
   isBackIconVisible: boolean = false;
   ads: any[];
+  skeletonAds: any[] = Array(6).fill({}); // Initialize skeletonAds with placeholder data
+  dataLoaded: boolean = false;
   noAdsFound: boolean = false;
   filterForm: FormGroup;
 
@@ -25,6 +27,8 @@ export class AdviewComponent implements OnInit {
       category: ['Select category'],
       price: ['Sort by Price']
     });
+
+    this.fetchAds(); // Fetch ads from the server
 
     this.route.queryParamMap.subscribe(params => {
       const cities = params.get('cities');
@@ -51,6 +55,8 @@ export class AdviewComponent implements OnInit {
           });
           return clonedAd;
         });
+        // Set dataLoaded flag to true once data is loaded
+        this.dataLoaded = true;
       },
       (error) => {
         console.error('Error fetching ads:', error);

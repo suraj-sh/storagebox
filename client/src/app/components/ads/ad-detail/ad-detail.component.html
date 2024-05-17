@@ -1,8 +1,45 @@
 <div class="container">
-    <div class="left">
+
+    <!-- Skeleton Page -->
+    <div class="skeleton-left" *ngIf="!dataLoaded">
+        <div class="main_image skeleton">
+            <img>
+        </div>
+        <div class="option">
+            <img>
+            <img>
+            <img>
+        </div>
+    </div>
+
+    <div class="skeleton-right" *ngIf="!dataLoaded">
+        <h3 class="title skeleton"></h3>
+        <div class="category skeleton"></div>
+
+        <div class="dl">
+            <div class="location skeleton"></div>
+            <div class="date skeleton"></div>
+        </div>
+
+        <div class="pa">
+            <div class="price skeleton"></div>
+            <div class="rented skeleton"></div>
+        </div>
+
+        <div class="contact">
+            <div class="posted-by skeleton"></div>
+            <div class="mobile skeleton"></div>
+        </div>
+
+        <div class="description skeleton"></div>
+    </div>
+
+
+    <!-- Ad Details Page -->
+    <div class="left" *ngIf="dataLoaded">
         <div class="main_image">
             <img [src]="storage?.images[selectedImageIndex]" class="slide">
-            <div class="slide-buttons">
+            <div class="slide-buttons" *ngIf="storage?.images.length > 1">
                 <button class="prev-button" (click)="prevImage()"><i class="ri-arrow-left-s-line"></i></button>
                 <button class="next-button" (click)="nextImage()"><i class="ri-arrow-right-s-line"></i></button>
             </div>
@@ -13,7 +50,7 @@
         </div>
     </div>
 
-    <div class="right">
+    <div class="right" *ngIf="dataLoaded">
         <h3 class="title">{{ storage?.name }}</h3>
         <div class="category">
             <i class="ri-archive-line"></i> {{ storage?.category }}

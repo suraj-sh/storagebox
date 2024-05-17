@@ -13,6 +13,7 @@ export class AdDetailComponent implements OnInit {
   storage: any;
   selectedImageIndex: number = 0; // Track the index of the selected image
   currentIndex: number = 0;
+  dataLoaded: boolean = false;
 
   constructor(private route: ActivatedRoute, private adService: AdService,
     private datePipe: DatePipe) { }
@@ -27,6 +28,7 @@ export class AdDetailComponent implements OnInit {
       (data: any) => {
         data.price = this.formatPrice(data.price);
         this.storage = data;
+        this.dataLoaded = true;
       },
       (error) => {
         console.error('Error fetching storage details:', error);

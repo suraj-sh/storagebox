@@ -1,16 +1,21 @@
-const express=require('express');
-const router=express.Router();
-const registerController=require('../controllers/registerController');
-const uploadDocument = require('../middlewere/uploadDocs');
+const express = require('express');
+const router = express.Router();
+const registerController = require('../controllers/registerController');
+const { createUploadMiddleware } = require('../middleware/uploadDocs');
 
 router.route('/')
-.post(uploadDocument.fields([
-    { name: 'idProof', maxCount: 1 },
-    { name: 'documentProof', maxCount: 1 },
-  ]), registerController.handleNewUser);
-;
+    .post(
+        createUploadMiddleware([
+            { name: 'idProof', maxCount: 1 },
+            { name: 'documentProof', maxCount: 1 }
+        ]),
+        registerController.handleNewUser
+    );
 
 router.route('/verify')
-.post(uploadDocument.single('document'),registerController.verifyCodeAndSetPassword);
+    .post(
+        createUploadMiddleware([{ name: 'document', maxCount: 1 }]),
+        registerController.verifyCodeAndSetPassword
+    );
 
-module.exports=router;
+module.exports = router;

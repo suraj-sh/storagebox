@@ -41,15 +41,32 @@
                 </select>
             </div>
             <div class="buttons">
-                <button type="button" (click)="applyFilters()">Apply Filters</button>
-                <button type="button" (click)="clearFilters()">Clear Filters</button>
+                <button type="button" (click)="applyFilters()">Apply</button>
+                <button type="button" (click)="clearFilters()">Clear</button>
             </div>
         </form>
-    </div> 
+    </div>
 
-    <div class="cards-container">
+
+    <!-- Skeleton Ads Page -->
+    <div class="skeleton-container" *ngIf="!dataLoaded">
+        <div class="skeleton-card" *ngFor="let skeleton of skeletonAds">
+            <img>
+            <div class="skeleton-card-content">
+                <h2></h2>
+                <p class="title"></p>
+                <div class="pd">
+                    <p class="price"></p>
+                    <p class="location"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ads Page -->
+    <div class="cards-container" *ngIf="dataLoaded">
         <div class="card" *ngFor="let ad of ads" (click)="viewAdDetails(ad)">
-            <img [src]="ad.images[0]" alt="Product">
+            <img [src]="ad.images[0]" alt="Storage Image">
             <div class="card-content">
                 <h2>{{ ad.category }}</h2>
                 <p class="title">{{ ad.name }}</p>
@@ -58,10 +75,11 @@
                     <p class="location"><i class="ri-map-pin-line"></i> {{ ad.city }}</p>
                 </div>
             </div>
-        </div>     
+        </div>
     </div>
+
     <div *ngIf="noAdsFound" class="no-ads-message">
         No ads found matching the selected filters.
     </div>
-      
+
 </div>
