@@ -62,7 +62,7 @@ Key features include:
 
    ![Screenshot (106)](https://github.com/suraj-sh/storagebox/assets/88436237/f5c609db-cc58-4626-9ac5-594575f12ad7)
 
-## 12. a. Profile of Owner (Only verified owners can post and access my ads page)
+## 12. a. Profile of Owner (Only verified owners can access Post Ad and My Ads page)
    
    ![Screenshot (97)](https://github.com/suraj-sh/storagebox/assets/88436237/309799b7-9e1a-43fd-b2d0-54f4d69893d9)
 
@@ -74,7 +74,7 @@ Key features include:
 
    ![Screenshot (102)](https://github.com/suraj-sh/storagebox/assets/88436237/6942a309-ec8a-47b1-8ca3-3a35012e6603)
 
-   ## d. Profile of Admin
+   ## d. Profile of Admin (Only admin can access Dashboard page)
 
    ![Screenshot (103)](https://github.com/suraj-sh/storagebox/assets/88436237/ea74153d-4e3d-42ac-8d40-75ddc5b35afc)
 
