@@ -60,19 +60,23 @@ Screenshots of the Web App
     ![Screenshot (106)](https://github.com/suraj-sh/storagebox/assets/88436237/f5c609db-cc58-4626-9ac5-594575f12ad7)
 
 12. a. Profile of Owner (Only verified owners can post and access my ads page)
+
        ![Screenshot (97)](https://github.com/suraj-sh/storagebox/assets/88436237/309799b7-9e1a-43fd-b2d0-54f4d69893d9)
-    
-   b. Profile of Not verified owner (Document reupload option if the documents are not valid)
-      ![Screenshot (107)](https://github.com/suraj-sh/storagebox/assets/88436237/ed0f9ee2-7ddc-4521-ad47-13fcfbe76b58)
 
-   c. Profile of Renter
-      ![Screenshot (102)](https://github.com/suraj-sh/storagebox/assets/88436237/6942a309-ec8a-47b1-8ca3-3a35012e6603)
+    b. Profile of Not verified owner (Document reupload option if the documents are not valid)
 
-   d. Profile of Admin
-      ![Screenshot (103)](https://github.com/suraj-sh/storagebox/assets/88436237/ea74153d-4e3d-42ac-8d40-75ddc5b35afc)
+       ![Screenshot (107)](https://github.com/suraj-sh/storagebox/assets/88436237/ed0f9ee2-7ddc-4521-ad47-13fcfbe76b58)
+
+    c. Profile of Renter
+
+       ![Screenshot (102)](https://github.com/suraj-sh/storagebox/assets/88436237/6942a309-ec8a-47b1-8ca3-3a35012e6603)
+
+    d. Profile of Admin
+
+       ![Screenshot (103)](https://github.com/suraj-sh/storagebox/assets/88436237/ea74153d-4e3d-42ac-8d40-75ddc5b35afc)
 
 
-13. Dashboard (Admin can track total users and view documents and verify owner accounts and notify if documents are invalid then they can reupload them form their profile page)
+14. Dashboard (Admin can track total users and view documents and verify owner accounts and notify if documents are invalid then they can reupload them form their profile page)
 
     ![Screenshot (104)](https://github.com/suraj-sh/storagebox/assets/88436237/58df1bfd-0201-4061-858e-43475405c3a8)
 
