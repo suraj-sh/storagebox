@@ -16,7 +16,7 @@ export class ForgotPasswordComponent implements OnInit {
     return this.forgotPasswordForm.get('email');
   }
 
-  constructor( private authService: AuthenticationService, private formBuilder: FormBuilder ) {}
+  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.forgotPasswordForm = this.formBuilder.group({
@@ -24,7 +24,17 @@ export class ForgotPasswordComponent implements OnInit {
     });
   }
 
+  trimInputs() {
+    const trimmedValues = {
+      email: this.forgotPasswordForm.get('email')?.value?.trim() ?? '',
+    };
+
+    this.forgotPasswordForm.patchValue(trimmedValues);
+  }
+
   submitEmail() {
+    this.trimInputs();
+
     // Show spinner
     this.showSpinner = true;
     this.authService.forgotpass(this.forgotPasswordForm.value).subscribe(

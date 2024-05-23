@@ -39,6 +39,14 @@ export class ResetPasswordComponent implements OnInit {
     });
   }
 
+  trimInputs() {
+    const trimmedValues = {
+      password: this.resetPasswordForm.get('password')?.value?.trim() ?? '',
+      confirmPassword: this.resetPasswordForm.get('confirmPassword')?.value?.trim() ?? '',
+    };
+    this.resetPasswordForm.patchValue(trimmedValues);
+  }
+
   isButtonDisabled(): boolean {
     return this.resetPasswordForm.invalid || this.resetPasswordForm.get('password')?.value !== this.resetPasswordForm.get('confirmPassword')?.value;
   }
@@ -48,6 +56,8 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   resetPassword() {
+    this.trimInputs();
+
     let resetObj = {
       token: this.token,
       password: this.resetPasswordForm.value.password,

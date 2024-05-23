@@ -18,13 +18,8 @@ export class RegisterComponent {
   filesStorageProof: File | null = null;
   showTooltip = false;
 
-  // Common getter function for the form inputs 
-  get form() {
-    return this.registrationForm.controls;
-  }
-
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
-    private router: Router) { }
+              private router: Router) { }
 
   registrationForm = this.formBuilder.group({
     user: ['', [Validators.required, Validators.minLength(6)]],
@@ -36,6 +31,25 @@ export class RegisterComponent {
     idProof: [''],
     documentProof: ['']
   });
+
+
+  get form() {
+    return this.registrationForm.controls;
+  }
+
+
+  trimInputs() {
+    const trimmedValues = {
+      user: this.registrationForm.get('user')?.value?.trim() ?? '',
+      email: this.registrationForm.get('email')?.value?.trim() ?? '',
+      verificationCode: this.registrationForm.get('verificationCode')?.value?.trim() ?? '',
+      pwd: this.registrationForm.get('pwd')?.value?.trim() ?? '',
+      confirmPassword: this.registrationForm.get('confirmPassword')?.value?.trim() ?? '',
+    };
+  
+    this.registrationForm.patchValue(trimmedValues);
+  }
+  
 
   selectFile(event: any, formControlName: string) {
     if (event.target.files.length > 0) {
@@ -54,15 +68,13 @@ export class RegisterComponent {
 
       if (formControlName === 'idProof') {
         this.filesIdProof = file;
-      }
-      else if (formControlName === 'documentProof') {
+      } else if (formControlName === 'documentProof') {
         this.filesStorageProof = file;
       }
     }
   }
 
   isPdfFile(file: File): boolean {
-    // Check if the file type is PDF
     return file.type === 'application/pdf';
   }
 
@@ -79,6 +91,7 @@ export class RegisterComponent {
   }
 
   sendVerificationCode() {
+    this.trimInputs();
 
     const formData = new FormData();
 
@@ -98,20 +111,15 @@ export class RegisterComponent {
       formData.append('documentProof', this.filesStorageProof);
     }
 
-
-    // Check if the user is a seller and if the required files are uploaded
     if (this.form.isSeller?.value) {
       if (!this.filesIdProof || !this.filesStorageProof) {
-        // If any of the required files are missing, show an alert and return
         Swal.fire('Error', 'Please provide both ID proof and proof of the storage unit', 'error');
         return;
       }
     }
 
-    // Show spinner
     this.showSpinner = true;
 
-    // Send verification email
     this.authService.sendVerificationEmail(formData).subscribe(
       (response) => {
         Swal.fire({
@@ -128,6 +136,8 @@ export class RegisterComponent {
   }
 
   register() {
+    this.trimInputs();
+
     if (!this.registrationForm.invalid) {
       const formData = new FormData();
 
@@ -156,7 +166,6 @@ export class RegisterComponent {
     }
   }
 
-
   isButtonDisabled(): boolean {
     return this.registrationForm.invalid || this.registrationForm.get('pwd')?.value !== this.registrationForm.get('confirmPassword')?.value;
   }
@@ -165,7 +174,6 @@ export class RegisterComponent {
     const userControl = this.registrationForm.get('user');
     const emailControl = this.registrationForm.get('email');
 
-    // Check if the username and email are not entered or valid
     if (!userControl?.value || userControl?.invalid || !emailControl?.value || emailControl.invalid) {
       return true;
     }
@@ -177,7 +185,6 @@ export class RegisterComponent {
       }
     }
 
-    // Return false if all conditions are met
     return false;
   }
 
