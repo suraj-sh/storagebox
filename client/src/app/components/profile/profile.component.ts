@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
 import { AuthenticationService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
-import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -52,6 +51,13 @@ export class ProfileComponent implements OnInit {
     this.userDetailsForm.reset(this.userProfile);
     this.isEditMode = false;
     this.userDetailsForm.disable();
+  }
+
+  trimInputs() {
+    const trimmedValues = {
+      username: this.userDetailsForm.get('username')?.value?.trim() ?? '',
+    };
+    this.userDetailsForm.patchValue(trimmedValues);
   }
 
   // Method to handle file selection
@@ -222,6 +228,8 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    this.trimInputs(); // Trim inputs before saving
+
     // Update username and email
     const updatedUserDetails = {
       username: this.userDetailsForm.get('username')?.value,
@@ -252,4 +260,5 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
+
 }

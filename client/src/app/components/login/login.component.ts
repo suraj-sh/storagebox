@@ -16,13 +16,24 @@ export class LoginComponent {
   constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
               private router: Router) { }
 
-
   loginForm = this.formBuilder.group({
     user: ['', [Validators.required]],
     pwd: ['', [Validators.required]],
   });
 
+  trimInputs() {
+    const userValue = this.loginForm.get('user')?.value?.trim() ?? '';
+    const pwdValue = this.loginForm.get('pwd')?.value?.trim() ?? '';
+
+    this.loginForm.patchValue({
+      user: userValue,
+      pwd: pwdValue
+    });
+  }
+
   login() {
+    this.trimInputs();
+
     const formData = {
       user: this.loginForm.value.user,
       email: this.loginForm.value.user,
@@ -46,6 +57,17 @@ export class LoginComponent {
           this.loginForm.reset();
         });
       },
+      (err) => {
+        // Handle login error
+        this.showSpinner = false;
+        Swal.fire({
+          title: 'Login Failed',
+          text: 'Please check your username and password.',
+          icon: 'error',
+          confirmButtonText: 'Try Again',
+          iconColor: '#ff0000',
+        });
+      }
     );
   }
 
