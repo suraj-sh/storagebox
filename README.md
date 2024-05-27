@@ -44,11 +44,11 @@ Key features include:
 
 ## 7. View Ads
 
-   ![Screenshot (100)](https://github.com/suraj-sh/storagebox/assets/88436237/5c2b1f89-694c-4e6e-9239-133834757040)
+   ![Screenshot (109)](https://github.com/suraj-sh/storagebox/assets/88436237/79417425-fed6-4c8d-8cdb-d5b2112192e1)
 
 ## 8. Ad Details (Only logged-in users can view the ad details)
 
-   ![Screenshot (101)](https://github.com/suraj-sh/storagebox/assets/88436237/7a2337a3-cb62-445c-8db4-8b2b24b78f33)
+   ![Screenshot (110)](https://github.com/suraj-sh/storagebox/assets/88436237/6160fc0f-90a0-4ddb-b1f8-01a5cc890428)
 
 ## 9. Post Ad
 
@@ -56,7 +56,7 @@ Key features include:
  
 ## 10. My Ads (Owner can edit or delete their ads)
 
-   ![Screenshot (99)](https://github.com/suraj-sh/storagebox/assets/88436237/575aa28b-6299-4257-a8fb-69b4a1e9bcee)
+   ![Screenshot (111)](https://github.com/suraj-sh/storagebox/assets/88436237/9b48979a-8619-439b-b82b-ee63ea1e11b9)
 
 ## 11. Edit Ad
 
