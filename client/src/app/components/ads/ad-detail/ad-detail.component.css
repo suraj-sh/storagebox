@@ -1,5 +1,5 @@
 .container {
-    width: 98%;
+    width: 90%;
     height: calc(80vh - 20px);
     margin: 1vw auto;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
@@ -49,6 +49,10 @@
     margin: 20px 0;
     border-radius: 8px;
     margin-bottom: 10px;
+}
+
+.profile-picture-container.skeleton{
+    border: none;
 }
 
 .category.skeleton{
@@ -226,10 +230,34 @@ i {
     justify-content: space-between;
 }
 
+.profile-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture-container {
+    width: 3vw;
+    height: 3vw;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #4070f4;
+}
+
+.profile-picture-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.contact span {
+    padding-left: 10px;
+}
+
 
 @media (max-width: 600px) {
     .container {
-        margin: 2vw auto;
+        width: 100%;
         display: block;
         max-height: calc(85vh - 5px);
         flex-direction: column;
@@ -300,5 +328,13 @@ i {
     .price,
     .rented {
         font-size: 18px;
+    }
+
+    .profile-picture-container {
+        width: 9vw;
+        height: 9vw;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1px solid #4070f4;
     }
 }

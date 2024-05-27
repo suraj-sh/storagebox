@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdService } from 'src/app/services/ad.service';
 import { DatePipe } from '@angular/common'; // Import DatePipe
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-ad-detail',
@@ -14,9 +15,10 @@ export class AdDetailComponent implements OnInit {
   selectedImageIndex: number = 0; // Track the index of the selected image
   currentIndex: number = 0;
   dataLoaded: boolean = false;
+  userProfile: any;
 
   constructor(private route: ActivatedRoute, private adService: AdService,
-    private datePipe: DatePipe) { }
+              private datePipe: DatePipe, private profileService: ProfileService) { }
 
   ngOnInit(): void {
     this.getStorageDetails();
@@ -29,13 +31,31 @@ export class AdDetailComponent implements OnInit {
         data.price = this.formatPrice(data.price);
         this.storage = data;
         this.dataLoaded = true;
+        // Ensure that storage.userId is available and valid
+        if (this.storage && this.storage.user && this.storage.user.id) {
+          this.loadUserProfile(this.storage.user.id); // Pass the userId to loadUserProfile
+        } else {
+          console.error('User ID is missing or invalid.');
+        }
       },
       (error) => {
         console.error('Error fetching storage details:', error);
       }
     );
   }
-
+  
+  loadUserProfile(userId: string): void {
+    this.profileService.getUser(userId).subscribe(
+      (userData: any) => {
+        this.userProfile = userData;
+      },
+      (error: any) => {
+        console.error('Error fetching user details:', error);
+      }
+    );
+  }
+  
+  
   // Method to format price with commas
   formatPrice(price: string | number): string {
     // Convert price to string if it's a number

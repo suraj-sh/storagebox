@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService {
+export class AuthService {
   private apiUrl = environment.apiUrl;
 
   isLoggedInSubject = new BehaviorSubject<boolean>(false);

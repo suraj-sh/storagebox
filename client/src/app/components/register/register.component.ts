@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthenticationService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -18,7 +18,7 @@ export class RegisterComponent {
   filesStorageProof: File | null = null;
   showTooltip = false;
 
-  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
+  constructor(private authService: AuthService, private formBuilder: FormBuilder,
               private router: Router) { }
 
   registrationForm = this.formBuilder.group({

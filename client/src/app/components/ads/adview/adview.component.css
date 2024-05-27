@@ -16,10 +16,10 @@
     background-color: #f9f9f9;
     width: 250px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    top: 120px;
-    left: 20px;
+    top: 8vw;
+    left: 5vw;
 }
 
 .sidebar h2 {
@@ -69,9 +69,9 @@ button:hover {
 .skeleton-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 50px;
+    gap: 4vw;
     padding: 30px;
-    margin-left: 250px;
+    margin-left: 23vw;
     margin-top: auto;
 }
 
@@ -79,7 +79,7 @@ button:hover {
     width: 300px;
     border: 1px solid #ddd;
     border-radius: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     overflow: hidden;
 }
 
@@ -113,9 +113,9 @@ button:hover {
 .cards-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 50px;
+    gap: 4vw;
     padding: 30px;
-    margin-left: 250px;
+    margin-left: 23vw;
     margin-top: auto;
 }
 
@@ -125,7 +125,7 @@ button:hover {
     border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {

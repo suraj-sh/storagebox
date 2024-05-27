@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -13,7 +13,7 @@ export class LoginComponent {
   passwordVisible = false;
   showSpinner = false;
 
-  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
+  constructor(private authService: AuthService, private formBuilder: FormBuilder,
               private router: Router) { }
 
   loginForm = this.formBuilder.group({

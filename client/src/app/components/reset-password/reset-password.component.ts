@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,7 +23,7 @@ export class ResetPasswordComponent implements OnInit {
     return this.resetPasswordForm.get('confirmPassword');
   }
 
-  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
+  constructor(private authService: AuthService, private formBuilder: FormBuilder,
     private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {

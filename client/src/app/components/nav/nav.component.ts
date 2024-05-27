@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
 import { ProfileService } from 'src/app/services/profile.service';
 
@@ -17,7 +17,7 @@ export class NavComponent implements OnInit {
   currentYear: number;
   isLoggedIn$: Observable<boolean>;
 
-  constructor(private router: Router, private authService: AuthenticationService,
+  constructor(private router: Router, private authService: AuthService,
               private profileService: ProfileService) {
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
