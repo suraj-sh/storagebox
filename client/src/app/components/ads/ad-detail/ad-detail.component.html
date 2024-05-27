@@ -27,7 +27,14 @@
         </div>
 
         <div class="contact">
-            <div class="posted-by skeleton"></div>
+            <div class="posted-by skeleton">
+                <div class="profile-info">
+                    <div class="profile-picture-container skeleton">
+                        <img>
+                    </div>
+                    <span class="skeleton"></span>
+                </div>
+            </div>
             <div class="mobile skeleton"></div>
         </div>
 
@@ -77,7 +84,16 @@
 
         <div class="contact">
             <div class="posted-by">
-                <i class="ri-user-line"></i> {{ storage?.user?.username }}
+                <div class="profile-info">
+                    <div class="profile-picture-container">
+                        <img *ngIf="userProfile?.image; else defaultProfilePic" [src]="userProfile.image"
+                            alt="Profile Picture">
+                        <ng-template #defaultProfilePic>
+                            <img src="../../../assets/images/Profile_image.jpg" alt="Default Profile Picture">
+                        </ng-template>
+                    </div>
+                    <span>{{ storage?.user?.username }}</span>
+                </div>
             </div>
             <div class="mobile">
                 <i class="ri-phone-line"></i> +91 {{ storage?.mobileNo }}

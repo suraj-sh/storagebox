@@ -16,7 +16,6 @@ export class AdminComponent {
   sellerCount: number;
   verifiedCount: number;
   notVerifiedCount: number = 0;
-  notVerifiedCountLoaded: boolean = false;
   sortByRoleOrder: boolean = false;
   showSpinner = false;
 
@@ -99,7 +98,6 @@ export class AdminComponent {
       const verifiedSellers = this.sellers.filter(seller => seller.isSeller && seller.isActiveSeller);
       this.verifiedCount = verifiedSellers.length;
       this.notVerifiedCount = this.sellerCount - this.verifiedCount;
-      this.notVerifiedCountLoaded = true; // Indicate that the data is loaded
     });
   }
 

@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { AuthenticationService } from './services/auth.service';
+import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AuthGuard } from './guards/auth.guard';
@@ -30,6 +30,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AboutUsComponent } from './components/about-us/about-us.component';
+import { AdminService } from './services/admin.service';
 
 @NgModule({
   
@@ -62,7 +63,8 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
   ],
 
   providers: [
-    AuthenticationService,
+    AuthService,
+    AdminService,
     ProfileService,
     AdService,
     AuthGuard,

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
-import { AuthenticationService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit {
   dataLoaded: boolean = false;
 
   constructor(private formBuilder: FormBuilder, private profileService: ProfileService,
-    private authService: AuthenticationService) { }
+    private authService: AuthService) { }
 
   // Common getter function for the form inputs 
   get userForm() {
