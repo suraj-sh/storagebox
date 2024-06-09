@@ -22,43 +22,34 @@ const createUploadMiddleware = (fieldOptions) => {
 // Middleware to upload document to Firebase Storage
 const uploadDocumentToFirebaseStorage = async (req, res, next) => {
     try {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).json({ message: 'No documents uploaded' });
+        if (req.files) {
+            req.fileUrls = {};
+            for (const [key, file] of Object.entries(req.files)) {
+                const fileName = `${Date.now()}-${file.originalname}`;
+                const fileBuffer = file.buffer;
+
+                const fileRef = bucket.file(`documents/${fileName}`);
+                await fileRef.save(fileBuffer, {
+                    metadata: {
+                        contentType: file.mimetype,
+                    },
+                });
+
+                const [url] = await fileRef.getSignedUrl({
+                    action: 'read',
+                    expires: '03-09-2491', // Set an appropriate expiration date
+                });
+
+                req.fileUrls[key] = url;
+            }
         }
-
-        const files = req.files;
-        req.fileUrls = {}; // Initialize an object to store file URLs
-
-        // Iterate over the keys of files
-        for (const fieldName of Object.keys(files)) {
-            const file = files[fieldName][0];
-            const fileName = `${Date.now()}-${file.originalname}`;
-            const fileBuffer = file.buffer;
-
-            // Upload the file to Firebase Storage
-            const fileRef = bucket.file(`documents/${fileName}`);
-            await fileRef.save(fileBuffer, {
-                metadata: {
-                    contentType: file.mimetype,
-                },
-            });
-
-            // Generate a signed URL for the uploaded file
-            const [url] = await fileRef.getSignedUrl({
-                action: 'read',
-                expires: '03-09-2491', // Set an appropriate expiration date
-            });
-
-            // Store the URL in req.fileUrls
-            req.fileUrls[fieldName] = url;
-        }
-
         next();
     } catch (error) {
         console.error('Error uploading document to Firebase Storage:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ 'message': 'Error uploading document' });
     }
 };
+
 
 module.exports = {
     createUploadMiddleware,

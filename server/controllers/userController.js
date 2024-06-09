@@ -2,9 +2,6 @@ const { default: mongoose } = require('mongoose');
 const User = require('../model/User');
 const Storage = require('../model/Storage');
 const { sendEmail } = require('../middleware/email');
-const path = require('path');
-const fs = require('fs');
-const { uploadDocumentToFirebaseStorage } = require('../middleware/uploadDocs');
 const { bucket } = require('../config/firebase');
 
 const getAllUser = async (req, res) => {
@@ -75,37 +72,55 @@ const updateSellerDocument = async (req, res) => {
         if (req.userId !== req.params.id) {
             return res.status(403).json({ 'message': 'Unauthorized' });
         }
-        if (!user.isSeller && req.files) {
+        if (!user.isSeller) {
             return res.status(403).json({ 'message': 'Only sellers can update idProof and documentProof' });
         }
-        if (user.isSeller) {
-            await uploadDocumentToFirebaseStorage(req, res, async () => {
-                if (req.files && req.files['idProof']) {
-                    // Delete old idProof document from Firebase Storage and update URL in MongoDB
-                    if (user.idProof) {
-                        await deleteFileFromFirebase(user.idProof);
-                    }
-                    const idProofUrl = req.fileUrls['idProof'];
-                    user.idProof = idProofUrl;
-                }
-                if (req.files && req.files['documentProof']) {
-                    // Delete old documentProof document from Firebase Storage and update URL in MongoDB
-                    if (user.documentProof) {
-                        await deleteFileFromFirebase(user.documentProof);
-                    }
-                    const documentProofUrl = req.fileUrls['documentProof'];
-                    user.documentProof = documentProofUrl;
-                }
-                await user.save();
-                res.status(200).json({ message: "User updated" });
-            });
+        
+        // Check if idProof and documentProof files exist in the request
+        if (req.files && req.files['idProof']) {
+            // Delete old idProof document from Firebase Storage if it exists
+            if (user.idProof) {
+                await deleteFileFromFirebase(user.idProof);
+            }
+            // Upload new idProof document to Firebase Storage and update URL in MongoDB
+            const idProofUrl = await uploadFileToFirebase(req.files['idProof'][0]);
+            user.idProof = idProofUrl;
         }
+        if (req.files && req.files['documentProof']) {
+            // Delete old documentProof document from Firebase Storage if it exists
+            if (user.documentProof) {
+                await deleteFileFromFirebase(user.documentProof);
+            }
+            // Upload new documentProof document to Firebase Storage and update URL in MongoDB
+            const documentProofUrl = await uploadFileToFirebase(req.files['documentProof'][0]);
+            user.documentProof = documentProofUrl;
+        }
+
+        // Save the updated user document
+        await user.save();
+        
+        res.status(200).json({ message: "User documents updated successfully" });
     } catch (error) {
-        console.error('Error updating user:', error);
+        console.error('Error updating user documents:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
+// Function to upload a file to Firebase Storage
+const uploadFileToFirebase = async (file) => {
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const fileUpload = bucket.file(`documents/${fileName}`);
+    await fileUpload.save(file.buffer, {
+        metadata: {
+            contentType: file.mimetype
+        }
+    });
+    const [url] = await fileUpload.getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491' // Adjust expiration as needed
+    });
+    return url;
+};
 
 const deleteDocument = async (req, res, documentType) => {
     try {
@@ -117,12 +132,15 @@ const deleteDocument = async (req, res, documentType) => {
 
         const documentUrl = user[documentType];
         if (documentUrl) {
-            const documentFileName = documentUrl.split('/').pop();
-            const file = bucket.file(`documents/${documentFileName}`);
-            await file.delete();
-            user[documentType] = undefined;
-            await user.save();
-            res.json({ 'message': `${documentType} deleted successfully` });
+            try {
+                await deleteFileFromFirebase(documentUrl); // Use the function to delete the file from Firebase Storage
+                user[documentType] = undefined;
+                await user.save();
+                res.json({ 'message': `${documentType} deleted successfully` });
+            } catch (error) {
+                console.error(`Error deleting ${documentType}:`, error);
+                res.status(500).json({ 'message': `Error deleting ${documentType}` });
+            }
         } else {
             res.status(404).json({ 'message': `${documentType} not found` });
         }
@@ -138,25 +156,22 @@ const deleteDocumentProof = (req, res) => deleteDocument(req, res, 'documentProo
 
 
 // Function to delete a file from Firebase Storage
-const deleteFileFromFirebase = async (fileUrl) => {
+const deleteFileFromFirebase = async (signedUrl) => {
     try {
-        // Extract file name from URL before query parameters
-        const url = new URL(fileUrl);
-        const fileName = url.pathname.split('/').pop();
-        const filePath = `documents/${fileName}`;
+        // Extract the file path from the signed URL
+        const url = new URL(signedUrl);
+        const filePath = decodeURIComponent(url.pathname.split('/').slice(2).join('/'));
+
         const file = bucket.file(filePath);
 
-        // Check if file exists before attempting to delete
+        // Check if the file exists
         const [exists] = await file.exists();
         if (!exists) {
             console.warn(`File not found: ${filePath}`);
             return; // File does not exist, no need to attempt deletion
         }
 
-        // Log file deletion attempt
         console.log(`Attempting to delete file: ${filePath}`);
-
-        // Attempt to delete the file
         await file.delete();
         console.log(`Deleted file: ${filePath}`);
     } catch (error) {
