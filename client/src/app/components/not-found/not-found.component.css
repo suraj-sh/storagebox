@@ -27,7 +27,7 @@ p {
 button {
     font-size: 1.2vw;
     padding: 1.1vw 2.1vw;
-    background-color: rgb(69, 141, 186);
+    background-color: var(--color);
     color: #fff;
     border: none;
     border-radius: 25px;
@@ -36,7 +36,7 @@ button {
 }
 
 button:hover {
-    background-color: #326B95;
+    background-color: var(--color-hover);
 }
 
 

@@ -216,7 +216,7 @@ i {
 }
 
 .price {
-    color: #458DBA;
+    color: var(--color);
 }
 
 .rented {

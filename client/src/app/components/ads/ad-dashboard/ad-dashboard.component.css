@@ -143,11 +143,11 @@ p {
 }
 
 .view-btn{
-    background-color: rgb(69, 141, 186);
+    background-color: var(--color);
 }
 
 .view-btn:hover {
-    background-color: #326B95;
+    background-color: var(--color-hover);
 }
 
 .edit-btn{

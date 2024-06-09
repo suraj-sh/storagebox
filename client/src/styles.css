@@ -7,3 +7,8 @@
     box-sizing: border-box;
     font-family: sans-serif;
 }
+
+:root {
+    --color: rgb(69, 141, 186);
+    --color-hover: #326b95;
+}

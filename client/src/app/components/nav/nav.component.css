@@ -54,7 +54,7 @@ menu li a {
 }
 
 menu li a:hover {
-    color: rgb(69, 141, 186);
+    color: var(--color);
 }
 
 .profile {
@@ -88,7 +88,7 @@ menu li a:hover {
 .profile span {
     font-weight: 600;
     font-size: 1.4vw;
-    color: rgb(69, 141, 186);; 
+    color: var(--color); 
     padding-right: 20px;
 }
 
@@ -105,7 +105,7 @@ header i {
 header button {
     font-size: 1.1vw;
     padding: 0.8vw 1.5vw;
-    background-color: rgb(69, 141, 186);
+    background-color: var(--color);
     color: #fff;
     border: none;
     border-radius: 20px;
@@ -116,7 +116,7 @@ header button {
 
 header button:hover,
 header button:focus {
-    background-color: #326b95; 
+    background-color: var(--color-hover);
     outline: none;
 }
 
