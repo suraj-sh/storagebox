@@ -44,7 +44,7 @@
  .file-upload-button {
      display: inline-block;
      padding: 10px 20px;
-     background-color: #458DBA;
+     background-color: var(--color);
      color: #fff;
      border-radius: 5px;
      margin-left: 15px;

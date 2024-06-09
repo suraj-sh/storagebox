@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken');
 const { sendEmail } = require('../middleware/email');
 const { user } = require('../config/roles_list');
 const errorhandler = require('../middleware/errorHandler');
-const userToken=require('../model/UserToken');
+const userToken = require('../model/UserToken');
 
 const handleLogin = async (req, res) => {
-    const cookies =req.cookies;
+    const cookies = req.cookies;
     console.log(cookies)
     const { user, email, pwd } = req.body;
     if (!(user || email) || !pwd) {
@@ -38,25 +38,24 @@ const handleLogin = async (req, res) => {
         let newRefreshTokenArray =
             !cookies?.jwt
                 ? foundUser.refreshToken
-                : foundUser.refreshToken.filter(rt=>rt !== cookies.jwt)
+                : foundUser.refreshToken.filter(rt => rt !== cookies.jwt)
 
-        if(cookies?.jwt)
-        {
-            const refreshToken= cookies.jwt;
-            const foundToken=await User.findOne({refreshToken}).exec();
-            
-            if(!foundToken){
+        if (cookies?.jwt) {
+            const refreshToken = cookies.jwt;
+            const foundToken = await User.findOne({ refreshToken }).exec();
+
+            if (!foundToken) {
                 console.log('attempted refresh token reasue at login');
-                newRefreshTokenArray=[];
+                newRefreshTokenArray = [];
             }
-            res.clearCookie('jwt',{ httpOnly:true} );//secure:true -only serves on http
-    }
+            res.clearCookie('jwt', { httpOnly: true });//secure:true -only serves on http
+        }
         //Saving refresh Token with current user
-        foundUser.refreshToken = [...newRefreshTokenArray,newRefreshToken];
+        foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
         const result = await foundUser.save();
         console.log(result);
-        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24*60*60*1000});
-        res.json({ accessToken});
+        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        res.json({ accessToken });
     } else {
         res.sendStatus(401);
     }
@@ -80,7 +79,7 @@ const forgotPassword = async (req, res, next) => {
         await sendEmail({
             email: user.email,
             subject: 'Password change request received',
-            html:`
+            html: `
             <html>
             <head>
             <title>Password Reset Request</title>
@@ -112,18 +111,36 @@ const resetPassword = async (req, res) => {
         if (!password) {
             return res.status(400).json({ message: "Password is required" });
         }
-        const decodedToken = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+
+        let decodedToken;
+        try {
+            decodedToken = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+        } catch (err) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
         const user = await User.findOne({ email: decodedToken.email });
         if (!user) {
-            return res.status(500).json({ message: "Reset Token Expired" });
+            return res.status(404).json({ message: "User not found" });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const updatedUser = await User.findByIdAndUpdate(user._id, { $set: { password: hashedPassword } }, { new: true });
-        res.status(200).json({ message: "Password reset successfully", updatedUser });
-         // Delete the token from UserToken collection after password reset
-         await userToken.findOneAndDelete({ userId: user._id });
 
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            { $set: { password: hashedPassword } },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(500).json({ message: "Failed to reset password" });
+        }
+
+        // Delete the token from UserToken collection after password reset
+        await userToken.findOneAndDelete({ userId: user._id });
+
+        res.status(200).json({ message: "Password reset successfully" });
     } catch (error) {
+        console.error('Password reset error:', error); // Log the error for debugging
         res.status(500).json({ message: "Something went wrong" });
     }
 };

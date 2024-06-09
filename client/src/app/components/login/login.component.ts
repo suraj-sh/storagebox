@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,9 +12,13 @@ import Swal from 'sweetalert2';
 export class LoginComponent {
   passwordVisible = false;
   showSpinner = false;
+  returnUrl: string;
 
   constructor(private authService: AuthService, private formBuilder: FormBuilder,
-              private router: Router) { }
+              private router: Router, private route: ActivatedRoute) { 
+    // Get the return URL from query parameters or default to the home page
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  }
 
   loginForm = this.formBuilder.group({
     user: ['', [Validators.required]],
@@ -53,7 +57,7 @@ export class LoginComponent {
           iconColor: '#00ff00',
         }).then(() => {
           this.showSpinner = false;
-          this.router.navigate(['']);
+          this.router.navigateByUrl(this.returnUrl); // Redirect to the return URL
           this.loginForm.reset();
         });
       },

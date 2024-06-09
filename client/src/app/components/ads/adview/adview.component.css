@@ -50,7 +50,7 @@ select {
 }
 
 button {
-    background-color: #5295BF;
+    background-color: var(--color);
     color: white;
     padding: 10px;
     border: none;
@@ -61,7 +61,7 @@ button {
 }
 
 button:hover {
-    background-color: #326B95;
+    background-color: var(--color-hover);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
@@ -159,7 +159,7 @@ button:hover {
 }
 
 .card-content .price {
-    color: #5295BF;
+    color: var(--color);
     font-weight: bold;
 }
 
@@ -176,7 +176,7 @@ button:hover {
 
 .card-content .location i {
     font-weight: bold;
-    color: #5295BF;
+    color: var(--color);
     font-size: 1.2em;
 }
 
