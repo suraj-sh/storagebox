@@ -120,18 +120,17 @@ const createNewStorage = async (req, res) => {
 const deleteImageUsingSignedUrl = async (signedUrl) => {
     try {
         const url = new URL(signedUrl);
-        const filePath = url.pathname.split('/').slice(2).join('/'); // Extract the path from the signed URL
+        const filePath = decodeURIComponent(url.pathname.split('/').slice(2).join('/')); // Extract the path from the signed URL
 
         // Delete the file from Firebase Storage using the extracted file path
         const fileRef = bucket.file(filePath);
         await fileRef.delete();
         console.log('Image deleted successfully');
     } catch (error) {
-        console.error('Error deleting image:', error);
+        console.error('Error deleting image:', error.message);
         throw new Error('Failed to delete image');
     }
 };
-
 
 const deleteImageFromStorage = async (req, res) => {
     try {
@@ -139,19 +138,19 @@ const deleteImageFromStorage = async (req, res) => {
         if (!storage) {
             return res.status(404).json({ message: 'Storage not found' });
         }
-        
+
         if (storage.user.toString() !== req.userId) {
             return res.status(401).send('Not Allowed');
         }
-        
+
         const imageIndex = parseInt(req.params.imageIndex);
         if (imageIndex < 0 || imageIndex >= storage.images.length) {
             return res.status(404).json({ message: 'Invalid image index' });
         }
-        
+
         // Get the signed URL for the image from the storage
         const imageUrl = storage.images[imageIndex];
-        
+
         // Delete the file using the signed URL
         await deleteImageUsingSignedUrl(imageUrl);
 
@@ -163,7 +162,7 @@ const deleteImageFromStorage = async (req, res) => {
 
         return res.json({ message: 'Image deleted successfully', storage });
     } catch (error) {
-        console.error('Error deleting image:', error);
+        console.error('Error deleting image:', error.message);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };

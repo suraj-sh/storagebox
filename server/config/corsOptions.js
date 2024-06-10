@@ -1,8 +1,11 @@
 //cors origin resource sharing
-const whitelist=['https://storagebox.onrender.com',
-'https://storage-box.netlify.app',
-'http://localhost:3500',
-'http://localhost:4200'];
+const whitelist=[
+    'https://storagebox.vercel.app',    // production server
+    'https://storage-box.netlify.app',  // production client
+    'http://localhost:3500',            // development server
+    'http://localhost:4200'             // development client
+];
+
 const corsOptions={
     origin:(origin,callback)=>{
         if(whitelist.indexOf(origin)!==-1||!origin){
@@ -13,4 +16,5 @@ const corsOptions={
     },
     credentials: true
 }
+
 module.exports=corsOptions;

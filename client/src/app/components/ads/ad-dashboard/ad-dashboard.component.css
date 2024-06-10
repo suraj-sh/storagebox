@@ -96,6 +96,11 @@ ul {
     }
 }
 
+#adsList .ads-message{
+    font-size: 1.5em;
+    text-align: center;
+}
+
 
 .ads {
     display: flex;
