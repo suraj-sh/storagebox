@@ -1,6 +1,10 @@
 <div class="container">
     <div id="adsList">
         <h3>My Posted Ads</h3>
+
+        <!-- Show "No ads posted yet" message if there are no ads -->
+        <p class="ads-message" *ngIf="dataLoaded && noAds && !hasError">No ads posted yet</p>
+
         <ul class="grid">
 
             <!-- Spinner module -->
@@ -12,7 +16,7 @@
             </div>
 
             <!-- Skeleton Dashboard Page -->
-            <ng-container *ngIf="!dataLoaded">
+            <ng-container *ngIf="!dataLoaded && !hasError">
                 <li *ngFor="let skeleton of skeletonAds">
                     <div class="skeleton-ads">
                         <div class="skeleton-ad-image">
@@ -34,7 +38,7 @@
             </ng-container>
 
             <!-- Dashboard Page -->
-            <ng-container *ngIf="dataLoaded">
+            <ng-container *ngIf="dataLoaded && !noAds && !hasError">
                 <li *ngFor="let ad of postedAds">
                     <div class="ads" [ngClass]="{ 'rented': ad.isRented }">
                         <div class="ad-image">
