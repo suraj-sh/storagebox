@@ -48,13 +48,13 @@ const handleLogin = async (req, res) => {
                 console.log('attempted refresh token reasue at login');
                 newRefreshTokenArray = [];
             }
-            res.clearCookie('jwt', { httpOnly: true, secure: true, sameSite: 'None' });//secure:true -only serves on http
+            res.clearCookie('jwt', { httpOnly: true });//secure:true -only serves on http
         }
         //Saving refresh Token with current user
         foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
         const result = await foundUser.save();
         console.log(result);
-        res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie('jwt', newRefreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({ accessToken });
     } else {
         res.sendStatus(401);
