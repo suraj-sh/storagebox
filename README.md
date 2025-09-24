@@ -12,6 +12,7 @@ Key features include:
 
 
 ## Project Link: https://storage-box.netlify.app
+## Use credentials [user: visitor, password: visitor@1234]
 
 
 ## Screenshots of the Web App
