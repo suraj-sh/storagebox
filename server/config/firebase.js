@@ -1,6 +1,9 @@
 require('dotenv').config();
 
-const admin = require('firebase-admin');
+// const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
+
 const serviceAccount = {
   "type": process.env.FIREBASE_TYPE,
   "project_id": process.env.FIREBASE_PROJECT_ID,
@@ -15,11 +18,20 @@ const serviceAccount = {
   "universe_domain": process.env.FIREBASE_UNIVERSE_DOMAIN
 };
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: `${process.env.FIREBASE_STORAGE_BUCKET}`
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   storageBucket: `${process.env.FIREBASE_STORAGE_BUCKET}`
+// });
+
+initializeApp({
+    credential: cert(serviceAccount),
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET
 });
 
-const bucket = admin.storage().bucket();
+// const bucket = admin.storage().bucket();
 
-module.exports.bucket = bucket;
+// module.exports.bucket = bucket;
+
+const bucket = getStorage().bucket();
+
+module.exports = { bucket };
